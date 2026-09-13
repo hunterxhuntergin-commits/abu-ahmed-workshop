@@ -1,0 +1,1044 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>أبو أحمد للألمنيوم</title>
+<meta name="description" content="أبو أحمد للألمنيوم — أبواب وشبابيك وكاونترات ومحجر درج بجودة تصنيع عالية.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#12161a; --panel:#1b2126; --panel2:#20272e; --line:rgba(255,255,255,.09);
+  --text:#eef1f3; --muted:#93a2ab; --accent:#c9884a; --accent2:#7fa0b3;
+  --green:#4caf7d; --red:#e2685f; --radius:14px;
+}
+*{box-sizing:border-box}
+html[data-admin-light="1"]{--bg:#f3f5f6;--panel:#fff;--panel2:#f7f8f9;--line:#e4e8ea;--text:#171b1e;--muted:#66727a}
+body{margin:0;background:var(--bg);color:var(--text);font-family:'Tajawal',sans-serif;line-height:1.6}
+.mono{font-family:'IBM Plex Mono',monospace}
+a{color:inherit;text-decoration:none}
+button,input,select,textarea{font-family:inherit;color:inherit}
+img{max-width:100%;display:block}
+.wrap{max-width:1100px;margin:0 auto;padding:0 16px}
+/* header */
+header.site{position:sticky;top:0;z-index:40;background:rgba(18,22,26,.9);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.hbar{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;max-width:1100px;margin:0 auto}
+.brand{font-weight:900;font-size:19px;display:flex;align-items:center;gap:8px}
+.brand .mark{width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,var(--accent),#8a5a28);display:grid;place-items:center;font-weight:900;color:#12161a}
+.nav{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}
+.nav::-webkit-scrollbar{display:none}
+.nav a{padding:9px 13px;border-radius:999px;font-size:13px;font-weight:700;color:var(--muted);white-space:nowrap}
+.nav a.active,.nav a:hover{color:var(--text);background:var(--panel2)}
+.icon-btn{border:1px solid var(--line);background:var(--panel);color:var(--text);border-radius:12px;width:42px;height:42px;display:grid;place-items:center;cursor:pointer;position:relative;flex:0 0 auto}
+.cart-badge{position:absolute;top:-6px;left:-6px;background:var(--accent);color:#12161a;font-size:10px;font-weight:900;border-radius:99px;min-width:18px;height:18px;display:grid;place-items:center;padding:0 4px}
+/* buttons */
+.btn{border:1px solid var(--line);background:var(--panel2);color:var(--text);border-radius:12px;padding:11px 16px;font-weight:800;font-size:13px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px}
+.btn:hover{border-color:rgba(201,136,74,.5)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#171308}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.danger{color:#ffb4ac;border-color:rgba(226,104,95,.4);background:rgba(226,104,95,.08)}
+.btn.block{width:100%}
+.btn.sm{padding:8px 11px;font-size:12px;border-radius:10px}
+.btn[disabled]{opacity:.5;cursor:not-allowed}
+/* layout helpers */
+.section{padding:34px 0}
+.section-head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:16px}
+.section-head h2{margin:0;font-size:21px;font-weight:900}
+.section-head p{margin:4px 0 0;color:var(--muted);font-size:12.5px}
+.grid{display:grid;gap:14px}
+.grid.cols-2{grid-template-columns:1fr 1fr}
+.grid.cols-3{grid-template-columns:repeat(3,1fr)}
+.grid.cols-4{grid-template-columns:repeat(4,1fr)}
+@media(max-width:760px){.grid.cols-3,.grid.cols-4{grid-template-columns:1fr 1fr}}
+/* hero */
+.hero{position:relative;padding:52px 0 40px;overflow:hidden;background:
+  repeating-linear-gradient(115deg, rgba(255,255,255,.025) 0 2px, transparent 2px 26px),
+  radial-gradient(circle at 85% 0%, rgba(201,136,74,.16), transparent 45%), var(--bg)}
+.hero h1{font-size:34px;line-height:1.25;margin:0 0 10px;font-weight:900;max-width:520px}
+.hero .accent{color:var(--accent)}
+.hero p{color:var(--muted);max-width:460px;font-size:14px;margin:0 0 20px}
+.hero-actions{display:flex;gap:10px;flex-wrap:wrap}
+/* category tile */
+.cat-tile{border:1px solid var(--line);border-radius:18px;background:var(--panel);overflow:hidden;cursor:pointer;transition:.15s border-color,.15s transform}
+.cat-tile:hover{border-color:rgba(201,136,74,.45);transform:translateY(-2px)}
+.cat-tile .thumb{aspect-ratio:4/3;background:var(--panel2);position:relative;overflow:hidden}
+.cat-tile .thumb img{width:100%;height:100%;object-fit:cover}
+.cat-tile .thumb .ph{position:absolute;inset:0;background:repeating-linear-gradient(125deg,rgba(255,255,255,.05) 0 3px,transparent 3px 22px)}
+.cat-tile .body{padding:13px 14px}
+.cat-tile .body b{font-size:15px;font-weight:800}
+.cat-tile .body small{color:var(--muted);font-size:11.5px;display:block;margin-top:4px;line-height:1.7}
+/* product card */
+.prod-card{border:1px solid var(--line);border-radius:16px;background:var(--panel);overflow:hidden;cursor:pointer;display:flex;flex-direction:column}
+.prod-card .thumb{aspect-ratio:1/1;background:var(--panel2);position:relative}
+.prod-card .thumb img{width:100%;height:100%;object-fit:cover}
+.prod-card .thumb .ph{position:absolute;inset:0;background:repeating-linear-gradient(125deg,rgba(255,255,255,.05) 0 3px,transparent 3px 22px)}
+.prod-card .badge{position:absolute;top:8px;right:8px;background:rgba(18,22,26,.85);border:1px solid var(--line);color:#e7d5ae;font-size:9.5px;font-weight:900;padding:4px 8px;border-radius:999px}
+.prod-card .body{padding:11px 12px;display:flex;flex-direction:column;gap:4px;flex:1}
+.prod-card .code{color:var(--accent2);font-size:10px;font-weight:700}
+.prod-card b{font-size:13.5px;font-weight:800}
+.prod-card .price{margin-top:auto;font-weight:900;font-size:14px}
+.prod-card .price small{color:var(--muted);font-weight:600;font-size:10.5px}
+/* filters bar */
+.filters{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;margin-bottom:16px}
+.chip{border:1px solid var(--line);background:var(--panel);padding:8px 14px;border-radius:999px;font-size:12.5px;font-weight:700;white-space:nowrap;cursor:pointer;color:var(--muted)}
+.chip.active{background:var(--accent);border-color:var(--accent);color:#171308}
+/* product detail */
+.pd-wrap{display:grid;grid-template-columns:1fr 1fr;gap:28px}
+@media(max-width:760px){.pd-wrap{grid-template-columns:1fr}}
+.pd-gallery{border-radius:18px;overflow:hidden;background:var(--panel);border:1px solid var(--line);aspect-ratio:1/1;position:relative}
+.pd-gallery img{width:100%;height:100%;object-fit:cover}
+.pd-thumbs{display:flex;gap:8px;margin-top:8px}
+.pd-thumbs img{width:56px;height:56px;object-fit:cover;border-radius:8px;border:1px solid var(--line);cursor:pointer}
+.field{margin-bottom:14px}
+.field label{display:block;font-size:12px;color:var(--muted);margin-bottom:6px;font-weight:700}
+.field input,.field select,.field textarea{width:100%;background:var(--panel2);border:1px solid var(--line);border-radius:11px;padding:11px 12px;font-size:14px}
+.field textarea{min-height:90px;resize:vertical}
+.field .hint{font-size:10.5px;color:var(--muted);margin-top:5px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.summary-box{border:1px solid var(--line);border-radius:14px;padding:14px;background:var(--panel2);margin:14px 0}
+.summary-line{display:flex;justify-content:space-between;font-size:13px;padding:5px 0;color:var(--muted)}
+.summary-line b{color:var(--text)}
+/* cart */
+.cart-fab{position:fixed;left:14px;bottom:16px;z-index:50;border:1px solid var(--line);background:var(--panel);color:var(--text);border-radius:999px;padding:13px 17px;font-weight:900;box-shadow:0 16px 36px rgba(0,0,0,.4);cursor:pointer;display:flex;align-items:center;gap:8px}
+.cart-fab span{background:var(--accent);color:#171308;border-radius:99px;min-width:20px;height:20px;display:grid;place-items:center;font-size:11px;padding:0 5px}
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:60;padding:14px;overflow:auto;display:flex;align-items:flex-start;justify-content:center}
+.sheet{max-width:520px;width:100%;margin:24px auto;background:var(--panel);border:1px solid var(--line);border-radius:22px;padding:20px;box-shadow:0 30px 80px rgba(0,0,0,.5)}
+.sheet.wide{max-width:760px}
+.sheet-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.sheet-head h3{margin:0;font-size:18px;font-weight:900}
+.sheet-close{width:36px;height:36px;border:1px solid var(--line);border-radius:10px;background:var(--panel2);display:grid;place-items:center;cursor:pointer;font-size:20px;line-height:1}
+.cart-item{display:flex;gap:10px;padding:12px 0;border-bottom:1px solid var(--line)}
+.cart-item img{width:58px;height:58px;border-radius:10px;object-fit:cover;background:var(--panel2);flex:0 0 auto}
+.cart-item .info{flex:1;min-width:0}
+.cart-item .info b{font-size:13px}
+.cart-item .info small{color:var(--muted);font-size:11px;display:block;margin-top:2px}
+.cart-item .qty-x{display:flex;align-items:center;gap:6px;margin-top:6px}
+.cart-item .qty-x button{width:24px;height:24px;border-radius:7px;border:1px solid var(--line);background:var(--panel2);cursor:pointer}
+.cart-empty{text-align:center;padding:30px 10px;color:var(--muted)}
+/* table (admin) */
+table.admtbl{width:100%;border-collapse:collapse;font-size:12.5px}
+table.admtbl th{text-align:right;color:var(--muted);font-weight:700;padding:8px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
+table.admtbl td{padding:9px 8px;border-bottom:1px solid var(--line);vertical-align:middle}
+.status-pill{display:inline-flex;padding:4px 9px;border-radius:999px;font-size:10.5px;font-weight:800;border:1px solid var(--line)}
+.status-pill.new{color:#e7d5ae;border-color:rgba(199,164,94,.35)}
+.status-pill.in_progress,.status-pill.contacted{color:#8fc2e0;border-color:rgba(143,194,224,.35)}
+.status-pill.completed,.status-pill.quoted{color:#7fe2b5;border-color:rgba(15,166,109,.35)}
+.status-pill.cancelled,.status-pill.closed{color:#9aa29d}
+/* admin shell */
+.adm-shell{display:grid;grid-template-columns:190px 1fr;min-height:100vh}
+@media(max-width:760px){.adm-shell{grid-template-columns:1fr}}
+.adm-side{border-left:1px solid var(--line);background:var(--panel);padding:16px 10px;position:sticky;top:0;height:100vh;overflow:auto}
+@media(max-width:760px){.adm-side{position:static;height:auto;display:flex;overflow-x:auto;padding:10px;gap:4px;border-left:0;border-bottom:1px solid var(--line)}}
+.adm-side a{display:block;padding:10px 12px;border-radius:10px;font-size:13px;font-weight:700;color:var(--muted);white-space:nowrap}
+.adm-side a.active{background:var(--panel2);color:var(--text)}
+.adm-main{padding:20px}
+.adm-topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+.adm-topbar h2{margin:0;font-size:19px;font-weight:900}
+.stat-card{border:1px solid var(--line);border-radius:14px;padding:16px;background:var(--panel)}
+.stat-card b{font-size:24px;display:block;margin-top:4px}
+.stat-card small{color:var(--muted);font-size:11.5px}
+.card-list{display:flex;flex-direction:column;gap:8px}
+.card-item{border:1px solid var(--line);border-radius:12px;padding:12px;background:var(--panel);display:flex;justify-content:space-between;align-items:center;gap:10px}
+.card-item .meta small{display:block;color:var(--muted);font-size:11px;margin-top:3px}
+.toolbar{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap}
+.upload-box{border:1px dashed var(--line);border-radius:12px;padding:14px;text-align:center;cursor:pointer;font-size:12px;color:var(--muted)}
+.img-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(70px,1fr));gap:8px;margin-top:10px}
+.img-grid .im{position:relative;border-radius:9px;overflow:hidden;aspect-ratio:1/1;background:var(--panel2)}
+.img-grid .im img{width:100%;height:100%;object-fit:cover}
+.img-grid .im button{position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:6px;border:0;background:rgba(0,0,0,.6);color:#fff;font-size:12px;cursor:pointer}
+.toast{position:fixed;bottom:18px;right:18px;z-index:80;background:var(--panel);border:1px solid var(--line);color:var(--text);padding:12px 16px;border-radius:12px;font-size:13px;font-weight:700;box-shadow:0 10px 30px rgba(0,0,0,.4)}
+.toast.err{border-color:rgba(226,104,95,.5);color:#ffb4ac}
+.spin{width:16px;height:16px;border-radius:50%;border:2px solid rgba(255,255,255,.25);border-top-color:var(--text);animation:sp .7s linear infinite;display:inline-block}
+@keyframes sp{to{transform:rotate(360deg)}}
+footer.site{border-top:1px solid var(--line);padding:26px 0;margin-top:30px;color:var(--muted);font-size:12px;text-align:center}
+.empty-state{text-align:center;padding:50px 10px;color:var(--muted)}
+.empty-state b{display:block;color:var(--text);font-size:15px;margin-bottom:6px}
+.wa-fab{position:fixed;left:14px;bottom:76px;z-index:45;background:#25d366;color:#08240f;width:48px;height:48px;border-radius:50%;display:grid;place-items:center;font-weight:900;font-size:20px;box-shadow:0 12px 26px rgba(0,0,0,.4)}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div id="modals"></div>
+<div id="toastHost"></div>
+
+<script type="module">
+import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
+
+const SUPABASE_URL = "https://rxbytiypnqmnastydwtl.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_EAV6Xz5dUouN8abhz3HbVQ_DnS3XcSi";
+const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+const CART_KEY = "workshop_cart_v1";
+const state = { settings:null, categories:[], session:null, cart: loadCart() };
+
+function loadCart(){ try{ return JSON.parse(localStorage.getItem(CART_KEY))||[]; }catch(e){ return []; } }
+function saveCart(){ localStorage.setItem(CART_KEY, JSON.stringify(state.cart)); renderCartBadge(); }
+function uid(){ return Math.random().toString(36).slice(2,10)+Date.now().toString(36); }
+
+function toast(msg, isErr){
+  const host = document.getElementById('toastHost');
+  const el = document.createElement('div');
+  el.className = 'toast'+(isErr?' err':'');
+  el.textContent = msg;
+  host.appendChild(el);
+  setTimeout(()=>el.remove(), 3200);
+}
+function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function money(n){ n = Number(n||0); return n.toLocaleString('ar-IQ',{maximumFractionDigits:0}) + ' د.ع'; }
+
+// -------------------- pricing --------------------
+function roundDim(v, rule){
+  if(rule === 'round_up_10cm'){ return Math.ceil(v/10)*10; }
+  return v;
+}
+function calcLine(product, opts){
+  const method = product.pricing_method;
+  const price = Number(product.unit_price||0);
+  const qty = Number(opts.quantity||1);
+  if(method === 'piece'){
+    return { areaOrLength: qty, lineTotal: price*qty };
+  }
+  if(method === 'sqm'){
+    const w = roundDim(Number(opts.widthCm||0), product.rounding_rule)/100;
+    const h = roundDim(Number(opts.heightCm||0), product.rounding_rule)/100;
+    const area = w*h*qty;
+    return { areaOrLength: area, lineTotal: price*area };
+  }
+  if(method === 'linear_meter'){
+    const len = roundDim(Number(opts.widthCm||0), product.rounding_rule)/100;
+    const total = len*qty;
+    return { areaOrLength: total, lineTotal: price*total };
+  }
+  return { areaOrLength: 0, lineTotal: 0 };
+}
+
+// -------------------- cart --------------------
+function addToCart(product, opts){
+  const calc = calcLine(product, opts);
+  const item = {
+    id: uid(), productId: product.id, name: product.name, code: product.code,
+    image: (product.product_images&&product.product_images[0]&&product.product_images[0].url)||null,
+    pricingMethod: product.pricing_method, unitPrice: Number(product.unit_price||0),
+    roundingRule: product.rounding_rule, quantity: Number(opts.quantity||1),
+    widthCm: opts.widthCm||null, heightCm: opts.heightCm||null, note: opts.note||'',
+    areaOrLength: calc.areaOrLength, lineTotal: calc.lineTotal
+  };
+  state.cart.push(item); saveCart();
+  toast('أُضيف للسلة');
+}
+function removeCartItem(id){ state.cart = state.cart.filter(i=>i.id!==id); saveCart(); openCart(); }
+function cartTotal(){ return state.cart.reduce((s,i)=>s+i.lineTotal,0); }
+function renderCartBadge(){
+  document.querySelectorAll('.cart-count').forEach(el=>{ el.textContent = state.cart.length; el.style.display = state.cart.length? 'grid':'none'; });
+}
+
+// -------------------- data fetchers (cached lightly) --------------------
+async function getSettings(){
+  if(state.settings) return state.settings;
+  const {data} = await sb.from('site_settings').select('*').eq('id',1).maybeSingle();
+  state.settings = data || {};
+  return state.settings;
+}
+async function getCategories(force){
+  if(state.categories.length && !force) return state.categories;
+  const {data} = await sb.from('categories').select('*').eq('is_active',true).order('sort_order');
+  state.categories = data||[];
+  return state.categories;
+}
+
+// -------------------- router --------------------
+const routes = {};
+function route(pattern, handler){ routes[pattern]=handler; }
+async function render(){
+  const hash = location.hash.slice(1) || '/';
+  const app = document.getElementById('app');
+  app.innerHTML = '<div style="padding:60px;text-align:center;color:var(--muted)">جارِ التحميل…</div>';
+  window.scrollTo(0,0);
+  const parts = hash.split('/').filter(Boolean);
+  try{
+    if(parts[0]==='admin'){ return renderAdminRoute(parts, app); }
+    if(!parts.length) return app.innerHTML = await pageHome();
+    if(parts[0]==='category') return app.innerHTML = await pageCategory(parts[1]);
+    if(parts[0]==='product') return app.innerHTML = await pageProduct(parts[1]);
+    if(parts[0]==='works') return app.innerHTML = await pageWorks();
+    if(parts[0]==='quote') return app.innerHTML = await pageQuote();
+    if(parts[0]==='track') return app.innerHTML = await pageTrack();
+    app.innerHTML = await pageHome();
+  }catch(e){ console.error(e); app.innerHTML = '<div class="wrap section"><div class="empty-state"><b>صار خطأ</b>'+esc(e.message||'')+'</div></div>'; }
+  bindPublicEvents();
+}
+window.addEventListener('hashchange', render);
+
+// -------------------- shared chrome --------------------
+function header(activePath){
+  const items = [
+    {href:'#/', label:'الرئيسية'},
+    {href:'#/works', label:'أعمالنا'},
+    {href:'#/quote', label:'اطلب عرض سعر'},
+    {href:'#/track', label:'تتبع طلبك'},
+  ];
+  return `
+  <header class="site">
+    <div class="hbar">
+      <a class="brand" href="#/"><span class="mark">أح</span> ${esc(state.settings?.workshop_name||'أبو أحمد للألمنيوم')}</span></a>
+      <nav class="nav">${items.map(i=>`<a href="${i.href}" class="${activePath===i.href?'active':''}">${i.label}</a>`).join('')}</nav>
+      <button class="icon-btn" onclick="openCart()">🛒<span class="cart-badge cart-count" style="display:none">0</span></button>
+    </div>
+  </header>`;
+}
+function footer(){
+  const s = state.settings||{};
+  return `<footer class="site wrap">
+    ${s.phone? `هاتف: <span class="mono">${esc(s.phone)}</span> · `:''}${s.address? esc(s.address):''}
+    <div style="margin-top:6px">© ${new Date().getFullYear()} ${esc(s.workshop_name||'أبو أحمد للألمنيوم')}</div>
+  </footer>`;
+}
+function waFab(){
+  const s = state.settings||{};
+  if(!s.whatsapp_number) return '';
+  const num = (s.country_code||'')+String(s.whatsapp_number).replace(/^0+/,'');
+  return `<a class="wa-fab" target="_blank" href="https://wa.me/${num.replace(/\D/g,'')}">📞</a>`;
+}
+function catImg(c){ return c.image_url? `<img src="${esc(c.image_url)}">` : `<div class="ph"></div>`; }
+function prodImg(p){ const url = p.product_images&&p.product_images[0]&&p.product_images[0].url; return url? `<img src="${esc(url)}">` : `<div class="ph"></div>`; }
+function priceLabel(p){
+  if(p.pricing_method==='piece') return money(p.unit_price)+` <small>/قطعة</small>`;
+  if(p.pricing_method==='sqm') return money(p.unit_price)+` <small>/م²</small>`;
+  if(p.pricing_method==='linear_meter') return money(p.unit_price)+` <small>/م.ط</small>`;
+  return `<small>حسب الطلب - اطلب عرض سعر</small>`;
+}
+
+// -------------------- pages --------------------
+async function pageHome(){
+  await getSettings(); const cats = await getCategories();
+  const {data: featured} = await sb.from('products').select('*, product_images(*)').eq('is_active',true).eq('is_featured',true).order('sort_order').limit(8);
+  return `
+  ${header('#/')}
+  <section class="hero"><div class="wrap">
+    <h1>${esc(state.settings.workshop_name||'أبو أحمد للألمنيوم')}<br><span class="accent">جودة تصنيع تدوم</span></h1>
+    <p>${esc(state.settings.description||'أبواب، شبابيك، كاونترات، ومحجر درج بمقاسات مضبوطة حسب طلبك.')}</p>
+    <div class="hero-actions">
+      <a class="btn primary" href="#/quote">اطلب عرض سعر</a>
+      <a class="btn" href="#/works">شوف أعمالنا</a>
+    </div>
+  </div></section>
+  <section class="section wrap">
+    <div class="section-head"><div><h2>أقسامنا</h2><p>اختر القسم اللي تحتاجه</p></div></div>
+    <div class="grid cols-4">
+      ${cats.map(c=>`<a class="cat-tile" href="#/category/${esc(c.slug)}"><div class="thumb">${catImg(c)}</div><div class="body"><b>${esc(c.name)}</b>${c.description?`<small>${esc(c.description)}</small>`:''}</div></a>`).join('') || '<div class="empty-state">لا توجد أقسام بعد</div>'}
+    </div>
+  </section>
+  ${featured&&featured.length? `<section class="section wrap">
+    <div class="section-head"><div><h2>منتجات مميزة</h2></div></div>
+    <div class="grid cols-4">${featured.map(prodCard).join('')}</div>
+  </section>`:''}
+  ${footer()} ${waFab()}
+  `;
+}
+function prodCard(p){
+  return `<a class="prod-card" href="#/product/${esc(p.slug)}">
+    <div class="thumb">${prodImg(p)}${p.is_featured?'<span class="badge">مميز</span>':''}</div>
+    <div class="body"><span class="code mono">${esc(p.code)}</span><b>${esc(p.name)}</b><div class="price">${priceLabel(p)}</div></div>
+  </a>`;
+}
+async function pageCategory(slug){
+  await getSettings(); const cats = await getCategories();
+  const cat = cats.find(c=>c.slug===slug);
+  if(!cat) return `${header()}<div class="wrap section"><div class="empty-state"><b>القسم غير موجود</b></div></div>${footer()}`;
+  const {data: products} = await sb.from('products').select('*, product_images(*)').eq('category_id',cat.id).eq('is_active',true).order('sort_order');
+  return `${header()}
+  <section class="section wrap">
+    <div class="section-head"><div><h2>${esc(cat.name)}</h2><p>${esc(cat.description||'')}</p></div></div>
+    <div class="grid cols-4">${(products||[]).map(prodCard).join('') || '<div class="empty-state">لا توجد منتجات بهذا القسم بعد</div>'}</div>
+  </section>${footer()} ${waFab()}`;
+}
+async function pageProduct(slug){
+  await getSettings();
+  const {data: p} = await sb.from('products').select('*, product_images(*), categories(name,slug)').eq('slug',slug).maybeSingle();
+  if(!p) return `${header()}<div class="wrap section"><div class="empty-state"><b>المنتج غير موجود</b></div></div>${footer()}`;
+  const imgs = (p.product_images||[]).sort((a,b)=>a.sort_order-b.sort_order);
+  const needsDims = p.pricing_method==='sqm' || p.pricing_method==='linear_meter';
+  const purchasable = p.is_purchasable && p.pricing_method!=='quote_only';
+  window.__PD = p;
+  return `${header()}
+  <section class="section wrap">
+    <div class="pd-wrap">
+      <div>
+        <div class="pd-gallery" id="pdMainImg">${imgs[0]? `<img src="${esc(imgs[0].url)}">`:'<div class="ph" style="position:absolute;inset:0"></div>'}</div>
+        ${imgs.length>1? `<div class="pd-thumbs">${imgs.map(im=>`<img src="${esc(im.url)}" onclick="document.getElementById('pdMainImg').innerHTML='<img src=\\'${esc(im.url)}\\'>'">`).join('')}</div>`:''}
+      </div>
+      <div>
+        <span class="code mono">${esc(p.code)}</span>
+        <h1 style="margin:6px 0">${esc(p.name)}</h1>
+        <div style="font-size:20px;font-weight:900;margin-bottom:10px">${priceLabel(p)}</div>
+        <p style="color:var(--muted);font-size:13.5px">${esc(p.description||'')}</p>
+        ${p.material||p.color||p.glass_type||p.design? `<div class="summary-box">
+          ${p.material?`<div class="summary-line"><span>المادة</span><b>${esc(p.material)}</b></div>`:''}
+          ${p.color?`<div class="summary-line"><span>اللون</span><b>${esc(p.color)}</b></div>`:''}
+          ${p.glass_type?`<div class="summary-line"><span>نوع الزجاج</span><b>${esc(p.glass_type)}</b></div>`:''}
+          ${p.design?`<div class="summary-line"><span>التصميم</span><b>${esc(p.design)}</b></div>`:''}
+        </div>`:''}
+        ${purchasable? `
+        <div id="pdOptions">
+          ${needsDims? `<div class="row2">
+            <div class="field"><label>العرض (سم)</label><input type="number" id="pdW" min="1" placeholder="مثال: 90"></div>
+            <div class="field"><label>الارتفاع (سم)</label><input type="number" id="pdH" min="1" placeholder="مثال: 200"></div>
+          </div>`:''}
+          <div class="field"><label>${p.pricing_method==='piece'?'الكمية (قطعة)':'الكمية (عدد الوحدات)'}</label><input type="number" id="pdQty" min="1" value="1"></div>
+          <div class="field"><label>ملاحظة (اختياري)</label><textarea id="pdNote" placeholder="أي تفاصيل إضافية..."></textarea></div>
+          <div id="pdLiveTotal" class="summary-box" style="text-align:center;font-weight:900;font-size:16px">أدخل البيانات لحساب السعر</div>
+          <button class="btn primary block" onclick="pdAddToCart()">أضف للسلة</button>
+        </div>`:`<a class="btn primary block" href="#/quote">اطلب عرض سعر لهذا المنتج</a>`}
+      </div>
+    </div>
+  </section>${footer()} ${waFab()}`;
+}
+window.pdAddToCart = function(){
+  const p = window.__PD;
+  const qty = Number(document.getElementById('pdQty')?.value||1);
+  const w = document.getElementById('pdW')?.value;
+  const h = document.getElementById('pdH')?.value;
+  if((p.pricing_method==='sqm'||p.pricing_method==='linear_meter') && (!w || (p.pricing_method==='sqm' && !h))){
+    toast('أدخل القياسات أولاً', true); return;
+  }
+  addToCart(p, { quantity: qty, widthCm: w, heightCm: h, note: document.getElementById('pdNote')?.value });
+};
+function pdLiveUpdate(){
+  const p = window.__PD; if(!p) return;
+  const qty = Number(document.getElementById('pdQty')?.value||1);
+  const w = document.getElementById('pdW')?.value; const h = document.getElementById('pdH')?.value;
+  const box = document.getElementById('pdLiveTotal'); if(!box) return;
+  if(p.pricing_method==='sqm' && (!w||!h)) { box.textContent='أدخل القياسات أولاً'; return; }
+  if(p.pricing_method==='linear_meter' && !w) { box.textContent='أدخل القياس أولاً'; return; }
+  const calc = calcLine(p, {quantity:qty, widthCm:w, heightCm:h});
+  box.textContent = 'الإجمالي: ' + money(calc.lineTotal);
+}
+async function pageWorks(){
+  await getSettings();
+  const {data: works} = await sb.from('completed_works').select('*, categories(name)').eq('is_active',true).order('sort_order');
+  return `${header('#/works')}
+  <section class="section wrap">
+    <div class="section-head"><div><h2>أعمالنا المنفذة</h2><p>نماذج من شغلنا الفعلي عند الزبائن</p></div></div>
+    <div class="grid cols-3">
+      ${(works||[]).map(w=>`<div class="cat-tile"><div class="thumb"><img src="${esc(w.image_url)}"></div><div class="body"><b>${esc(w.title)}</b><small>${esc(w.location_area||'')}${w.categories?' · '+esc(w.categories.name):''}</small></div></div>`).join('') || '<div class="empty-state">لا توجد أعمال منشورة بعد</div>'}
+    </div>
+  </section>${footer()} ${waFab()}`;
+}
+async function pageQuote(){
+  await getSettings(); const cats = await getCategories();
+  return `${header('#/quote')}
+  <section class="section wrap" style="max-width:600px">
+    <div class="section-head"><div><h2>اطلب عرض سعر</h2><p>عبّي البيانات وراح نتواصل وياك بأقرب وقت</p></div></div>
+    <div class="field"><label>الاسم *</label><input id="qName"></div>
+    <div class="row2">
+      <div class="field"><label>رقم الهاتف *</label><input id="qPhone" type="tel"></div>
+      <div class="field"><label>واتساب (اختياري)</label><input id="qWa" type="tel"></div>
+    </div>
+    <div class="field"><label>نوع الشغل *</label><select id="qType">
+      <option value="">اختر...</option><option value="باب">باب</option><option value="شباك">شباك</option>
+      <option value="كاونتر">كاونتر</option><option value="محجر درج">محجر درج</option><option value="أخرى">أخرى</option>
+    </select></div>
+    <div class="row2">
+      <div class="field"><label>العرض (سم)</label><input id="qW" type="number"></div>
+      <div class="field"><label>الارتفاع (سم)</label><input id="qH" type="number"></div>
+    </div>
+    <div class="field"><label>المحافظة</label><input id="qGov" value="${esc(state.settings.governorate||'')}"></div>
+    <div class="field"><label>المنطقة / أقرب نقطة دالة</label><input id="qArea"></div>
+    <div class="field"><label>تفاصيل إضافية</label><textarea id="qNotes" placeholder="أي تفاصيل تساعدنا نحدد السعر..."></textarea></div>
+    <div class="field"><label>صورة (اختياري)</label><input id="qImg" type="file" accept="image/*"></div>
+    <button class="btn primary block" onclick="submitQuote()" id="qSubmitBtn">إرسال الطلب</button>
+  </section>${footer()} ${waFab()}`;
+}
+window.submitQuote = async function(){
+  const name=document.getElementById('qName').value.trim();
+  const phone=document.getElementById('qPhone').value.trim();
+  const work_type=document.getElementById('qType').value;
+  if(!name||!phone||!work_type){ toast('عبّي الحقول المطلوبة (*)', true); return; }
+  const btn=document.getElementById('qSubmitBtn'); btn.disabled=true; btn.innerHTML='<span class="spin"></span>';
+  try{
+    let image_url=null;
+    const file=document.getElementById('qImg').files[0];
+    if(file){
+      const path = `${Date.now()}_${uid()}.${file.name.split('.').pop()}`;
+      const {error:upErr}=await sb.storage.from('quote-images').upload(path,file);
+      if(!upErr){ image_url = sb.storage.from('quote-images').getPublicUrl(path).data.publicUrl; }
+    }
+    const row={ name, phone, whatsapp: document.getElementById('qWa').value.trim()||null, work_type,
+      width_cm: document.getElementById('qW').value||null, height_cm: document.getElementById('qH').value||null,
+      governorate: document.getElementById('qGov').value.trim()||null, area: document.getElementById('qArea').value.trim()||null,
+      notes: document.getElementById('qNotes').value.trim()||null, image_url };
+    const {error}=await sb.from('quote_requests').insert(row);
+    if(error) throw error;
+    document.querySelector('#app .section.wrap').innerHTML = `<div class="empty-state"><b>تم إرسال طلبك ✅</b>راح نتواصل وياك قريبًا لتحديد السعر.<div style="margin-top:14px"><a class="btn primary" href="#/">الرجوع للرئيسية</a></div></div>`;
+  }catch(e){ toast('صار خطأ: '+e.message, true); btn.disabled=false; btn.textContent='إرسال الطلب'; }
+};
+async function pageTrack(){
+  await getSettings();
+  return `${header('#/track')}
+  <section class="section wrap" style="max-width:480px">
+    <div class="section-head"><div><h2>تتبع طلبك</h2><p>أدخل رقم الطلب ورقم الهاتف المستخدم بالطلب</p></div></div>
+    <div class="field"><label>رقم الطلب</label><input id="tOrder" placeholder="ORD-2026-0001"></div>
+    <div class="field"><label>رقم الهاتف</label><input id="tPhone" type="tel"></div>
+    <button class="btn primary block" onclick="doTrack()" id="tBtn">بحث</button>
+    <div id="tResult" style="margin-top:16px"></div>
+  </section>${footer()} ${waFab()}`;
+}
+window.doTrack = async function(){
+  const order_number=document.getElementById('tOrder').value.trim();
+  const phone=document.getElementById('tPhone').value.trim();
+  const box=document.getElementById('tResult'); const btn=document.getElementById('tBtn');
+  if(!order_number||!phone){ toast('عبّي الحقلين', true); return; }
+  btn.disabled=true; btn.innerHTML='<span class="spin"></span>';
+  try{
+    const {data,error}=await sb.rpc('track_order',{p_order_number:order_number,p_phone:phone});
+    if(error) throw error;
+    if(!data){ box.innerHTML='<div class="empty-state">ما لكينا طلب بهذا الرقم والهاتف</div>'; }
+    else{
+      const items=(data.items||[]).map(it=>`<div class="summary-line"><span>${esc(it.name)} × ${it.quantity}</span><b>${money(it.total_price)}</b></div>`).join('');
+      box.innerHTML = `<div class="summary-box">
+        <div class="summary-line"><span>رقم الطلب</span><b class="mono">${esc(data.order_number)}</b></div>
+        <div class="summary-line"><span>الحالة</span><span class="status-pill ${data.status}">${statusAr(data.status)}</span></div>
+        <div class="summary-line"><span>حالة الدفع</span><span class="status-pill ${data.payment_status}">${payAr(data.payment_status)}</span></div>
+        <div style="margin:10px 0;border-top:1px solid var(--line);padding-top:8px">${items}</div>
+        <div class="summary-line"><span>الإجمالي</span><b>${money(data.total)}</b></div>
+      </div>`;
+    }
+  }catch(e){ box.innerHTML='<div class="empty-state">صار خطأ، حاول مرة ثانية</div>'; }
+  btn.disabled=false; btn.textContent='بحث';
+};
+function statusAr(s){ return {new:'جديد',in_progress:'قيد التنفيذ',completed:'مكتمل',cancelled:'ملغي'}[s]||s; }
+function payAr(s){ return {pending:'بانتظار الدفع',paid:'مدفوع',failed:'فشل',cod:'دفع عند الاستلام',refunded:'مسترجع'}[s]||s; }
+
+// -------------------- cart & checkout modals --------------------
+window.openCart = function(){
+  const modals=document.getElementById('modals');
+  const items = state.cart.map(i=>`
+    <div class="cart-item">
+      <img src="${i.image?esc(i.image):''}">
+      <div class="info"><b>${esc(i.name)}</b><small>${esc(i.code)} ${i.widthCm?`· ${i.widthCm}×${i.heightCm||''}سم`:''}</small>
+      <small>${money(i.lineTotal)}</small></div>
+      <button class="btn sm danger" onclick="removeCartItem('${i.id}')">حذف</button>
+    </div>`).join('') || '<div class="cart-empty">السلة فارغة</div>';
+  modals.innerHTML = `<div class="overlay" onclick="if(event.target===this)this.remove()">
+    <div class="sheet">
+      <div class="sheet-head"><h3>سلة المشتريات</h3><div class="sheet-close" onclick="this.closest('.overlay').remove()">×</div></div>
+      ${items}
+      ${state.cart.length? `<div class="summary-box"><div class="summary-line"><span>الإجمالي</span><b>${money(cartTotal())}</b></div></div>
+      <button class="btn primary block" onclick="openCheckout()">إتمام الطلب</button>`:''}
+    </div></div>`;
+};
+window.openCheckout = async function(){
+  await getSettings();
+  const modals=document.getElementById('modals');
+  modals.innerHTML = `<div class="overlay">
+    <div class="sheet">
+      <div class="sheet-head"><h3>إتمام الطلب</h3><div class="sheet-close" onclick="openCart()">×</div></div>
+      <div class="field"><label>الاسم *</label><input id="coName"></div>
+      <div class="row2">
+        <div class="field"><label>رقم الهاتف *</label><input id="coPhone" type="tel"></div>
+        <div class="field"><label>واتساب</label><input id="coWa" type="tel"></div>
+      </div>
+      <div class="field"><label>المحافظة</label><input id="coGov" value="${esc(state.settings.governorate||'')}"></div>
+      <div class="field"><label>المنطقة</label><input id="coArea"></div>
+      <div class="field"><label>تفاصيل العنوان</label><textarea id="coAddr"></textarea></div>
+      <div class="field"><label>ملاحظات</label><textarea id="coNotes"></textarea></div>
+      <div class="summary-box"><div class="summary-line"><span>الإجمالي</span><b>${money(cartTotal())}</b></div>
+      <div class="summary-line"><span>الدفع</span><b>عند الاستلام</b></div></div>
+      <button class="btn primary block" id="coBtn" onclick="submitOrder()">تأكيد الطلب</button>
+    </div></div>`;
+};
+window.submitOrder = async function(){
+  const name=document.getElementById('coName').value.trim();
+  const phone=document.getElementById('coPhone').value.trim();
+  if(!name||!phone){ toast('عبّي الاسم والهاتف', true); return; }
+  const btn=document.getElementById('coBtn'); btn.disabled=true; btn.innerHTML='<span class="spin"></span>';
+  try{
+    const subtotal=cartTotal();
+    const {data:order,error}=await sb.from('orders').insert({
+      customer_name:name, customer_phone:phone, customer_whatsapp:document.getElementById('coWa').value.trim()||null,
+      governorate:document.getElementById('coGov').value.trim()||null, area:document.getElementById('coArea').value.trim()||null,
+      address_details:document.getElementById('coAddr').value.trim()||null, notes:document.getElementById('coNotes').value.trim()||null,
+      subtotal, total:subtotal, payment_method:'cod', payment_status:'cod'
+    }).select().single();
+    if(error) throw error;
+    const items = state.cart.map(i=>({
+      order_id:order.id, product_id:i.productId, product_name_snapshot:i.name, product_code_snapshot:i.code,
+      unit_price_snapshot:i.unitPrice, pricing_method_snapshot:i.pricingMethod, quantity:i.quantity,
+      width_cm:i.widthCm||null, height_cm:i.heightCm||null, calculated_area_or_length:i.areaOrLength,
+      note:i.note||null, total_price:i.lineTotal
+    }));
+    const {error:itErr}=await sb.from('order_items').insert(items);
+    if(itErr) throw itErr;
+    state.cart=[]; saveCart();
+    document.getElementById('modals').innerHTML = `<div class="overlay"><div class="sheet" style="text-align:center">
+      <div style="font-size:40px">✅</div><h3>تم استلام طلبك</h3>
+      <p style="color:var(--muted)">رقم الطلب</p>
+      <div class="mono" style="font-size:20px;font-weight:900;margin-bottom:14px">${esc(order.order_number)}</div>
+      <button class="btn primary block" onclick="document.getElementById('modals').innerHTML='';location.hash='#/'">تمام</button>
+    </div></div>`;
+  }catch(e){ toast('صار خطأ: '+e.message, true); btn.disabled=false; btn.textContent='تأكيد الطلب'; }
+};
+function bindPublicEvents(){
+  renderCartBadge();
+  ['pdW','pdH','pdQty'].forEach(id=>{ const el=document.getElementById(id); if(el) el.addEventListener('input', pdLiveUpdate); });
+}
+
+// ==================== ADMIN ====================
+const ADM_TABS = [
+  {key:'overview',label:'نظرة عامة'},{key:'categories',label:'الأقسام'},{key:'products',label:'المنتجات'},
+  {key:'works',label:'الأعمال'},{key:'orders',label:'الطلبات'},{key:'quotes',label:'طلبات الأسعار'},
+  {key:'customers',label:'الزبائن'},{key:'settings',label:'الإعدادات'}
+];
+async function getSession(){ const {data}=await sb.auth.getSession(); state.session=data.session; return state.session; }
+async function renderAdminRoute(parts, app){
+  document.documentElement.setAttribute('data-admin-light','1');
+  await getSession();
+  if(parts[1]==='login'){ app.innerHTML = adminLoginPage(); return; }
+  if(!state.session){ location.hash='#/admin/login'; return; }
+  const tab = parts[1] || 'overview';
+  app.innerHTML = adminShell(tab, '<div style="padding:40px;text-align:center;color:var(--muted)">جارِ التحميل…</div>');
+  const target = document.getElementById('admContent');
+  try{
+    if(tab==='overview') target.innerHTML = await admOverview();
+    else if(tab==='categories') target.innerHTML = await admCategories();
+    else if(tab==='products') target.innerHTML = await admProducts();
+    else if(tab==='works') target.innerHTML = await admWorks();
+    else if(tab==='orders') target.innerHTML = await admOrders();
+    else if(tab==='quotes') target.innerHTML = await admQuotes();
+    else if(tab==='customers') target.innerHTML = await admCustomers();
+    else if(tab==='settings') target.innerHTML = await admSettings();
+  }catch(e){ console.error(e); target.innerHTML = '<div class="empty-state"><b>صار خطأ</b>'+esc(e.message)+'</div>'; }
+}
+function adminLoginPage(){
+  return `<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px">
+    <div class="sheet" style="max-width:360px">
+      <h3 style="margin-top:0">دخول لوحة التحكم</h3>
+      <div class="field"><label>البريد الإلكتروني</label><input id="loginEmail" type="email"></div>
+      <div class="field"><label>كلمة المرور</label><input id="loginPass" type="password"></div>
+      <button class="btn primary block" id="loginBtn" onclick="adminLogin()">دخول</button>
+      <div style="text-align:center;margin-top:12px"><a href="#/" style="color:var(--muted);font-size:12px">الرجوع للموقع</a></div>
+    </div></div>`;
+}
+window.adminLogin = async function(){
+  const email=document.getElementById('loginEmail').value.trim();
+  const password=document.getElementById('loginPass').value;
+  const btn=document.getElementById('loginBtn'); btn.disabled=true; btn.innerHTML='<span class="spin"></span>';
+  const {error}=await sb.auth.signInWithPassword({email,password});
+  if(error){ toast('فشل الدخول: تأكد من البريد وكلمة المرور', true); btn.disabled=false; btn.textContent='دخول'; return; }
+  location.hash='#/admin/overview'; render();
+};
+window.adminLogout = async function(){ await sb.auth.signOut(); location.hash='#/admin/login'; render(); };
+function adminShell(tab, content){
+  return `<div class="adm-shell">
+    <aside class="adm-side">
+      <div style="font-weight:900;padding:8px 10px 16px">لوحة التحكم</div>
+      ${ADM_TABS.map(t=>`<a href="#/admin/${t.key}" class="${tab===t.key?'active':''}">${t.label}</a>`).join('')}
+      <a onclick="adminLogout()" style="color:var(--red);cursor:pointer">تسجيل خروج</a>
+      <a href="#/" style="margin-top:10px">↩ الموقع العام</a>
+    </aside>
+    <main class="adm-main" id="admContent">${content}</main>
+  </div>`;
+}
+function fld(f, val){
+  val = val==null? '': val;
+  if(f.type==='select') return `<div class="field"><label>${f.label}</label><select id="f_${f.key}">${f.options.map(o=>`<option value="${esc(o.value)}" ${String(val)===String(o.value)?'selected':''}>${esc(o.label)}</option>`).join('')}</select></div>`;
+  if(f.type==='textarea') return `<div class="field"><label>${f.label}</label><textarea id="f_${f.key}">${esc(val)}</textarea></div>`;
+  if(f.type==='checkbox') return `<div class="field"><label><input type="checkbox" id="f_${f.key}" ${val?'checked':''} style="width:auto;margin-left:8px">${f.label}</label></div>`;
+  return `<div class="field"><label>${f.label}</label><input id="f_${f.key}" type="${f.type||'text'}" value="${esc(val)}"></div>`;
+}
+function readFld(f){
+  const el = document.getElementById('f_'+f.key);
+  if(f.type==='checkbox') return el.checked;
+  if(f.type==='number') return el.value===''? null : Number(el.value);
+  return el.value.trim()===''? null: el.value.trim();
+}
+function openModal(html){ document.getElementById('modals').innerHTML = `<div class="overlay" onclick="if(event.target===this)this.remove()"><div class="sheet wide">${html}</div></div>`; }
+function closeModal(){ document.getElementById('modals').innerHTML=''; }
+
+// ---- overview ----
+async function admOverview(){
+  const [{count:catCount},{count:prodCount},{count:orderCount},{count:newOrders},{count:quoteCount},{count:custCount}] = await Promise.all([
+    sb.from('categories').select('*',{count:'exact',head:true}),
+    sb.from('products').select('*',{count:'exact',head:true}),
+    sb.from('orders').select('*',{count:'exact',head:true}),
+    sb.from('orders').select('*',{count:'exact',head:true}).eq('status','new'),
+    sb.from('quote_requests').select('*',{count:'exact',head:true}).eq('status','new'),
+    sb.from('customers').select('*',{count:'exact',head:true}),
+  ]);
+  const cards = [
+    ['الأقسام',catCount],['المنتجات',prodCount],['كل الطلبات',orderCount],
+    ['طلبات جديدة',newOrders],['طلبات أسعار جديدة',quoteCount],['الزبائن',custCount]
+  ];
+  return `<div class="adm-topbar"><h2>نظرة عامة</h2></div>
+  <div class="grid cols-3">${cards.map(c=>`<div class="stat-card"><small>${c[0]}</small><b>${c[1]??0}</b></div>`).join('')}</div>`;
+}
+
+// ---- categories ----
+async function admCategories(){
+  const {data} = await sb.from('categories').select('*').order('sort_order');
+  window.__CATS_ADM = data||[];
+  return `<div class="adm-topbar"><h2>الأقسام</h2><button class="btn primary" onclick="catForm()">+ قسم جديد</button></div>
+  <div class="card-list">${(data||[]).map(c=>`<div class="card-item">
+    <div class="meta"><b>${esc(c.name)}</b><small>${esc(c.slug)} ${c.is_active?'':'· غير مفعّل'}</small></div>
+    <div style="display:flex;gap:6px"><button class="btn sm" onclick="catForm('${c.id}')">تعديل</button><button class="btn sm danger" onclick="catDelete('${c.id}')">حذف</button></div>
+  </div>`).join('') || '<div class="empty-state">لا توجد أقسام</div>'}</div>`;
+}
+window.catForm = function(id){
+  const cat = id? window.__CATS_ADM.find(c=>c.id===id): {};
+  openModal(`<div class="sheet-head"><h3>${id?'تعديل قسم':'قسم جديد'}</h3><div class="sheet-close" onclick="closeModal()">×</div></div>
+    ${fld({key:'name',label:'الاسم'},cat.name)}
+    ${fld({key:'slug',label:'الرابط (slug بالإنكليزي)'},cat.slug)}
+    ${fld({key:'description',label:'الوصف',type:'textarea'},cat.description)}
+    ${fld({key:'sort_order',label:'ترتيب العرض',type:'number'},cat.sort_order||0)}
+    ${fld({key:'is_active',label:'مفعّل',type:'checkbox'},cat.is_active!==false)}
+    <div class="field"><label>صورة</label><input type="file" id="catImgFile" accept="image/*">${cat.image_url?`<img src="${esc(cat.image_url)}" style="width:70px;margin-top:8px;border-radius:8px">`:''}</div>
+    <button class="btn primary block" onclick="catSave('${id||''}')">حفظ</button>`);
+};
+window.catSave = async function(id){
+  const row = { name: readFld({key:'name'}), slug: readFld({key:'slug'}), description: readFld({key:'description'}),
+    sort_order: readFld({key:'sort_order',type:'number'})||0, is_active: readFld({key:'is_active',type:'checkbox'}) };
+  const file = document.getElementById('catImgFile').files[0];
+  if(file){
+    const path = `${Date.now()}_${uid()}.${file.name.split('.').pop()}`;
+    const {error:upErr} = await sb.storage.from('categories').upload(path,file);
+    if(!upErr) row.image_url = sb.storage.from('categories').getPublicUrl(path).data.publicUrl;
+  }
+  const {error} = id? await sb.from('categories').update(row).eq('id',id) : await sb.from('categories').insert(row);
+  if(error){ toast(error.message, true); return; }
+  toast('تم الحفظ'); closeModal(); state.categories=[]; render();
+};
+window.catDelete = async function(id){
+  if(!confirm('تأكيد الحذف؟')) return;
+  const {error} = await sb.from('categories').delete().eq('id',id);
+  if(error) toast(error.message, true); else { toast('تم الحذف'); state.categories=[]; render(); }
+};
+
+// ---- products ----
+async function admProducts(){
+  const {data:cats} = await sb.from('categories').select('id,name').order('sort_order');
+  const {data} = await sb.from('products').select('*, categories(name), product_images(*)').order('sort_order');
+  window.__PRODS_ADM = data||[]; window.__CATS_ADM = cats||[];
+  return `<div class="adm-topbar"><h2>المنتجات</h2><button class="btn primary" onclick="prodForm()">+ منتج جديد</button></div>
+  <table class="admtbl"><thead><tr><th>الكود</th><th>الاسم</th><th>القسم</th><th>السعر</th><th>الحالة</th><th></th></tr></thead><tbody>
+  ${(data||[]).map(p=>`<tr><td class="mono">${esc(p.code)}</td><td>${esc(p.name)}</td><td>${esc(p.categories?.name||'-')}</td>
+    <td>${p.unit_price?money(p.unit_price):'-'}</td><td>${p.is_active?'مفعّل':'موقوف'}</td>
+    <td style="display:flex;gap:6px"><button class="btn sm" onclick="prodForm('${p.id}')">تعديل</button><button class="btn sm danger" onclick="prodDelete('${p.id}')">حذف</button></td></tr>`).join('') || `<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:20px">لا توجد منتجات</td></tr>`}
+  </tbody></table>`;
+}
+window.prodForm = function(id){
+  const p = id? window.__PRODS_ADM.find(x=>x.id===id): {};
+  const cats = window.__CATS_ADM||[];
+  openModal(`<div class="sheet-head"><h3>${id?'تعديل منتج':'منتج جديد'}</h3><div class="sheet-close" onclick="closeModal()">×</div></div>
+    <div class="row2">${fld({key:'code',label:'الكود (مثال D-101)'},p.code)}${fld({key:'name',label:'الاسم'},p.name)}</div>
+    ${fld({key:'slug',label:'الرابط (slug بالإنكليزي)'},p.slug)}
+    ${fld({key:'category_id',label:'القسم',type:'select',options:[{value:'',label:'بدون'},...cats.map(c=>({value:c.id,label:c.name}))]},p.category_id)}
+    ${fld({key:'description',label:'الوصف',type:'textarea'},p.description)}
+    <div class="row2">${fld({key:'material',label:'المادة'},p.material)}${fld({key:'color',label:'اللون'},p.color)}</div>
+    <div class="row2">${fld({key:'glass_type',label:'نوع الزجاج'},p.glass_type)}${fld({key:'design',label:'التصميم'},p.design)}</div>
+    ${fld({key:'pricing_method',label:'طريقة التسعير',type:'select',options:[
+      {value:'piece',label:'بالقطعة'},{value:'sqm',label:'بالمتر المربع'},{value:'linear_meter',label:'بالمتر الطولي'},{value:'quote_only',label:'عرض سعر فقط'}]},p.pricing_method||'quote_only')}
+    <div class="row2">${fld({key:'unit_price',label:'سعر الوحدة',type:'number'},p.unit_price)}
+      ${fld({key:'rounding_rule',label:'قاعدة التقريب',type:'select',options:[{value:'none',label:'بدون'},{value:'round_up_10cm',label:'تقريب لأعلى 10سم'}]},p.rounding_rule||'none')}</div>
+    <div class="row2">${fld({key:'sort_order',label:'ترتيب العرض',type:'number'},p.sort_order||0)}
+      <div></div></div>
+    ${fld({key:'is_purchasable',label:'قابل للشراء المباشر',type:'checkbox'},p.is_purchasable!==false)}
+    ${fld({key:'is_featured',label:'منتج مميز',type:'checkbox'},!!p.is_featured)}
+    ${fld({key:'is_active',label:'مفعّل',type:'checkbox'},p.is_active!==false)}
+    <div class="field"><label>إضافة صور</label><input type="file" id="prodImgFiles" accept="image/*" multiple>
+      <div class="img-grid">${(p.product_images||[]).map(im=>`<div class="im"><img src="${esc(im.url)}"><button onclick="prodImgDelete('${im.id}','${id}')">×</button></div>`).join('')}</div>
+    </div>
+    <button class="btn primary block" onclick="prodSave('${id||''}')">حفظ</button>`);
+};
+window.prodImgDelete = async function(imgId, prodId){
+  await sb.from('product_images').delete().eq('id',imgId);
+  toast('تم حذف الصورة'); const p = await sb.from('products').select('*, product_images(*)').eq('id',prodId).single();
+  window.__PRODS_ADM = window.__PRODS_ADM.map(x=>x.id===prodId? p.data: x);
+  prodForm(prodId);
+};
+window.prodSave = async function(id){
+  const row = {
+    code: readFld({key:'code'}), name: readFld({key:'name'}), slug: readFld({key:'slug'}),
+    category_id: readFld({key:'category_id'})||null, description: readFld({key:'description'}),
+    material: readFld({key:'material'}), color: readFld({key:'color'}), glass_type: readFld({key:'glass_type'}),
+    design: readFld({key:'design'}), pricing_method: readFld({key:'pricing_method'}),
+    unit_price: readFld({key:'unit_price',type:'number'}), rounding_rule: readFld({key:'rounding_rule'}),
+    sort_order: readFld({key:'sort_order',type:'number'})||0,
+    is_purchasable: readFld({key:'is_purchasable',type:'checkbox'}), is_featured: readFld({key:'is_featured',type:'checkbox'}),
+    is_active: readFld({key:'is_active',type:'checkbox'})
+  };
+  if(!row.code || !row.name || !row.slug){ toast('الكود والاسم والرابط مطلوبين', true); return; }
+  let prodId = id;
+  const {data, error} = id? await sb.from('products').update(row).eq('id',id).select().single() : await sb.from('products').insert(row).select().single();
+  if(error){ toast(error.message, true); return; }
+  prodId = data.id;
+  const files = document.getElementById('prodImgFiles').files;
+  for(const file of files){
+    const path = `${Date.now()}_${uid()}.${file.name.split('.').pop()}`;
+    const {error:upErr} = await sb.storage.from('product-images').upload(path,file);
+    if(!upErr){
+      const url = sb.storage.from('product-images').getPublicUrl(path).data.publicUrl;
+      await sb.from('product_images').insert({product_id:prodId, url});
+    }
+  }
+  toast('تم الحفظ'); closeModal(); render();
+};
+window.prodDelete = async function(id){
+  if(!confirm('تأكيد الحذف؟')) return;
+  const {error} = await sb.from('products').delete().eq('id',id);
+  if(error) toast(error.message, true); else { toast('تم الحذف'); render(); }
+};
+
+// ---- works ----
+async function admWorks(){
+  const {data:cats} = await sb.from('categories').select('id,name');
+  const {data} = await sb.from('completed_works').select('*, categories(name)').order('sort_order');
+  window.__WORKS_ADM = data||[]; window.__CATS_ADM = cats||[];
+  return `<div class="adm-topbar"><h2>الأعمال المنفذة</h2><button class="btn primary" onclick="workForm()">+ عمل جديد</button></div>
+  <div class="card-list">${(data||[]).map(w=>`<div class="card-item"><div class="meta"><b>${esc(w.title)}</b><small>${esc(w.categories?.name||'')} ${w.is_active?'':'· موقوف'}</small></div>
+  <div style="display:flex;gap:6px"><button class="btn sm" onclick="workForm('${w.id}')">تعديل</button><button class="btn sm danger" onclick="workDelete('${w.id}')">حذف</button></div></div>`).join('') || '<div class="empty-state">لا توجد أعمال</div>'}</div>`;
+}
+window.workForm = function(id){
+  const w = id? window.__WORKS_ADM.find(x=>x.id===id): {};
+  const cats = window.__CATS_ADM||[];
+  openModal(`<div class="sheet-head"><h3>${id?'تعديل عمل':'عمل جديد'}</h3><div class="sheet-close" onclick="closeModal()">×</div></div>
+    ${fld({key:'title',label:'العنوان'},w.title)}
+    ${fld({key:'category_id',label:'القسم',type:'select',options:[{value:'',label:'بدون'},...cats.map(c=>({value:c.id,label:c.name}))]},w.category_id)}
+    ${fld({key:'description',label:'الوصف',type:'textarea'},w.description)}
+    ${fld({key:'location_area',label:'المنطقة'},w.location_area)}
+    ${fld({key:'sort_order',label:'ترتيب العرض',type:'number'},w.sort_order||0)}
+    ${fld({key:'is_active',label:'مفعّل',type:'checkbox'},w.is_active!==false)}
+    <div class="field"><label>صورة *</label><input type="file" id="workImgFile" accept="image/*">${w.image_url?`<img src="${esc(w.image_url)}" style="width:70px;margin-top:8px;border-radius:8px">`:''}</div>
+    <button class="btn primary block" onclick="workSave('${id||''}')">حفظ</button>`);
+};
+window.workSave = async function(id){
+  const row = { title: readFld({key:'title'}), category_id: readFld({key:'category_id'})||null,
+    description: readFld({key:'description'}), location_area: readFld({key:'location_area'}),
+    sort_order: readFld({key:'sort_order',type:'number'})||0, is_active: readFld({key:'is_active',type:'checkbox'}) };
+  const file = document.getElementById('workImgFile').files[0];
+  if(file){
+    const path = `${Date.now()}_${uid()}.${file.name.split('.').pop()}`;
+    const {error:upErr} = await sb.storage.from('work-images').upload(path,file);
+    if(!upErr) row.image_url = sb.storage.from('work-images').getPublicUrl(path).data.publicUrl;
+  }
+  if(!row.image_url && !id){ toast('الصورة مطلوبة', true); return; }
+  const {error} = id? await sb.from('completed_works').update(row).eq('id',id) : await sb.from('completed_works').insert(row);
+  if(error){ toast(error.message, true); return; }
+  toast('تم الحفظ'); closeModal(); render();
+};
+window.workDelete = async function(id){
+  if(!confirm('تأكيد الحذف؟')) return;
+  const {error} = await sb.from('completed_works').delete().eq('id',id);
+  if(error) toast(error.message, true); else { toast('تم الحذف'); render(); }
+};
+
+// ---- orders ----
+async function admOrders(){
+  const {data} = await sb.from('orders').select('*, order_items(*)').order('created_at',{ascending:false}).limit(100);
+  window.__ORDERS_ADM = data||[];
+  return `<div class="adm-topbar"><h2>الطلبات</h2></div>
+  <table class="admtbl"><thead><tr><th>الرقم</th><th>الزبون</th><th>الهاتف</th><th>الإجمالي</th><th>الحالة</th><th>الدفع</th><th></th></tr></thead><tbody>
+  ${(data||[]).map(o=>`<tr><td class="mono">${esc(o.order_number)}</td><td>${esc(o.customer_name)}</td><td class="mono">${esc(o.customer_phone)}</td>
+    <td>${money(o.total)}</td>
+    <td><select onchange="orderStatusChange('${o.id}',this.value)">${['new','in_progress','completed','cancelled'].map(s=>`<option value="${s}" ${o.status===s?'selected':''}>${statusAr(s)}</option>`).join('')}</select></td>
+    <td><select onchange="orderPayChange('${o.id}',this.value)">${['pending','cod','paid','failed','refunded'].map(s=>`<option value="${s}" ${o.payment_status===s?'selected':''}>${payAr(s)}</option>`).join('')}</select></td>
+    <td><button class="btn sm" onclick="orderDetail('${o.id}')">تفاصيل</button></td></tr>`).join('') || `<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:20px">لا توجد طلبات</td></tr>`}
+  </tbody></table>`;
+}
+window.orderStatusChange = async function(id, status){
+  const {error} = await sb.from('orders').update({status}).eq('id',id);
+  if(error) toast(error.message, true); else toast('تم التحديث');
+};
+window.orderPayChange = async function(id, payment_status){
+  const {error} = await sb.from('orders').update({payment_status}).eq('id',id);
+  if(error) toast(error.message, true); else toast('تم التحديث');
+};
+window.orderDetail = function(id){
+  const o = window.__ORDERS_ADM.find(x=>x.id===id);
+  const items = (o.order_items||[]).map(it=>`<div class="summary-line"><span>${esc(it.product_name_snapshot)} (${esc(it.product_code_snapshot)}) × ${it.quantity}</span><b>${money(it.total_price)}</b></div>`).join('');
+  openModal(`<div class="sheet-head"><h3>تفاصيل الطلب ${esc(o.order_number)}</h3><div class="sheet-close" onclick="closeModal()">×</div></div>
+    <div class="summary-box">
+      <div class="summary-line"><span>الزبون</span><b>${esc(o.customer_name)}</b></div>
+      <div class="summary-line"><span>الهاتف</span><b class="mono">${esc(o.customer_phone)}</b></div>
+      ${o.customer_whatsapp?`<div class="summary-line"><span>واتساب</span><b class="mono">${esc(o.customer_whatsapp)}</b></div>`:''}
+      ${o.governorate?`<div class="summary-line"><span>المحافظة</span><b>${esc(o.governorate)}</b></div>`:''}
+      ${o.area?`<div class="summary-line"><span>المنطقة</span><b>${esc(o.area)}</b></div>`:''}
+      ${o.address_details?`<div class="summary-line"><span>العنوان</span><b>${esc(o.address_details)}</b></div>`:''}
+      ${o.notes?`<div class="summary-line"><span>ملاحظات</span><b>${esc(o.notes)}</b></div>`:''}
+    </div>
+    <div style="margin:10px 0">${items}</div>
+    <div class="summary-box"><div class="summary-line"><span>الإجمالي</span><b>${money(o.total)}</b></div></div>`);
+};
+
+// ---- quotes ----
+async function admQuotes(){
+  const {data} = await sb.from('quote_requests').select('*').order('created_at',{ascending:false}).limit(100);
+  window.__QUOTES_ADM = data||[];
+  return `<div class="adm-topbar"><h2>طلبات عرض السعر</h2></div>
+  <table class="admtbl"><thead><tr><th>الاسم</th><th>الهاتف</th><th>النوع</th><th>الحالة</th><th></th></tr></thead><tbody>
+  ${(data||[]).map(q=>`<tr><td>${esc(q.name)}</td><td class="mono">${esc(q.phone)}</td><td>${esc(q.work_type)}</td>
+    <td><select onchange="quoteStatusChange('${q.id}',this.value)">${['new','contacted','quoted','closed'].map(s=>`<option value="${s}" ${q.status===s?'selected':''}>${statusAr(s)}</option>`).join('')}</select></td>
+    <td><button class="btn sm" onclick="quoteDetail('${q.id}')">تفاصيل</button></td></tr>`).join('') || `<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:20px">لا توجد طلبات</td></tr>`}
+  </tbody></table>`;
+}
+window.quoteStatusChange = async function(id, status){
+  const {error} = await sb.from('quote_requests').update({status}).eq('id',id);
+  if(error) toast(error.message, true); else toast('تم التحديث');
+};
+window.quoteDetail = function(id){
+  const q = window.__QUOTES_ADM.find(x=>x.id===id);
+  openModal(`<div class="sheet-head"><h3>طلب سعر - ${esc(q.name)}</h3><div class="sheet-close" onclick="closeModal()">×</div></div>
+    <div class="summary-box">
+      <div class="summary-line"><span>الهاتف</span><b class="mono">${esc(q.phone)}</b></div>
+      ${q.whatsapp?`<div class="summary-line"><span>واتساب</span><b class="mono">${esc(q.whatsapp)}</b></div>`:''}
+      <div class="summary-line"><span>نوع الشغل</span><b>${esc(q.work_type)}</b></div>
+      ${q.width_cm?`<div class="summary-line"><span>القياسات</span><b>${q.width_cm} × ${q.height_cm||''} سم</b></div>`:''}
+      ${q.governorate?`<div class="summary-line"><span>المحافظة</span><b>${esc(q.governorate)}</b></div>`:''}
+      ${q.area?`<div class="summary-line"><span>المنطقة</span><b>${esc(q.area)}</b></div>`:''}
+      ${q.notes?`<div class="summary-line"><span>ملاحظات</span><b>${esc(q.notes)}</b></div>`:''}
+    </div>
+    ${q.image_url?`<img src="${esc(q.image_url)}" style="border-radius:12px;margin-top:10px">`:''}`);
+};
+
+// ---- customers ----
+async function admCustomers(){
+  const {data} = await sb.from('customer_account_summary').select('*').order('name');
+  window.__CUST_ADM = data||[];
+  return `<div class="adm-topbar"><h2>حسابات الزبائن</h2><button class="btn primary" onclick="custForm()">+ زبون جديد</button></div>
+  <table class="admtbl"><thead><tr><th>الاسم</th><th>الهاتف</th><th>الإجمالي</th><th>المدفوع</th><th>المتبقي</th><th>الحالة</th><th></th></tr></thead><tbody>
+  ${(data||[]).map(c=>`<tr><td>${esc(c.name)}</td><td class="mono">${esc(c.phone)}</td><td>${money(c.agreed_total)}</td>
+    <td>${money(c.paid_total)}</td><td>${money(c.remaining)}</td><td><span class="status-pill ${c.status==='unpaid'?'new':c.status==='completed'?'completed':'in_progress'}">${c.status==='unpaid'?'غير مدفوع':c.status==='completed'?'مكتمل':'متبقي'}</span></td>
+    <td><button class="btn sm" onclick="custDetail('${c.customer_id}')">فتح الحساب</button></td></tr>`).join('') || `<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:20px">لا يوجد زبائن</td></tr>`}
+  </tbody></table>`;
+}
+window.custForm = function(){
+  openModal(`<div class="sheet-head"><h3>زبون جديد</h3><div class="sheet-close" onclick="closeModal()">×</div></div>
+    ${fld({key:'name',label:'الاسم'})}${fld({key:'phone',label:'الهاتف'})}${fld({key:'notes',label:'ملاحظات',type:'textarea'})}
+    <button class="btn primary block" onclick="custSave()">حفظ</button>`);
+};
+window.custSave = async function(){
+  const row = {name:readFld({key:'name'}), phone:readFld({key:'phone'}), notes:readFld({key:'notes'})};
+  if(!row.name||!row.phone){ toast('الاسم والهاتف مطلوبين', true); return; }
+  const {error} = await sb.from('customers').insert(row);
+  if(error){ toast(error.message, true); return; }
+  toast('تم الحفظ'); closeModal(); render();
+};
+window.custDetail = async function(id){
+  const [{data:cust},{data:items},{data:pays},{data:adjs},{data:prods}] = await Promise.all([
+    sb.from('customers').select('*').eq('id',id).single(),
+    sb.from('customer_work_items').select('*').eq('customer_id',id).order('created_at',{ascending:false}),
+    sb.from('customer_payments').select('*').eq('customer_id',id).order('payment_date',{ascending:false}),
+    sb.from('customer_adjustments').select('*').eq('customer_id',id).order('created_at',{ascending:false}),
+    sb.from('products').select('id,name,code,unit_price,pricing_method')
+  ]);
+  window.__CUST_CTX = {id, prods: prods||[]};
+  const itemsHtml = (items||[]).map(it=>`<div class="card-item"><div class="meta"><b>${esc(it.product_name_snapshot||it.work_type)}</b><small>${it.quantity} ${esc(it.unit)} × ${money(it.unit_price)} = ${money(it.total_price)}</small></div></div>`).join('') || '<div class="empty-state" style="padding:14px">لا توجد أعمال</div>';
+  const paysHtml = (pays||[]).map(p=>`<div class="card-item"><div class="meta"><b>${money(p.amount)}</b><small>${esc(p.payment_date)} ${p.note?'· '+esc(p.note):''}</small></div></div>`).join('') || '<div class="empty-state" style="padding:14px">لا توجد دفعات</div>';
+  const adjsHtml = (adjs||[]).map(a=>`<div class="card-item"><div class="meta"><b>${a.amount>=0?'+':''}${money(a.amount)}</b><small>${esc(a.reason||'')}</small></div></div>`).join('') || '';
+  openModal(`<div class="sheet-head"><h3>حساب ${esc(cust.name)}</h3><div class="sheet-close" onclick="closeModal()">×</div></div>
+    <p class="mono" style="color:var(--muted)">${esc(cust.phone)}</p>
+    <div class="toolbar"><b>الأعمال</b><button class="btn sm primary" onclick="custAddWorkForm()">+ إضافة عمل</button></div>
+    <div class="card-list">${itemsHtml}</div>
+    <div class="toolbar" style="margin-top:16px"><b>الدفعات</b><button class="btn sm primary" onclick="custAddPayForm()">+ دفعة</button></div>
+    <div class="card-list">${paysHtml}</div>
+    <div class="toolbar" style="margin-top:16px"><b>تعديلات (خصم/إضافة)</b><button class="btn sm primary" onclick="custAddAdjForm()">+ تعديل</button></div>
+    <div class="card-list">${adjsHtml}</div>`);
+};
+window.custAddWorkForm = function(){
+  const prods = window.__CUST_CTX.prods;
+  openModal(`<div class="sheet-head"><h3>إضافة عمل</h3><div class="sheet-close" onclick="custDetail('${window.__CUST_CTX.id}')">×</div></div>
+    ${fld({key:'work_type',label:'النوع',type:'select',options:[{value:'door',label:'باب'},{value:'window',label:'شباك'},{value:'countertop',label:'كاونتر'},{value:'stair_railing',label:'محجر درج'},{value:'other',label:'أخرى'}]})}
+    ${fld({key:'product_id',label:'منتج مرتبط (اختياري)',type:'select',options:[{value:'',label:'بدون'},...prods.map(p=>({value:p.id,label:p.name}))]})}
+    ${fld({key:'product_name_snapshot',label:'اسم العمل/الوصف'})}
+    <div class="row2">${fld({key:'quantity',label:'الكمية',type:'number'},1)}${fld({key:'unit',label:'الوحدة',type:'select',options:[{value:'piece',label:'قطعة'},{value:'sqm',label:'م²'},{value:'meter',label:'م.ط'}]})}</div>
+    <div class="row2">${fld({key:'width_cm',label:'العرض (سم)',type:'number'})}${fld({key:'height_cm',label:'الارتفاع (سم)',type:'number'})}</div>
+    <div class="row2">${fld({key:'unit_price',label:'سعر الوحدة',type:'number'})}${fld({key:'total_price',label:'الإجمالي',type:'number'})}</div>
+    ${fld({key:'note',label:'ملاحظة',type:'textarea'})}
+    <button class="btn primary block" onclick="custAddWorkSave()">حفظ</button>`);
+};
+window.custAddWorkSave = async function(){
+  const row = {
+    customer_id: window.__CUST_CTX.id, work_type: readFld({key:'work_type'}),
+    product_id: readFld({key:'product_id'})||null, product_name_snapshot: readFld({key:'product_name_snapshot'}),
+    quantity: readFld({key:'quantity',type:'number'})||1, unit: readFld({key:'unit'}),
+    width_cm: readFld({key:'width_cm',type:'number'}), height_cm: readFld({key:'height_cm',type:'number'}),
+    area_or_length: readFld({key:'quantity',type:'number'})||1,
+    unit_price: readFld({key:'unit_price',type:'number'})||0, total_price: readFld({key:'total_price',type:'number'})||0,
+    note: readFld({key:'note'})
+  };
+  const {error} = await sb.from('customer_work_items').insert(row);
+  if(error){ toast(error.message, true); return; }
+  toast('تم الحفظ'); custDetail(window.__CUST_CTX.id); render();
+};
+window.custAddPayForm = function(){
+  openModal(`<div class="sheet-head"><h3>إضافة دفعة</h3><div class="sheet-close" onclick="custDetail('${window.__CUST_CTX.id}')">×</div></div>
+    ${fld({key:'amount',label:'المبلغ',type:'number'})}
+    ${fld({key:'payment_date',label:'التاريخ',type:'date'})}
+    ${fld({key:'note',label:'ملاحظة',type:'textarea'})}
+    <button class="btn primary block" onclick="custAddPaySave()">حفظ</button>`);
+};
+window.custAddPaySave = async function(){
+  const row = { customer_id: window.__CUST_CTX.id, amount: readFld({key:'amount',type:'number'}),
+    payment_date: readFld({key:'payment_date'})||new Date().toISOString().slice(0,10), note: readFld({key:'note'}) };
+  if(!row.amount || row.amount<=0){ toast('أدخل مبلغ صحيح', true); return; }
+  const {error} = await sb.from('customer_payments').insert(row);
+  if(error){ toast(error.message, true); return; }
+  toast('تم الحفظ'); custDetail(window.__CUST_CTX.id); render();
+};
+window.custAddAdjForm = function(){
+  openModal(`<div class="sheet-head"><h3>تعديل (خصم/إضافة)</h3><div class="sheet-close" onclick="custDetail('${window.__CUST_CTX.id}')">×</div></div>
+    ${fld({key:'amount',label:'المبلغ (سالب = خصم)',type:'number'})}
+    ${fld({key:'reason',label:'السبب'})}
+    <button class="btn primary block" onclick="custAddAdjSave()">حفظ</button>`);
+};
+window.custAddAdjSave = async function(){
+  const row = { customer_id: window.__CUST_CTX.id, amount: readFld({key:'amount',type:'number'}), reason: readFld({key:'reason'}) };
+  const {error} = await sb.from('customer_adjustments').insert(row);
+  if(error){ toast(error.message, true); return; }
+  toast('تم الحفظ'); custDetail(window.__CUST_CTX.id); render();
+};
+
+// ---- settings ----
+async function admSettings(){
+  const {data} = await sb.from('site_settings').select('*').eq('id',1).maybeSingle();
+  const s = data||{};
+  window.__SETTINGS_ADM = s;
+  return `<div class="adm-topbar"><h2>إعدادات الموقع</h2></div>
+  <div style="max-width:520px">
+    ${fld({key:'workshop_name',label:'اسم الورشة'},s.workshop_name)}
+    ${fld({key:'description',label:'وصف مختصر',type:'textarea'},s.description)}
+    <div class="row2">${fld({key:'phone',label:'الهاتف'},s.phone)}${fld({key:'whatsapp_number',label:'رقم واتساب'},s.whatsapp_number)}</div>
+    ${fld({key:'country_code',label:'رمز الدولة'},s.country_code||'+964')}
+    <div class="row2">${fld({key:'governorate',label:'المحافظة'},s.governorate)}${fld({key:'address',label:'العنوان'},s.address)}</div>
+    <div class="row2">${fld({key:'work_hours',label:'ساعات الدوام'},s.work_hours)}${fld({key:'email',label:'البريد الإلكتروني'},s.email)}</div>
+    ${fld({key:'google_maps_url',label:'رابط خرائط قوقل'},s.google_maps_url)}
+    ${fld({key:'cod_enabled',label:'الدفع عند الاستلام مفعّل',type:'checkbox'},s.cod_enabled!==false)}
+    <div class="field"><label>شعار الورشة</label><input type="file" id="logoFile" accept="image/*">${s.logo_url?`<img src="${esc(s.logo_url)}" style="width:60px;margin-top:8px;border-radius:8px">`:''}</div>
+    <button class="btn primary block" onclick="settingsSave()">حفظ الإعدادات</button>
+  </div>`;
+}
+window.settingsSave = async function(){
+  const row = {
+    workshop_name: readFld({key:'workshop_name'}), description: readFld({key:'description'}),
+    phone: readFld({key:'phone'}), whatsapp_number: readFld({key:'whatsapp_number'}),
+    country_code: readFld({key:'country_code'}), governorate: readFld({key:'governorate'}),
+    address: readFld({key:'address'}), work_hours: readFld({key:'work_hours'}), email: readFld({key:'email'}),
+    google_maps_url: readFld({key:'google_maps_url'}), cod_enabled: readFld({key:'cod_enabled',type:'checkbox'})
+  };
+  const file = document.getElementById('logoFile').files[0];
+  if(file){
+    const path = `${Date.now()}_${uid()}.${file.name.split('.').pop()}`;
+    const {error:upErr} = await sb.storage.from('site-assets').upload(path,file);
+    if(!upErr) row.logo_url = sb.storage.from('site-assets').getPublicUrl(path).data.publicUrl;
+  }
+  const {error} = await sb.from('site_settings').update(row).eq('id',1);
+  if(error){ toast(error.message, true); return; }
+  toast('تم حفظ الإعدادات'); state.settings=null;
+};
+
+// -------------------- boot --------------------
+sb.auth.onAuthStateChange((_e, session)=>{ state.session=session; });
+render();
+</script>
+</body>
+</html>
