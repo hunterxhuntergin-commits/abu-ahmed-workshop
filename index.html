@@ -192,7 +192,7 @@ const CART_KEY = "workshop_cart_v1";
 const CUSTOMER_KEY = "workshop_customer_v1";
 const RECENT_KEY = "workshop_recent_products_v1";
 // مسار لوحة التحكم — غيّره لأي كلمة تفضلها (بدون فراغات)، هذا هو المكان الوحيد اللي تحتاج تعدله
-const ADMIN_ROUTE = "الادارة-السرية";
+const ADMIN_ROUTE = "krkr-777";
 const state = { settings:null, categories:[], session:null, cart: loadCart() };
 
 function loadCart(){ try{ return JSON.parse(localStorage.getItem(CART_KEY))||[]; }catch(e){ return []; } }
@@ -320,7 +320,8 @@ async function getCategories(force){
 const routes = {};
 function route(pattern, handler){ routes[pattern]=handler; }
 async function render(){
-  const hash = location.hash.slice(1) || '/';
+  let hash = location.hash.slice(1) || '/';
+  try{ hash = decodeURIComponent(hash); }catch(e){ /* رابط غير قابل لفك الترميز، نكمل بالنص الخام */ }
   const app = document.getElementById('app');
   app.innerHTML = '<div style="padding:80px 20px;text-align:center;color:var(--muted)"><span class="spin" style="width:26px;height:26px;border-width:3px;margin-bottom:12px"></span><div>جارِ التحميل…</div></div>';
   window.scrollTo(0,0);
@@ -331,7 +332,7 @@ async function render(){
     if(parts[0]==='products') return app.innerHTML = await pageAllProducts();
     if(parts[0]==='category') return app.innerHTML = await pageCategory(parts[1]);
     if(parts[0]==='product') return app.innerHTML = await pageProduct(parts[1]);
-    if(parts[0]==='search') return app.innerHTML = await pageSearch(decodeURIComponent(parts[1]||''));
+    if(parts[0]==='search') return app.innerHTML = await pageSearch(parts[1]||'');
     if(parts[0]==='quote') return app.innerHTML = await pageQuote();
     if(parts[0]==='track') return app.innerHTML = await pageTrack();
     app.innerHTML = await pageHome();
@@ -342,7 +343,7 @@ let __suppressLeaveWarning = false;
 window.addEventListener('hashchange', function(e){
   if(__suppressLeaveWarning){ __suppressLeaveWarning = false; render(); return; }
   let oldHash = '';
-  try{ oldHash = new URL(e.oldURL).hash.slice(1); }catch(err){}
+  try{ oldHash = decodeURIComponent(new URL(e.oldURL).hash.slice(1)); }catch(err){}
   if(oldHash.indexOf('/product/')===0 && pdLeaveGuardCheck()){
     const proceed = confirm('أدخلت بُعد واحد بس (عرض أو ارتفاع) ونسيت الثاني، والمنتج لسا ما انضاف للسلة. تريد تطلع من الصفحة بدون إكماله؟');
     if(!proceed){ __suppressLeaveWarning = true; location.hash = oldHash; return; }
