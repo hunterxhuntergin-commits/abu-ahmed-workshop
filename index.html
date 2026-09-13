@@ -125,6 +125,8 @@ header.site{position:sticky;top:0;z-index:40;background:rgba(248,250,252,.88);ba
 .cart-empty{text-align:center;padding:30px 10px;color:var(--muted)}
 /* table (admin) */
 .tbl-scroll{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.tbl-hint{display:none;font-size:11px;color:var(--muted);margin-bottom:6px}
+@media(max-width:760px){.tbl-hint{display:block}}
 table.admtbl{width:100%;min-width:560px;border-collapse:collapse;font-size:12.5px}
 table.admtbl th{text-align:right;color:var(--muted);font-weight:700;padding:8px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
 table.admtbl td{padding:9px 8px;border-bottom:1px solid var(--line);vertical-align:middle}
@@ -134,7 +136,7 @@ table.admtbl td{padding:9px 8px;border-bottom:1px solid var(--line);vertical-ali
 .status-pill.completed,.status-pill.quoted{color:#15803D;border-color:rgba(21,128,61,.3)}
 .status-pill.cancelled,.status-pill.closed{color:#64748B}
 /* admin shell */
-.adm-shell{display:grid;grid-template-columns:190px 1fr;min-height:100vh}
+.adm-shell{display:grid;grid-template-columns:190px 1fr;min-height:100vh;align-content:start}
 @media(max-width:760px){.adm-shell{grid-template-columns:1fr}}
 .adm-side{border-left:1px solid var(--line);background:var(--panel);padding:16px 10px;position:sticky;top:0;height:100vh;overflow:auto}
 @media(max-width:760px){.adm-side{position:static;height:auto;display:flex;align-items:center;overflow-x:auto;padding:10px;gap:4px;border-left:0;border-bottom:1px solid var(--line)}}
@@ -1204,7 +1206,7 @@ async function admProducts(){
   const {data} = await sb.from('products').select('*, categories(name), product_images(*)').order('sort_order');
   window.__PRODS_ADM = data||[]; window.__CATS_ADM = cats||[];
   return `<div class="adm-topbar"><h2>المنتجات</h2><button class="btn primary" onclick="prodForm()">+ منتج جديد</button></div>
-  <div class="tbl-scroll"><table class="admtbl"><thead><tr><th>الاسم</th><th>القسم</th><th>السعر</th><th>الحالة</th><th></th></tr></thead><tbody>
+  <div class="tbl-hint">⇠ مرر يمينًا لعرض باقي الأعمدة</div><div class="tbl-scroll"><table class="admtbl"><thead><tr><th>الاسم</th><th>القسم</th><th>السعر</th><th>الحالة</th><th></th></tr></thead><tbody>
   ${(data||[]).map(p=>`<tr><td>${esc(p.name)}</td><td>${esc(p.categories?.name||'-')}</td>
     <td>${p.unit_price?money(p.unit_price):'-'}</td><td>${p.is_active?'مفعّل':'موقوف'}</td>
     <td style="display:flex;gap:6px"><button class="btn sm" onclick="prodForm('${p.id}')">تعديل</button><button class="btn sm danger" onclick="prodDelete('${p.id}')">حذف</button></td></tr>`).join('') || `<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:20px">لا توجد منتجات</td></tr>`}
@@ -1289,7 +1291,7 @@ async function admOrders(){
   const {data} = await sb.from('orders').select('*, order_items(*)').order('created_at',{ascending:false}).limit(100);
   window.__ORDERS_ADM = data||[];
   return `<div class="adm-topbar"><h2>الطلبات</h2><button class="btn" onclick="exportOrdersCSV()">⬇ تصدير Excel/CSV</button></div>
-  <div class="tbl-scroll"><table class="admtbl"><thead><tr><th>الرقم</th><th>الزبون</th><th>الهاتف</th><th>الإجمالي</th><th>الحالة</th><th>الدفع</th><th></th></tr></thead><tbody>
+  <div class="tbl-hint">⇠ مرر يمينًا لعرض باقي الأعمدة</div><div class="tbl-scroll"><table class="admtbl"><thead><tr><th>الرقم</th><th>الزبون</th><th>الهاتف</th><th>الإجمالي</th><th>الحالة</th><th>الدفع</th><th></th></tr></thead><tbody>
   ${(data||[]).map(o=>`<tr><td class="mono">${esc(o.order_number)}</td><td>${esc(o.customer_name)}</td><td class="mono">${esc(o.customer_phone)}</td>
     <td>${money(o.total)}</td>
     <td><select onchange="orderStatusChange('${o.id}',this.value)">${['new','in_progress','completed','cancelled'].map(s=>`<option value="${s}" ${o.status===s?'selected':''}>${statusAr(s)}</option>`).join('')}</select></td>
@@ -1327,7 +1329,7 @@ async function admQuotes(){
   const {data} = await sb.from('quote_requests').select('*').order('created_at',{ascending:false}).limit(100);
   window.__QUOTES_ADM = data||[];
   return `<div class="adm-topbar"><h2>طلبات عرض السعر</h2></div>
-  <div class="tbl-scroll"><table class="admtbl"><thead><tr><th>الاسم</th><th>الهاتف</th><th>النوع</th><th>الحالة</th><th></th></tr></thead><tbody>
+  <div class="tbl-hint">⇠ مرر يمينًا لعرض باقي الأعمدة</div><div class="tbl-scroll"><table class="admtbl"><thead><tr><th>الاسم</th><th>الهاتف</th><th>النوع</th><th>الحالة</th><th></th></tr></thead><tbody>
   ${(data||[]).map(q=>`<tr><td>${esc(q.name)}</td><td class="mono">${esc(q.phone)}</td><td>${esc(q.work_type)}</td>
     <td><select onchange="quoteStatusChange('${q.id}',this.value)">${['new','contacted','quoted','closed'].map(s=>`<option value="${s}" ${q.status===s?'selected':''}>${statusAr(s)}</option>`).join('')}</select></td>
     <td style="display:flex;gap:6px"><button class="btn sm" onclick="quoteDetail('${q.id}')">تفاصيل</button><button class="btn sm danger" onclick="quoteDelete('${q.id}')">حذف</button></td></tr>`).join('') || `<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:20px">لا توجد طلبات</td></tr>`}
@@ -1362,7 +1364,7 @@ async function admCustomers(){
   const {data} = await sb.from('customer_account_summary').select('*').order('name');
   window.__CUST_ADM = data||[];
   return `<div class="adm-topbar"><h2>حسابات الزبائن</h2><div style="display:flex;gap:8px"><button class="btn" onclick="exportCustomersCSV()">⬇ تصدير Excel/CSV</button><button class="btn primary" onclick="custForm()">+ زبون جديد</button></div></div>
-  <div class="tbl-scroll"><table class="admtbl"><thead><tr><th>الاسم</th><th>الهاتف</th><th>الإجمالي</th><th>المدفوع</th><th>المتبقي</th><th>الحالة</th><th></th></tr></thead><tbody>
+  <div class="tbl-hint">⇠ مرر يمينًا لعرض باقي الأعمدة</div><div class="tbl-scroll"><table class="admtbl"><thead><tr><th>الاسم</th><th>الهاتف</th><th>الإجمالي</th><th>المدفوع</th><th>المتبقي</th><th>الحالة</th><th></th></tr></thead><tbody>
   ${(data||[]).map(c=>`<tr><td>${esc(c.name)}</td><td class="mono">${esc(c.phone)}</td><td>${money(c.agreed_total)}</td>
     <td>${money(c.paid_total)}</td><td>${money(c.remaining)}</td><td><span class="status-pill ${c.status==='unpaid'?'new':c.status==='completed'?'completed':'in_progress'}">${c.status==='unpaid'?'غير مدفوع':c.status==='completed'?'مكتمل':'متبقي'}</span></td>
     <td><button class="btn sm" onclick="custDetail('${c.customer_id}')">فتح الحساب</button></td></tr>`).join('') || `<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:20px">لا يوجد زبائن</td></tr>`}
