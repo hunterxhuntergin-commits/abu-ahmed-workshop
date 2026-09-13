@@ -800,18 +800,17 @@ async function admProducts(){
   const {data} = await sb.from('products').select('*, categories(name), product_images(*)').order('sort_order');
   window.__PRODS_ADM = data||[]; window.__CATS_ADM = cats||[];
   return `<div class="adm-topbar"><h2>المنتجات</h2><button class="btn primary" onclick="prodForm()">+ منتج جديد</button></div>
-  <table class="admtbl"><thead><tr><th>الكود</th><th>الاسم</th><th>القسم</th><th>السعر</th><th>الحالة</th><th></th></tr></thead><tbody>
-  ${(data||[]).map(p=>`<tr><td class="mono">${esc(p.code)}</td><td>${esc(p.name)}</td><td>${esc(p.categories?.name||'-')}</td>
+  <table class="admtbl"><thead><tr><th>الاسم</th><th>القسم</th><th>السعر</th><th>الحالة</th><th></th></tr></thead><tbody>
+  ${(data||[]).map(p=>`<tr><td>${esc(p.name)}</td><td>${esc(p.categories?.name||'-')}</td>
     <td>${p.unit_price?money(p.unit_price):'-'}</td><td>${p.is_active?'مفعّل':'موقوف'}</td>
-    <td style="display:flex;gap:6px"><button class="btn sm" onclick="prodForm('${p.id}')">تعديل</button><button class="btn sm danger" onclick="prodDelete('${p.id}')">حذف</button></td></tr>`).join('') || `<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:20px">لا توجد منتجات</td></tr>`}
+    <td style="display:flex;gap:6px"><button class="btn sm" onclick="prodForm('${p.id}')">تعديل</button><button class="btn sm danger" onclick="prodDelete('${p.id}')">حذف</button></td></tr>`).join('') || `<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:20px">لا توجد منتجات</td></tr>`}
   </tbody></table>`;
 }
 window.prodForm = function(id){
   const p = id? window.__PRODS_ADM.find(x=>x.id===id): {};
   const cats = window.__CATS_ADM||[];
   openModal(`<div class="sheet-head"><h3>${id?'تعديل منتج':'منتج جديد'}</h3><div class="sheet-close" onclick="closeModal()">×</div></div>
-    <div class="row2">${fld({key:'code',label:'الكود (مثال D-101)'},p.code)}${fld({key:'name',label:'الاسم'},p.name)}</div>
-    ${fld({key:'slug',label:'الرابط (slug بالإنكليزي)'},p.slug)}
+    ${fld({key:'name',label:'الاسم'},p.name)}
     ${fld({key:'category_id',label:'القسم',type:'select',options:[{value:'',label:'بدون'},...cats.map(c=>({value:c.id,label:c.name}))]},p.category_id)}
     ${fld({key:'description',label:'الوصف',type:'textarea'},p.description)}
     <div class="row2">${fld({key:'material',label:'المادة'},p.material)}${fld({key:'color',label:'اللون'},p.color)}</div>
@@ -838,10 +837,18 @@ window.prodImgDelete = async function(imgId, prodId){
   window.__PRODS_ADM = window.__PRODS_ADM.map(x=>x.id===prodId? p.data: x);
   prodForm(prodId);
 };
+function autoSlugCode(name){
+  const rand = Date.now().toString(36) + Math.random().toString(36).slice(2,6);
+  let base = (name||'').toString().trim().toLowerCase()
+    .replace(/[^a-z0-9\s-]/g,'').replace(/\s+/g,'-').replace(/-+/g,'-').replace(/^-|-$/g,'');
+  const slug = (base? base+'-':'') + rand;
+  const code = 'P-' + rand.toUpperCase();
+  return {slug, code};
+}
 window.prodSave = async function(id){
+  const name = readFld({key:'name'});
   const row = {
-    code: readFld({key:'code'}), name: readFld({key:'name'}), slug: readFld({key:'slug'}),
-    category_id: readFld({key:'category_id'})||null, description: readFld({key:'description'}),
+    name, category_id: readFld({key:'category_id'})||null, description: readFld({key:'description'}),
     material: readFld({key:'material'}), color: readFld({key:'color'}), glass_type: readFld({key:'glass_type'}),
     design: readFld({key:'design'}), pricing_method: readFld({key:'pricing_method'}),
     unit_price: readFld({key:'unit_price',type:'number'}), rounding_rule: readFld({key:'rounding_rule'}),
@@ -850,7 +857,8 @@ window.prodSave = async function(id){
     is_purchasable: readFld({key:'is_purchasable',type:'checkbox'}), is_featured: readFld({key:'is_featured',type:'checkbox'}),
     is_active: readFld({key:'is_active',type:'checkbox'})
   };
-  if(!row.code || !row.name || !row.slug){ toast('الكود والاسم والرابط مطلوبين', true); return; }
+  if(!row.name){ toast('الاسم مطلوب', true); return; }
+  if(!id){ const gen = autoSlugCode(name); row.code = gen.code; row.slug = gen.slug; }
   let prodId = id;
   const {data, error} = id? await sb.from('products').update(row).eq('id',id).select().single() : await sb.from('products').insert(row).select().single();
   if(error){ toast(error.message, true); return; }
