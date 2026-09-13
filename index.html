@@ -1192,7 +1192,7 @@ window.glassExportShare = async function(){
   </div>`;
   document.body.insertAdjacentHTML('beforeend', printHtml);
   const node = document.getElementById('glassPrintCard');
-  const waText = `طلب قياسات زجاج\nنوع الزجاج: ${window.glassType||''}\n` +
+  const waText = `السلام عليكم\nطلب قياسات زجاج\nنوع الزجاج: ${window.glassType||''}\n` +
     rows.map((r,i)=>`${i+1}) ${r.length}×${r.width} سم × ${r.qty} = ${glassRowArea(r).toFixed(2)} فوت²`).join('\n') +
     `\nالإجمالي: ${total.toFixed(2)} فوت²`;
   try{
