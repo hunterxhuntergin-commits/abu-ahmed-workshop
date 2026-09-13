@@ -165,6 +165,14 @@ footer.site{border-top:1px solid var(--line);padding:26px 0;margin-top:30px;colo
 .glass-table th,.glass-table td{border:1px solid var(--line);padding:8px 6px;text-align:center;font-size:12.5px}
 .glass-table th{background:var(--panel2);font-weight:800}
 .glass-table input{width:100%;background:transparent;border:1px solid var(--line);border-radius:8px;padding:6px;font-size:12.5px;text-align:center}
+.gallery-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+@media(max-width:760px){.gallery-grid{grid-template-columns:repeat(2,1fr)}}
+.gallery-item{position:relative;border-radius:14px;overflow:hidden;aspect-ratio:1/1;background:var(--panel2)}
+.gallery-item img{width:100%;height:100%;object-fit:cover;display:block}
+.gallery-item .cap{position:absolute;bottom:0;right:0;left:0;background:linear-gradient(transparent,rgba(15,23,42,.78));color:#fff;font-size:11px;font-weight:700;padding:18px 10px 8px}
+.stat-strip{display:flex;gap:22px;margin-top:14px;flex-wrap:wrap}
+.stat-strip .st b{font-size:22px;font-weight:900;display:block}
+.stat-strip .st small{font-size:11px;color:var(--muted)}
 </style>
 </head>
 <body>
@@ -181,13 +189,27 @@ const SUPABASE_ANON_KEY = "sb_publishable_EAV6Xz5dUouN8abhz3HbVQ_DnS3XcSi";
 const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 const CART_KEY = "workshop_cart_v1";
+const CUSTOMER_KEY = "workshop_customer_v1";
+const RECENT_KEY = "workshop_recent_products_v1";
 // مسار لوحة التحكم — غيّره لأي كلمة تفضلها (بدون فراغات)، هذا هو المكان الوحيد اللي تحتاج تعدله
-const ADMIN_ROUTE = "qwert-2026";
+const ADMIN_ROUTE = "الادارة-السرية";
 const state = { settings:null, categories:[], session:null, cart: loadCart() };
 
 function loadCart(){ try{ return JSON.parse(localStorage.getItem(CART_KEY))||[]; }catch(e){ return []; } }
 function saveCart(){ localStorage.setItem(CART_KEY, JSON.stringify(state.cart)); renderCartBadge(); }
 function uid(){ return Math.random().toString(36).slice(2,10)+Date.now().toString(36); }
+// -------------------- بيانات الزبون المحفوظة (لتعبئة تلقائية بالطلب القادم) --------------------
+function loadSavedCustomer(){ try{ return JSON.parse(localStorage.getItem(CUSTOMER_KEY))||null; }catch(e){ return null; } }
+function saveCustomerInfo(obj){ try{ localStorage.setItem(CUSTOMER_KEY, JSON.stringify(obj)); }catch(e){} }
+// -------------------- آخر منتجات تمت زيارتها (محلياً بالمتصفح) --------------------
+function loadRecentProducts(){ try{ return JSON.parse(localStorage.getItem(RECENT_KEY))||[]; }catch(e){ return []; } }
+function pushRecentProduct(id){
+  try{
+    let list = loadRecentProducts().filter(x=>x!==id);
+    list.unshift(id);
+    localStorage.setItem(RECENT_KEY, JSON.stringify(list.slice(0,8)));
+  }catch(e){}
+}
 
 function toast(msg, isErr){
   const host = document.getElementById('toastHost');
@@ -199,6 +221,8 @@ function toast(msg, isErr){
 }
 function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function money(n){ n = Number(n||0); return n.toLocaleString('ar-IQ',{maximumFractionDigits:0}) + ' د.ع'; }
+// رقم عراقي صحيح: يبدأ بـ07 ويتكون من 11 رقم بالضبط
+function isValidIraqiPhone(p){ const digits = String(p||'').replace(/\D/g,''); return /^07\d{9}$/.test(digits); }
 
 // -------------------- pricing engine --------------------
 // قاعدة تقريب الورشة: كل بُعد يُعامل بشكل مستقل.
@@ -256,7 +280,23 @@ function addToCart(product, opts){
   state.cart.push(item); saveCart();
   toast('أُضيف للسلة');
 }
-window.removeCartItem = function(id){ state.cart = state.cart.filter(i=>i.id!==id); saveCart(); openCart(); }
+window.removeCartItem = function(id){
+  if(!confirm('تأكيد حذف هذا العنصر من السلة؟')) return;
+  state.cart = state.cart.filter(i=>i.id!==id); saveCart(); openCart();
+}
+// تغيير كمية عنصر بالسلة (+/-) وإعادة احتساب سعره عبر نفس محرك التسعير
+window.cartChangeQty = function(id, delta){
+  const item = state.cart.find(i=>i.id===id);
+  if(!item) return;
+  const newQty = item.quantity + delta;
+  if(newQty < 1) return;
+  const pseudoProduct = { pricing_method:item.pricingMethod, unit_price:item.unitPrice, rounding_rule:item.roundingRule, no_rounding:item.noRounding };
+  const calc = calcLine(pseudoProduct, { quantity:newQty, widthCm:item.widthCm, heightCm:item.heightCm });
+  item.quantity = newQty; item.areaOrLength = calc.areaOrLength; item.lineTotal = calc.lineTotal;
+  item.actualArea = calc.actualArea; item.pricingArea = calc.pricingArea;
+  item.pricingW = calc.pricingW||null; item.pricingH = calc.pricingH||null;
+  saveCart(); openCart();
+};
 function cartTotal(){ return state.cart.reduce((s,i)=>s+i.lineTotal,0); }
 function renderCartBadge(){
   document.querySelectorAll('.cart-count').forEach(el=>{ el.textContent = state.cart.length; el.style.display = state.cart.length? 'grid':'none'; });
@@ -282,26 +322,39 @@ function route(pattern, handler){ routes[pattern]=handler; }
 async function render(){
   const hash = location.hash.slice(1) || '/';
   const app = document.getElementById('app');
-  app.innerHTML = '<div style="padding:60px;text-align:center;color:var(--muted)">جارِ التحميل…</div>';
+  app.innerHTML = '<div style="padding:80px 20px;text-align:center;color:var(--muted)"><span class="spin" style="width:26px;height:26px;border-width:3px;margin-bottom:12px"></span><div>جارِ التحميل…</div></div>';
   window.scrollTo(0,0);
   const parts = hash.split('/').filter(Boolean);
   try{
     if(parts[0]===ADMIN_ROUTE){ return renderAdminRoute(parts, app); }
     if(!parts.length) return app.innerHTML = await pageHome();
+    if(parts[0]==='products') return app.innerHTML = await pageAllProducts();
     if(parts[0]==='category') return app.innerHTML = await pageCategory(parts[1]);
     if(parts[0]==='product') return app.innerHTML = await pageProduct(parts[1]);
+    if(parts[0]==='search') return app.innerHTML = await pageSearch(decodeURIComponent(parts[1]||''));
     if(parts[0]==='quote') return app.innerHTML = await pageQuote();
     if(parts[0]==='track') return app.innerHTML = await pageTrack();
     app.innerHTML = await pageHome();
-  }catch(e){ console.error(e); app.innerHTML = '<div class="wrap section"><div class="empty-state"><b>صار خطأ</b>'+esc(e.message||'')+'</div></div>'; }
+  }catch(e){ console.error(e); app.innerHTML = '<div class="wrap section"><div class="empty-state"><b>صار خطأ</b>تعذّر تحميل الصفحة، تأكد من الاتصال بالإنترنت وحاول مرة ثانية.</div></div>'; }
   bindPublicEvents();
 }
-window.addEventListener('hashchange', render);
+let __suppressLeaveWarning = false;
+window.addEventListener('hashchange', function(e){
+  if(__suppressLeaveWarning){ __suppressLeaveWarning = false; render(); return; }
+  let oldHash = '';
+  try{ oldHash = new URL(e.oldURL).hash.slice(1); }catch(err){}
+  if(oldHash.indexOf('/product/')===0 && pdLeaveGuardCheck()){
+    const proceed = confirm('أدخلت بُعد واحد بس (عرض أو ارتفاع) ونسيت الثاني، والمنتج لسا ما انضاف للسلة. تريد تطلع من الصفحة بدون إكماله؟');
+    if(!proceed){ __suppressLeaveWarning = true; location.hash = oldHash; return; }
+  }
+  render();
+});
 
 // -------------------- shared chrome --------------------
 function header(activePath){
   const items = [
     {href:'#/', label:'الرئيسية'},
+    {href:'#/products', label:'كل المنتجات'},
     {href:'#/quote', label:'اطلب عرض سعر'},
     {href:'#/track', label:'تتبع طلبك'},
   ];
@@ -312,8 +365,18 @@ function header(activePath){
       <nav class="nav">${items.map(i=>`<a href="${i.href}" class="${activePath===i.href?'active':''}">${i.label}</a>`).join('')}</nav>
       <button class="icon-btn" onclick="openCart()">🛒<span class="cart-badge cart-count" style="display:none">0</span></button>
     </div>
+    <div class="wrap" style="padding-bottom:12px">
+      <form onsubmit="event.preventDefault(); doSiteSearch();" style="display:flex">
+        <input id="siteSearchInput" type="search" placeholder="🔍 دوّر عن منتج أو كود..." style="width:100%;border:1px solid var(--line);background:var(--panel2);border-radius:999px;padding:10px 16px;font-size:13px">
+      </form>
+    </div>
   </header>`;
 }
+window.doSiteSearch = function(){
+  const q = document.getElementById('siteSearchInput').value.trim();
+  if(!q) return;
+  location.hash = '#/search/' + encodeURIComponent(q);
+};
 function footer(){
   const s = state.settings||{};
   const socials = [];
@@ -346,8 +409,42 @@ function waLinkToPhone(phone, message){
   return `https://wa.me/${digits}?text=${encodeURIComponent(message)}`;
 }
 function unitAr(u){ return {piece:'قطعة', sqm:'م²', meter:'م.ط'}[u] || u||''; }
-function catImg(c){ return c.image_url? `<img src="${esc(c.image_url)}">` : `<div class="ph"></div>`; }
-function prodImg(p){ const url = p.product_images&&p.product_images[0]&&p.product_images[0].url; return url? `<img src="${esc(url)}">` : `<div class="ph"></div>`; }
+// -------------------- تصدير CSV (يفتح مباشرة بـ Excel) --------------------
+function toCSVRow(arr){
+  return arr.map(v=>{
+    let s = v==null? '' : String(v);
+    if(/[",\n]/.test(s)) s = '"'+s.replace(/"/g,'""')+'"';
+    return s;
+  }).join(',');
+}
+function downloadCSV(filename, rows){
+  const csv = '\uFEFF' + rows.map(toCSVRow).join('\r\n'); // BOM عشان يقرأ العربي صح بـ Excel
+  const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url; a.download = filename; a.click();
+  URL.revokeObjectURL(url);
+  toast('تم تصدير الملف');
+}
+window.exportOrdersCSV = function(){
+  const data = window.__ORDERS_ADM||[];
+  if(!data.length){ toast('لا توجد طلبات للتصدير', true); return; }
+  const rows = [['رقم الطلب','الزبون','الهاتف','واتساب','المحافظة','المنطقة','العنوان','الملاحظات','الإجمالي','الحالة','حالة الدفع','طريقة الدفع','التاريخ']];
+  data.forEach(o=> rows.push([o.order_number, o.customer_name, o.customer_phone, o.customer_whatsapp||'',
+    o.governorate||'', o.area||'', o.address_details||'', o.notes||'', o.total,
+    statusAr(o.status), payAr(o.payment_status), o.payment_method||'',
+    o.created_at? new Date(o.created_at).toLocaleString('ar-IQ') : '']));
+  downloadCSV('الطلبات-'+new Date().toISOString().slice(0,10)+'.csv', rows);
+};
+window.exportCustomersCSV = function(){
+  const data = window.__CUST_ADM||[];
+  if(!data.length){ toast('لا يوجد زبائن للتصدير', true); return; }
+  const rows = [['الاسم','الهاتف','الإجمالي المتفق عليه','المدفوع','المتبقي','الحالة']];
+  data.forEach(c=> rows.push([c.name, c.phone, c.agreed_total, c.paid_total, c.remaining,
+    c.status==='unpaid'?'غير مدفوع': c.status==='completed'?'مكتمل':'متبقي']));
+  downloadCSV('الزبائن-'+new Date().toISOString().slice(0,10)+'.csv', rows);
+};
+function catImg(c){ return c.image_url? `<img src="${esc(c.image_url)}" loading="lazy">` : `<div class="ph"></div>`; }
+function prodImg(p){ const url = p.product_images&&p.product_images[0]&&p.product_images[0].url; return url? `<img src="${esc(url)}" loading="lazy">` : `<div class="ph"></div>`; }
 function priceLabel(p){
   if(p.pricing_method==='piece') return money(p.unit_price)+` <small>/قطعة</small>`;
   if(p.pricing_method==='sqm') return money(p.unit_price)+` <small>/م²</small>`;
@@ -360,11 +457,17 @@ function priceLabel(p){
 async function pageHome(){
   await getSettings(); const cats = await getCategories();
   const {data: featured} = await sb.from('products').select('*, product_images(*)').eq('is_active',true).eq('is_featured',true).order('sort_order').limit(8);
+  const s = state.settings||{};
+  const yearsExp = s.founded_year? (new Date().getFullYear() - Number(s.founded_year)) : null;
   return `
   ${header('#/')}
   <section class="hero" ${state.settings.cover_url?`style="background-image:linear-gradient(rgba(15,23,42,.35),rgba(15,23,42,.15)),url('${esc(state.settings.cover_url)}');background-size:cover;background-position:center"`:''}><div class="wrap">
     <h1 ${state.settings.cover_url?'style="color:#fff"':''}>${esc(state.settings.workshop_name||'أبو أحمد للألمنيوم')}<br><span class="accent">جودة تصنيع تدوم</span></h1>
     <p ${state.settings.cover_url?'style="color:#f1f5f9"':''}>${esc(state.settings.description||'أبواب، شبابيك، كاونترات، ومحجر درج بمقاسات مضبوطة حسب طلبك.')}</p>
+    ${(yearsExp || s.projects_completed)? `<div class="stat-strip">
+      ${yearsExp? `<div class="st" ${state.settings.cover_url?'style="color:#fff"':''}><b>+${yearsExp}</b><small ${state.settings.cover_url?'style="color:#e2e8f0"':''}>سنة خبرة</small></div>`:''}
+      ${s.projects_completed? `<div class="st" ${state.settings.cover_url?'style="color:#fff"':''}><b>+${esc(s.projects_completed)}</b><small ${state.settings.cover_url?'style="color:#e2e8f0"':''}>مشروع منفّذ</small></div>`:''}
+    </div>`:''}
     <div class="hero-actions">
       <a class="btn primary" href="#/quote">اطلب عرض سعر</a>
     </div>
@@ -375,12 +478,51 @@ async function pageHome(){
       ${cats.map(c=>`<a class="cat-tile" href="#/category/${esc(c.slug)}"><div class="thumb">${catImg(c)}</div><div class="body"><b>${esc(c.name)}</b>${c.description?`<small>${esc(c.description)}</small>`:''}</div></a>`).join('') || '<div class="empty-state">لا توجد أقسام بعد</div>'}
     </div>
   </section>
+  ${await galleryPreviewSection()}
   ${featured&&featured.length? `<section class="section wrap">
     <div class="section-head"><div><h2>منتجات مميزة</h2></div></div>
     <div class="grid cols-4">${featured.map(prodCard).join('')}</div>
   </section>`:''}
+  ${await recentProductsSection()}
   ${footer()} ${waFab()}
   `;
+}
+async function galleryPreviewSection(){
+  try{
+    const {data} = await sb.from('gallery_items').select('*').eq('is_active',true).order('sort_order').limit(8);
+    if(!data || !data.length) return '';
+    return `<section class="section wrap">
+      <div class="section-head"><div><h2>من أعمالنا</h2><p>نماذج من مشاريع نفّذناها فعلياً</p></div></div>
+      <div class="gallery-grid">${data.map(g=>`<div class="gallery-item"><img src="${esc(g.image_url)}" loading="lazy">${g.caption?`<div class="cap">${esc(g.caption)}</div>`:''}</div>`).join('')}</div>
+    </section>`;
+  }catch(e){ return ''; }
+}
+async function recentProductsSection(){
+  const ids = loadRecentProducts();
+  if(!ids.length) return '';
+  const {data} = await sb.from('products').select('*, product_images(*)').in('id', ids).eq('is_active',true);
+  if(!data || !data.length) return '';
+  const ordered = ids.map(id=>data.find(p=>p.id===id)).filter(Boolean);
+  if(!ordered.length) return '';
+  return `<section class="section wrap">
+    <div class="section-head"><div><h2>تصفّحته مؤخراً</h2></div></div>
+    <div class="grid cols-4">${ordered.map(prodCard).join('')}</div>
+  </section>`;
+}
+async function pageSearch(q){
+  await getSettings();
+  const term = (q||'').trim();
+  let products = [];
+  if(term){
+    const {data} = await sb.from('products').select('*, product_images(*)').eq('is_active',true)
+      .or(`name.ilike.%${term}%,code.ilike.%${term}%`).order('sort_order');
+    products = data||[];
+  }
+  return `${header()}
+  <section class="section wrap">
+    <div class="section-head"><div><h2>نتائج البحث عن "${esc(term)}"</h2><p>${products.length} نتيجة</p></div></div>
+    <div class="grid cols-4">${products.map(prodCard).join('') || '<div class="empty-state"><b>ما لكينا نتائج</b>جرّب كلمة ثانية أو تصفّح الأقسام</div>'}</div>
+  </section>${footer()} ${waFab()}`;
 }
 function prodCard(p){
   return `<a class="prod-card" href="#/product/${esc(p.slug)}">
@@ -393,26 +535,100 @@ async function pageCategory(slug){
   const cat = cats.find(c=>c.slug===slug);
   if(!cat) return `${header()}<div class="wrap section"><div class="empty-state"><b>القسم غير موجود</b></div></div>${footer()}`;
   const {data: products} = await sb.from('products').select('*, product_images(*)').eq('category_id',cat.id).eq('is_active',true).order('sort_order');
+  window.__catProducts = products||[];
+  window.__catMaterialFilter = 'all';
+  const materials = [...new Set((products||[]).map(p=>p.material).filter(Boolean))];
   return `${header()}
   <section class="section wrap">
-    <div class="section-head"><div><h2>${esc(cat.name)}</h2><p>${esc(cat.description||'')}</p></div></div>
-    <div class="grid cols-4">${(products||[]).map(prodCard).join('') || '<div class="empty-state">لا توجد منتجات بهذا القسم بعد</div>'}</div>
+    <div class="section-head"><div><h2>${esc(cat.name)}</h2><p>${esc(cat.description||'')}</p></div>
+      <select id="catSort" onchange="catApplySort()" style="border:1px solid var(--line);background:var(--panel);border-radius:10px;padding:9px 10px;font-size:12.5px">
+        <option value="default">الترتيب الافتراضي</option>
+        <option value="price_asc">السعر: الأقل أولاً</option>
+        <option value="price_desc">السعر: الأعلى أولاً</option>
+        <option value="name">الاسم (أ-ي)</option>
+      </select>
+    </div>
+    ${materials.length>1? `<div class="filters">
+      <div class="chip active" data-mat="all" onclick="catFilterMaterial('all',this)">الكل</div>
+      ${materials.map(m=>`<div class="chip" data-mat="${esc(m)}" onclick="catFilterMaterial('${esc(m)}',this)">${esc(m)}</div>`).join('')}
+    </div>`:''}
+    <div class="grid cols-4" id="catProductsGrid">${(products||[]).map(prodCard).join('') || '<div class="empty-state">لا توجد منتجات بهذا القسم بعد</div>'}</div>
   </section>${footer()} ${waFab()}`;
 }
+function catRenderGrid(){
+  let list = window.__catProducts.slice();
+  if(window.__catMaterialFilter && window.__catMaterialFilter!=='all') list = list.filter(p=>p.material===window.__catMaterialFilter);
+  const sortVal = document.getElementById('catSort')?.value || 'default';
+  if(sortVal==='price_asc') list.sort((a,b)=>(Number(a.unit_price)||0)-(Number(b.unit_price)||0));
+  else if(sortVal==='price_desc') list.sort((a,b)=>(Number(b.unit_price)||0)-(Number(a.unit_price)||0));
+  else if(sortVal==='name') list.sort((a,b)=>String(a.name).localeCompare(String(b.name),'ar'));
+  const grid = document.getElementById('catProductsGrid');
+  if(grid) grid.innerHTML = list.map(prodCard).join('') || '<div class="empty-state">لا توجد منتجات تطابق الفلتر</div>';
+}
+window.catApplySort = function(){ catRenderGrid(); };
+window.catFilterMaterial = function(mat, el){
+  window.__catMaterialFilter = mat;
+  document.querySelectorAll('.filters .chip').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  catRenderGrid();
+};
+async function pageAllProducts(){
+  await getSettings(); const cats = await getCategories();
+  const {data: products} = await sb.from('products').select('*, product_images(*)').eq('is_active',true).order('sort_order');
+  window.__allProducts = products||[];
+  window.__allCatFilter = 'all';
+  return `${header('#/products')}
+  <section class="section wrap">
+    <div class="section-head"><div><h2>كل المنتجات</h2><p>تصفح جميع منتجاتنا من كل الأقسام دفعة وحدة</p></div>
+      <select id="allSort" onchange="allApplySort()" style="border:1px solid var(--line);background:var(--panel);border-radius:10px;padding:9px 10px;font-size:12.5px">
+        <option value="default">الترتيب الافتراضي</option>
+        <option value="price_asc">السعر: الأقل أولاً</option>
+        <option value="price_desc">السعر: الأعلى أولاً</option>
+        <option value="name">الاسم (أ-ي)</option>
+      </select>
+    </div>
+    ${cats.length? `<div class="filters">
+      <div class="chip active" data-cat="all" onclick="allFilterCategory('all',this)">الكل</div>
+      ${cats.map(c=>`<div class="chip" data-cat="${esc(c.id)}" onclick="allFilterCategory('${esc(c.id)}',this)">${esc(c.name)}</div>`).join('')}
+    </div>`:''}
+    <div class="grid cols-4" id="allProductsGrid">${(products||[]).map(prodCard).join('') || '<div class="empty-state">لا توجد منتجات بعد</div>'}</div>
+  </section>${footer()} ${waFab()}`;
+}
+function allRenderGrid(){
+  let list = window.__allProducts.slice();
+  if(window.__allCatFilter && window.__allCatFilter!=='all') list = list.filter(p=>String(p.category_id)===String(window.__allCatFilter));
+  const sortVal = document.getElementById('allSort')?.value || 'default';
+  if(sortVal==='price_asc') list.sort((a,b)=>(Number(a.unit_price)||0)-(Number(b.unit_price)||0));
+  else if(sortVal==='price_desc') list.sort((a,b)=>(Number(b.unit_price)||0)-(Number(a.unit_price)||0));
+  else if(sortVal==='name') list.sort((a,b)=>String(a.name).localeCompare(String(b.name),'ar'));
+  const grid = document.getElementById('allProductsGrid');
+  if(grid) grid.innerHTML = list.map(prodCard).join('') || '<div class="empty-state">لا توجد منتجات تطابق الفلتر</div>';
+}
+window.allApplySort = function(){ allRenderGrid(); };
+window.allFilterCategory = function(catId, el){
+  window.__allCatFilter = catId;
+  el.closest('.filters').querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  allRenderGrid();
+};
 async function pageProduct(slug){
   await getSettings();
   const {data: p} = await sb.from('products').select('*, product_images(*), categories(name,slug)').eq('slug',slug).maybeSingle();
   if(!p) return `${header()}<div class="wrap section"><div class="empty-state"><b>المنتج غير موجود</b></div></div>${footer()}`;
+  pushRecentProduct(p.id);
+  window.__pdAdded = false;
   const imgs = (p.product_images||[]).sort((a,b)=>a.sort_order-b.sort_order);
   const needsDims = p.pricing_method==='sqm' || p.pricing_method==='linear_meter';
   const purchasable = p.is_purchasable && p.pricing_method!=='quote_only';
   window.__PD = p;
+  window.__PD_meta = { needsDims, purchasable, pricingMethod: p.pricing_method };
   return `${header()}
   <section class="section wrap">
+    ${p.categories? `<a href="#/category/${esc(p.categories.slug)}" style="display:inline-flex;align-items:center;gap:6px;color:var(--muted);font-size:13px;font-weight:700;margin-bottom:14px">→ رجوع لـ${esc(p.categories.name)}</a>`:''}
     <div class="pd-wrap">
       <div>
         <div class="pd-gallery" id="pdMainImg">${imgs[0]? `<img src="${esc(imgs[0].url)}">`:'<div class="ph" style="position:absolute;inset:0"></div>'}</div>
-        ${imgs.length>1? `<div class="pd-thumbs">${imgs.map(im=>`<img src="${esc(im.url)}" onclick="document.getElementById('pdMainImg').innerHTML='<img src=\\'${esc(im.url)}\\'>'">`).join('')}</div>`:''}
+        ${imgs.length>1? `<div class="pd-thumbs">${imgs.map(im=>`<img src="${esc(im.url)}" loading="lazy" onclick="document.getElementById('pdMainImg').innerHTML='<img src=\\'${esc(im.url)}\\'>'">`).join('')}</div>`:''}
       </div>
       <div>
         <span class="code mono">${esc(p.code)}</span>
@@ -438,10 +654,22 @@ async function pageProduct(slug){
         </div>`:`<a class="btn primary block" href="#/quote">اطلب عرض سعر لهذا المنتج</a>`}
         ${(()=>{ const link = waLinkWorkshop(`السلام عليكم،\nأرغب بالاستفسار عن المنتج:\n${p.name}\nالكود: ${p.code}`);
           return link? `<a class="btn block" style="margin-top:8px;border-color:rgba(37,211,102,.4);color:#1ba851" target="_blank" href="${link}">💬 استفسار عن هذا المنتج عبر واتساب</a>` : ''; })()}
+        <button class="btn block" style="margin-top:8px" onclick="shareProduct()">🔗 مشاركة المنتج</button>
       </div>
     </div>
   </section>${footer()} ${waFab()}`;
 }
+window.shareProduct = async function(){
+  const p = window.__PD; if(!p) return;
+  const url = location.origin + location.pathname + '#/product/' + p.slug;
+  const shareData = { title: p.name, text: `${p.name} — ${p.code||''}`, url };
+  if(navigator.share){
+    try{ await navigator.share(shareData); return; }
+    catch(e){ /* المستخدم ألغى المشاركة */ return; }
+  }
+  try{ await navigator.clipboard.writeText(url); toast('تم نسخ رابط المنتج'); }
+  catch(e){ toast('تعذّر نسخ الرابط، انسخه يدوياً', true); }
+};
 window.pdAddToCart = function(){
   const p = window.__PD;
   const qty = Number(document.getElementById('pdQty')?.value||1);
@@ -451,7 +679,18 @@ window.pdAddToCart = function(){
     toast('أدخل القياسات أولاً', true); return;
   }
   addToCart(p, { quantity: qty, widthCm: w, heightCm: h, note: document.getElementById('pdNote')?.value });
+  window.__pdAdded = true;
 };
+// تنبيه لو الزبون طالع من صفحة منتج يحتاج عرض وارتفاع (sqm) وعبّى بُعد وحد بس ونسي الثاني، ولسا ما ضاف المنتج للسلة
+function pdLeaveGuardCheck(){
+  const meta = window.__PD_meta;
+  if(!meta || !meta.needsDims || !meta.purchasable || window.__pdAdded) return false;
+  if(meta.pricingMethod !== 'sqm') return false;
+  const wEl = document.getElementById('pdW'), hEl = document.getElementById('pdH');
+  if(!wEl || !hEl) return false;
+  const wVal = wEl.value.trim(), hVal = hEl.value.trim();
+  return Boolean((wVal || hVal) && !(wVal && hVal));
+}
 function pdLiveUpdate(){
   const p = window.__PD; if(!p) return;
   const qty = Number(document.getElementById('pdQty')?.value||1);
@@ -476,7 +715,7 @@ async function pageQuote(){
     <div class="section-head"><div><h2>اطلب عرض سعر</h2><p>عبّي البيانات وراح نتواصل وياك بأقرب وقت</p></div></div>
     <div class="field"><label>الاسم *</label><input id="qName"></div>
     <div class="row2">
-      <div class="field"><label>رقم الهاتف *</label><input id="qPhone" type="tel"></div>
+      <div class="field"><label>رقم الهاتف *</label><input id="qPhone" type="tel" inputmode="numeric" maxlength="11" placeholder="07xxxxxxxxx"></div>
       <div class="field"><label>واتساب (اختياري)</label><input id="qWa" type="tel"></div>
     </div>
     <div class="field"><label>نوع الشغل *</label><select id="qType">
@@ -499,6 +738,7 @@ window.submitQuote = async function(){
   const phone=document.getElementById('qPhone').value.trim();
   const work_type=document.getElementById('qType').value;
   if(!name||!phone||!work_type){ toast('عبّي الحقول المطلوبة (*)', true); return; }
+  if(!isValidIraqiPhone(phone)){ toast('رقم الهاتف غير صحيح — يجب أن يبدأ بـ07 ويتكون من 11 رقم', true); return; }
   const btn=document.getElementById('qSubmitBtn'); btn.disabled=true; btn.innerHTML='<span class="spin"></span>';
   try{
     let image_url=null;
@@ -526,7 +766,7 @@ window.submitQuote = async function(){
     document.querySelector('#app .section.wrap').innerHTML = `<div class="empty-state"><b>تم إرسال طلبك ✅</b>راح نتواصل وياك قريبًا لتحديد السعر.
       ${waLink? `<div style="margin-top:14px"><a class="btn block" style="border-color:rgba(37,211,102,.4);color:#1ba851" target="_blank" href="${waLink}">💬 لو ما انفتح واتساب تلقائياً، اضغط هنا</a></div>`:''}
       <div style="margin-top:10px"><a class="btn primary" href="#/">الرجوع للرئيسية</a></div></div>`;
-  }catch(e){ toast('صار خطأ: '+e.message, true); btn.disabled=false; btn.textContent='إرسال الطلب'; }
+  }catch(e){ console.error(e); toast('تعذّر إرسال الطلب، تأكد من الاتصال وحاول مرة ثانية', true); btn.disabled=false; btn.textContent='إرسال الطلب'; }
 };
 async function pageTrack(){
   await getSettings();
@@ -587,6 +827,11 @@ window.openCart = function(){
     <div class="cart-item">
       <img src="${i.image?esc(i.image):''}">
       <div class="info"><b>${esc(i.name)}</b><small>${esc(i.code)} ${i.widthCm?`· ${i.widthCm}×${i.heightCm||''}سم`:''}</small>
+      <div class="qty-x">
+        <button onclick="cartChangeQty('${i.id}',-1)">−</button>
+        <span class="mono">${i.quantity}</span>
+        <button onclick="cartChangeQty('${i.id}',1)">+</button>
+      </div>
       <small>${money(i.lineTotal)}</small></div>
       <button class="btn sm danger" onclick="removeCartItem('${i.id}')">حذف</button>
     </div>`).join('') || '<div class="cart-empty">السلة فارغة</div>';
@@ -600,18 +845,19 @@ window.openCart = function(){
 };
 window.openCheckout = async function(){
   await getSettings();
+  const saved = loadSavedCustomer() || {};
   const modals=document.getElementById('modals');
   modals.innerHTML = `<div class="overlay">
     <div class="sheet">
       <div class="sheet-head"><h3>إتمام الطلب</h3><div class="sheet-close" onclick="openCart()">×</div></div>
-      <div class="field"><label>الاسم *</label><input id="coName"></div>
+      <div class="field"><label>الاسم *</label><input id="coName" value="${esc(saved.name||'')}"></div>
       <div class="row2">
-        <div class="field"><label>رقم الهاتف *</label><input id="coPhone" type="tel"></div>
-        <div class="field"><label>واتساب</label><input id="coWa" type="tel"></div>
+        <div class="field"><label>رقم الهاتف *</label><input id="coPhone" type="tel" inputmode="numeric" maxlength="11" placeholder="07xxxxxxxxx" value="${esc(saved.phone||'')}"></div>
+        <div class="field"><label>واتساب</label><input id="coWa" type="tel" value="${esc(saved.whatsapp||'')}"></div>
       </div>
-      <div class="field"><label>المحافظة</label><input id="coGov" value="${esc(state.settings.governorate||'')}"></div>
-      <div class="field"><label>المنطقة</label><input id="coArea"></div>
-      <div class="field"><label>تفاصيل العنوان</label><textarea id="coAddr"></textarea></div>
+      <div class="field"><label>المحافظة</label><input id="coGov" value="${esc(saved.governorate||state.settings.governorate||'')}"></div>
+      <div class="field"><label>المنطقة</label><input id="coArea" value="${esc(saved.area||'')}"></div>
+      <div class="field"><label>تفاصيل العنوان</label><textarea id="coAddr">${esc(saved.address||'')}</textarea></div>
       <div class="field"><label>ملاحظات</label><textarea id="coNotes"></textarea></div>
       ${(()=>{
         const provider = getActiveElectronicProvider();
@@ -631,6 +877,7 @@ window.submitOrder = async function(){
   const name=document.getElementById('coName').value.trim();
   const phone=document.getElementById('coPhone').value.trim();
   if(!name||!phone){ toast('عبّي الاسم والهاتف', true); return; }
+  if(!isValidIraqiPhone(phone)){ toast('رقم الهاتف غير صحيح — يجب أن يبدأ بـ07 ويتكون من 11 رقم', true); return; }
   const btn=document.getElementById('coBtn'); btn.disabled=true; btn.innerHTML='<span class="spin"></span>';
   try{
     const subtotal=cartTotal();
@@ -660,14 +907,65 @@ window.submitOrder = async function(){
     }));
     const {error:itErr}=await sb.from('order_items').insert(items);
     if(itErr) throw itErr;
+    saveCustomerInfo({
+      name, phone, whatsapp: document.getElementById('coWa').value.trim()||'',
+      governorate: document.getElementById('coGov').value.trim()||'',
+      area: document.getElementById('coArea').value.trim()||'',
+      address: document.getElementById('coAddr').value.trim()||''
+    });
+    window.__LAST_ORDER = {
+      order,
+      total: subtotal,
+      items: state.cart.map(i=>({ name:i.name, code:i.code, qty:i.quantity, lineTotal:i.lineTotal,
+        dims: i.widthCm? `${i.widthCm}×${i.heightCm||''}` : null }))
+    };
     state.cart=[]; saveCart();
     document.getElementById('modals').innerHTML = `<div class="overlay"><div class="sheet" style="text-align:center">
       <div style="font-size:40px">✅</div><h3>تم استلام طلبك</h3>
       <p style="color:var(--muted)">رقم الطلب</p>
       <div class="mono" style="font-size:20px;font-weight:900;margin-bottom:14px">${esc(order.order_number)}</div>
+      <button class="btn block" style="margin-bottom:8px" onclick="downloadOrderSummary()">⬇ تحميل ملخص الطلب</button>
       <button class="btn primary block" onclick="document.getElementById('modals').innerHTML='';location.hash='#/'">تمام</button>
     </div></div>`;
-  }catch(e){ toast('صار خطأ: '+e.message, true); btn.disabled=false; btn.textContent='تأكيد الطلب'; }
+  }catch(e){ console.error(e); toast('تعذّر تأكيد الطلب، تأكد من الاتصال وحاول مرة ثانية', true); btn.disabled=false; btn.textContent='تأكيد الطلب'; }
+};
+window.downloadOrderSummary = async function(){
+  const data = window.__LAST_ORDER; if(!data) return;
+  const s = state.settings||{};
+  const trs = data.items.map((it,i)=>`<tr>
+      <td style="padding:8px;border:1px solid #e2e8f0">${i+1}</td>
+      <td style="padding:8px;border:1px solid #e2e8f0">${esc(it.name)}${it.dims?` (${esc(it.dims)} سم)`:''}</td>
+      <td style="padding:8px;border:1px solid #e2e8f0">${esc(it.qty)}</td>
+      <td style="padding:8px;border:1px solid #e2e8f0">${money(it.lineTotal)}</td>
+    </tr>`).join('');
+  const printHtml = `<div id="orderPrintCard" style="position:fixed;left:-9999px;top:0;width:420px;background:#fff;padding:20px;font-family:Tajawal,sans-serif;direction:rtl;color:#0F172A">
+    <div style="font-weight:900;font-size:18px;margin-bottom:4px">${esc(s.workshop_name||'أبو أحمد للألمنيوم')}</div>
+    <div style="font-weight:700;font-size:13px;color:#0EA5E9;margin-bottom:6px">ملخص الطلب رقم ${esc(data.order.order_number)}</div>
+    <div style="font-size:12px;color:#64748B;margin-bottom:14px">${esc(data.order.customer_name)} · ${esc(data.order.customer_phone)}</div>
+    <table style="width:100%;border-collapse:collapse;font-size:13px">
+      <thead><tr style="background:#F1F5F9">
+        <th style="padding:8px;border:1px solid #e2e8f0">#</th>
+        <th style="padding:8px;border:1px solid #e2e8f0">المنتج</th>
+        <th style="padding:8px;border:1px solid #e2e8f0">الكمية</th>
+        <th style="padding:8px;border:1px solid #e2e8f0">السعر</th>
+      </tr></thead>
+      <tbody>${trs}</tbody>
+    </table>
+    <div style="margin-top:12px;font-weight:900;font-size:15px;text-align:left">الإجمالي: ${money(data.total)}</div>
+  </div>`;
+  document.body.insertAdjacentHTML('beforeend', printHtml);
+  const node = document.getElementById('orderPrintCard');
+  try{
+    const canvas = await html2canvas(node, {scale:2, backgroundColor:'#ffffff'});
+    node.remove();
+    canvas.toBlob((blob)=>{
+      if(!blob){ toast('صار خطأ بإنشاء الصورة', true); return; }
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a'); a.href = url; a.download = 'ملخص-الطلب-'+data.order.order_number+'.png'; a.click();
+      URL.revokeObjectURL(url);
+      toast('تم تنزيل ملخص الطلب');
+    }, 'image/png');
+  }catch(e){ node.remove(); console.error(e); toast('صار خطأ بالتصدير', true); }
 };
 function bindPublicEvents(){
   renderCartBadge();
@@ -678,15 +976,55 @@ function bindPublicEvents(){
 const ADM_TABS = [
   {key:'overview',label:'نظرة عامة'},{key:'categories',label:'الأقسام'},{key:'products',label:'المنتجات'},
   {key:'orders',label:'الطلبات'},{key:'quotes',label:'طلبات الأسعار'},
-  {key:'customers',label:'الزبائن'},{key:'glass-calc',label:'حاسبة الزجاج'},{key:'settings',label:'الإعدادات'}
+  {key:'customers',label:'الزبائن'},{key:'gallery',label:'معرض الأعمال'},{key:'glass-calc',label:'حاسبة الزجاج'},{key:'settings',label:'الإعدادات'}
 ];
 async function getSession(){ const {data}=await sb.auth.getSession(); state.session=data.session; return state.session; }
+// -------------------- تنبيه الطلبات الجديدة (صوتي + بصري) بلوحة التحكم --------------------
+window.__newOrderCount = 0;
+let __orderChannel = null;
+function setupOrderAlerts(){
+  if(__orderChannel) return;
+  __orderChannel = sb.channel('admin-orders-alert')
+    .on('postgres_changes', {event:'INSERT', schema:'public', table:'orders'}, (payload)=>{
+      window.__newOrderCount++;
+      playOrderAlertSound();
+      updateOrdersBadge();
+      toast('🔔 طلب جديد وصل: ' + (payload.new && payload.new.order_number || ''));
+    })
+    .subscribe();
+}
+function teardownOrderAlerts(){
+  if(__orderChannel){ sb.removeChannel(__orderChannel); __orderChannel = null; }
+}
+function playOrderAlertSound(){
+  try{
+    const ctx = new (window.AudioContext||window.webkitAudioContext)();
+    const o = ctx.createOscillator(); const g = ctx.createGain();
+    o.connect(g); g.connect(ctx.destination);
+    o.type = 'sine'; o.frequency.value = 880; g.gain.value = 0.18;
+    o.start();
+    setTimeout(()=>{ o.frequency.value = 1180; }, 130);
+    setTimeout(()=>{ o.stop(); ctx.close(); }, 340);
+  }catch(e){ /* المتصفح ما يدعم الصوت التلقائي */ }
+}
+function updateOrdersBadge(){
+  const el = document.getElementById('newOrderBadge');
+  if(!el) return;
+  el.textContent = window.__newOrderCount>9? '+9' : String(window.__newOrderCount);
+  el.style.display = window.__newOrderCount? 'inline-flex' : 'none';
+}
+function tabBadge(t){
+  if(t.key!=='orders') return '';
+  return `<span id="newOrderBadge" style="display:${window.__newOrderCount?'inline-flex':'none'};background:var(--accent);color:#fff;border-radius:999px;font-size:10px;font-weight:900;padding:1px 7px;margin-right:6px;min-width:16px;justify-content:center">${window.__newOrderCount>9?'+9':window.__newOrderCount}</span>`;
+}
 async function renderAdminRoute(parts, app){
   document.documentElement.setAttribute('data-admin-light','1');
   await getSession();
   if(parts[1]==='login'){ app.innerHTML = adminLoginPage(); return; }
   if(!state.session){ location.hash='#/'+ADMIN_ROUTE+'/login'; return; }
+  setupOrderAlerts();
   const tab = parts[1] || 'overview';
+  if(tab==='orders'){ window.__newOrderCount = 0; }
   app.innerHTML = adminShell(tab, '<div style="padding:40px;text-align:center;color:var(--muted)">جارِ التحميل…</div>');
   const target = document.getElementById('admContent');
   try{
@@ -696,6 +1034,7 @@ async function renderAdminRoute(parts, app){
     else if(tab==='orders') target.innerHTML = await admOrders();
     else if(tab==='quotes') target.innerHTML = await admQuotes();
     else if(tab==='customers') target.innerHTML = await admCustomers();
+    else if(tab==='gallery') target.innerHTML = await admGallery();
     else if(tab==='glass-calc') target.innerHTML = admGlassCalc();
     else if(tab==='settings') target.innerHTML = await admSettings();
     else if(tab==='change-password') target.innerHTML = admChangePassword();
@@ -719,12 +1058,12 @@ window.adminLogin = async function(){
   if(error){ toast('فشل الدخول: تأكد من البريد وكلمة المرور', true); btn.disabled=false; btn.textContent='دخول'; return; }
   location.hash='#/'+ADMIN_ROUTE+'/overview'; render();
 };
-window.adminLogout = async function(){ await sb.auth.signOut(); location.hash='#/'+ADMIN_ROUTE+'/login'; render(); };
+window.adminLogout = async function(){ teardownOrderAlerts(); await sb.auth.signOut(); location.hash='#/'+ADMIN_ROUTE+'/login'; render(); };
 function adminShell(tab, content){
   return `<div class="adm-shell">
     <aside class="adm-side">
       <div style="font-weight:900;padding:8px 10px 16px">لوحة التحكم</div>
-      ${ADM_TABS.map(t=>`<a href="#/${ADMIN_ROUTE}/${t.key}" class="${tab===t.key?'active':''}">${t.label}</a>`).join('')}
+      ${ADM_TABS.map(t=>`<a href="#/${ADMIN_ROUTE}/${t.key}" class="${tab===t.key?'active':''}">${t.label}${tabBadge(t)}</a>`).join('')}
       <a href="#/${ADMIN_ROUTE}/change-password" class="${tab==='change-password'?'active':''}">تغيير كلمة المرور</a>
       <a onclick="adminLogout()" style="color:var(--red);cursor:pointer">تسجيل خروج</a>
       <a href="#/" style="margin-top:10px">↩ الموقع العام</a>
@@ -804,6 +1143,53 @@ window.catDelete = async function(id){
   if(!confirm('تأكيد الحذف؟')) return;
   const {error} = await sb.from('categories').delete().eq('id',id);
   if(error) toast(error.message, true); else { toast('تم الحذف'); state.categories=[]; render(); }
+};
+
+// ---- معرض الأعمال (صور مشاريع منفّذة فعلياً، بدون تقييمات أو تعليقات) ----
+async function admGallery(){
+  let data = [];
+  try{ const res = await sb.from('gallery_items').select('*').order('sort_order'); data = res.data||[]; }
+  catch(e){}
+  window.__GAL_ADM = data;
+  return `<div class="adm-topbar"><h2>معرض الأعمال</h2><button class="btn primary" onclick="galForm()">+ صورة جديدة</button></div>
+  <div class="field hint" style="margin-bottom:14px">صور نماذج من مشاريع نفّذتوها فعلياً — تظهر بالصفحة الرئيسية للزبائن كدليل على جودة الشغل، بدون تقييمات أو تعليقات.</div>
+  <div class="img-grid">${data.map(g=>`<div class="im">
+    <img src="${esc(g.image_url)}">
+    <button onclick="galDelete('${g.id}')" title="حذف">×</button>
+  </div>`).join('') || ''}</div>
+  ${!data.length? '<div class="empty-state">لا توجد صور بعد</div>' : ''}
+  <div class="card-list" style="margin-top:14px">${data.map(g=>`<div class="card-item">
+    <div class="meta"><b>${esc(g.caption||'(بدون وصف)')}</b><small>ترتيب: ${g.sort_order||0} ${g.is_active?'':'· غير مفعّل'}</small></div>
+    <div style="display:flex;gap:6px"><button class="btn sm" onclick="galForm('${g.id}')">تعديل</button><button class="btn sm danger" onclick="galDelete('${g.id}')">حذف</button></div>
+  </div>`).join('')}</div>`;
+}
+window.galForm = function(id){
+  const g = id? window.__GAL_ADM.find(x=>x.id===id): {};
+  openModal(`<div class="sheet-head"><h3>${id?'تعديل صورة':'صورة جديدة'}</h3><div class="sheet-close" onclick="closeModal()">×</div></div>
+    <div class="field"><label>الصورة${id?'':' *'}</label><input type="file" id="galImgFile" accept="image/*">${g.image_url?`<img src="${esc(g.image_url)}" style="width:100px;margin-top:8px;border-radius:8px">`:''}</div>
+    ${fld({key:'caption',label:'وصف مختصر (اختياري)'},g.caption)}
+    ${fld({key:'sort_order',label:'ترتيب العرض',type:'number'},g.sort_order||0)}
+    ${fld({key:'is_active',label:'مفعّل',type:'checkbox'},g.is_active!==false)}
+    <button class="btn primary block" onclick="galSave('${id||''}')">حفظ</button>`);
+};
+window.galSave = async function(id){
+  const row = { caption: readFld({key:'caption'}), sort_order: readFld({key:'sort_order',type:'number'})||0,
+    is_active: readFld({key:'is_active',type:'checkbox'}) };
+  const file = document.getElementById('galImgFile').files[0];
+  if(file){
+    const path = `gallery/${Date.now()}_${uid()}.${file.name.split('.').pop()}`;
+    const {error:upErr} = await sb.storage.from('site-assets').upload(path,file);
+    if(!upErr) row.image_url = sb.storage.from('site-assets').getPublicUrl(path).data.publicUrl;
+  }
+  if(!id && !row.image_url){ toast('اختر صورة أولاً', true); return; }
+  const {error} = id? await sb.from('gallery_items').update(row).eq('id',id) : await sb.from('gallery_items').insert(row);
+  if(error){ toast(error.message, true); return; }
+  toast('تم الحفظ'); closeModal(); render();
+};
+window.galDelete = async function(id){
+  if(!confirm('تأكيد الحذف؟')) return;
+  const {error} = await sb.from('gallery_items').delete().eq('id',id);
+  if(error) toast(error.message, true); else { toast('تم الحذف'); render(); }
 };
 
 // ---- products ----
@@ -896,7 +1282,7 @@ window.prodDelete = async function(id){
 async function admOrders(){
   const {data} = await sb.from('orders').select('*, order_items(*)').order('created_at',{ascending:false}).limit(100);
   window.__ORDERS_ADM = data||[];
-  return `<div class="adm-topbar"><h2>الطلبات</h2></div>
+  return `<div class="adm-topbar"><h2>الطلبات</h2><button class="btn" onclick="exportOrdersCSV()">⬇ تصدير Excel/CSV</button></div>
   <table class="admtbl"><thead><tr><th>الرقم</th><th>الزبون</th><th>الهاتف</th><th>الإجمالي</th><th>الحالة</th><th>الدفع</th><th></th></tr></thead><tbody>
   ${(data||[]).map(o=>`<tr><td class="mono">${esc(o.order_number)}</td><td>${esc(o.customer_name)}</td><td class="mono">${esc(o.customer_phone)}</td>
     <td>${money(o.total)}</td>
@@ -969,7 +1355,7 @@ window.quoteDetail = function(id){
 async function admCustomers(){
   const {data} = await sb.from('customer_account_summary').select('*').order('name');
   window.__CUST_ADM = data||[];
-  return `<div class="adm-topbar"><h2>حسابات الزبائن</h2><button class="btn primary" onclick="custForm()">+ زبون جديد</button></div>
+  return `<div class="adm-topbar"><h2>حسابات الزبائن</h2><div style="display:flex;gap:8px"><button class="btn" onclick="exportCustomersCSV()">⬇ تصدير Excel/CSV</button><button class="btn primary" onclick="custForm()">+ زبون جديد</button></div></div>
   <table class="admtbl"><thead><tr><th>الاسم</th><th>الهاتف</th><th>الإجمالي</th><th>المدفوع</th><th>المتبقي</th><th>الحالة</th><th></th></tr></thead><tbody>
   ${(data||[]).map(c=>`<tr><td>${esc(c.name)}</td><td class="mono">${esc(c.phone)}</td><td>${money(c.agreed_total)}</td>
     <td>${money(c.paid_total)}</td><td>${money(c.remaining)}</td><td><span class="status-pill ${c.status==='unpaid'?'new':c.status==='completed'?'completed':'in_progress'}">${c.status==='unpaid'?'غير مدفوع':c.status==='completed'?'مكتمل':'متبقي'}</span></td>
@@ -1095,12 +1481,30 @@ window.custAddAdjSave = async function(){
 };
 
 // ---- glass calculator ----
+const GLASS_CALC_KEY = "workshop_glass_calc_v1";
 function ensureGlassState(){
+  if(!window.glassRows){
+    try{
+      const saved = JSON.parse(localStorage.getItem(GLASS_CALC_KEY));
+      if(saved && Array.isArray(saved.rows) && saved.rows.length){
+        window.glassRows = saved.rows; window.glassType = saved.type||''; window.glassPhone = saved.phone||'';
+      }
+    }catch(e){}
+  }
   if(!window.glassRows) window.glassRows = [{length:'',width:'',qty:1}];
   if(window.glassType==null) window.glassType = '';
   if(window.glassPhone==null) window.glassPhone = '';
 }
+function glassSaveState(){
+  try{ localStorage.setItem(GLASS_CALC_KEY, JSON.stringify({rows:window.glassRows, type:window.glassType, phone:window.glassPhone})); }catch(e){}
+}
 function glassRowArea(r){ return (Number(r.length)||0)/30 * (Number(r.width)||0)/30 * (Number(r.qty)||0); }
+function cmToFeetLabel(cm){
+  cm = Number(cm)||0; if(cm<=0) return '';
+  const ft = Math.floor(cm/30); const rem = Math.round(cm - ft*30);
+  if(ft<=0) return `${rem}سم`;
+  return rem>0? `${ft}فوت ${rem}سم` : `${ft}فوت`;
+}
 function glassUpdateTotal(){
   const total = window.glassRows.reduce((s,r)=>s+glassRowArea(r),0);
   const el = document.getElementById('glassTotalVal');
@@ -1110,8 +1514,10 @@ function glassTableHtml(){
   const rows = window.glassRows;
   const rowsHtml = rows.map((r,i)=>`
     <tr>
-      <td><input type="number" min="0" step="0.5" value="${esc(r.length)}" oninput="glassUpdateRow(${i},'length',this.value)"></td>
-      <td><input type="number" min="0" step="0.5" value="${esc(r.width)}" oninput="glassUpdateRow(${i},'width',this.value)"></td>
+      <td><input type="number" min="0" step="0.5" value="${esc(r.length)}" oninput="glassUpdateRow(${i},'length',this.value)">
+        <div class="hint" id="glassLenFt_${i}" style="margin-top:3px">${cmToFeetLabel(r.length)}</div></td>
+      <td><input type="number" min="0" step="0.5" value="${esc(r.width)}" oninput="glassUpdateRow(${i},'width',this.value)">
+        <div class="hint" id="glassWidFt_${i}" style="margin-top:3px">${cmToFeetLabel(r.width)}</div></td>
       <td><input type="number" min="1" step="1" value="${esc(r.qty)}" oninput="glassUpdateRow(${i},'qty',this.value)"></td>
       <td class="mono" id="glassArea_${i}">${glassRowArea(r).toFixed(2)}</td>
       <td><button class="btn sm danger" onclick="glassRemoveRow(${i})">حذف</button></td>
@@ -1129,6 +1535,7 @@ function glassTableHtml(){
   <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap">
     <button class="btn" onclick="glassAddRow()">+ إضافة صف</button>
     <button class="btn primary" onclick="glassExportShare()">📤 تصدير ومشاركة عبر واتساب</button>
+    <button class="btn" onclick="glassCopyText()">📋 نسخ نص الطلب</button>
     <button class="btn danger" onclick="glassClearAll()">مسح الكل</button>
   </div>`;
 }
@@ -1138,10 +1545,10 @@ function admGlassCalc(){
   <div style="max-width:640px">
     <div class="field"><label>نوع الزجاج</label>
       <input id="glassTypeInput" value="${esc(window.glassType)}" placeholder="مثال: زجاج سيكوريت 8 ملم شفاف"
-        oninput="window.glassType=this.value; const d=document.getElementById('glassTypeDisplay'); if(d) d.textContent=this.value||'—';">
+        oninput="window.glassType=this.value; const d=document.getElementById('glassTypeDisplay'); if(d) d.textContent=this.value||'—'; glassSaveState();">
     </div>
     <div class="field"><label>رقم واتساب محل الزجاج (اختياري)</label>
-      <input id="glassPhone" value="${esc(window.glassPhone)}" placeholder="مثال: 07701234567" oninput="window.glassPhone=this.value">
+      <input id="glassPhone" value="${esc(window.glassPhone)}" placeholder="مثال: 07701234567" oninput="window.glassPhone=this.value; glassSaveState();">
       <div class="hint">إذا تركته فاضي، رح يفتح واتساب على رقم الورشة المسجّل بالإعدادات.</div>
     </div>
     <div id="glassCalcBox">${glassTableHtml()}</div>
@@ -1151,20 +1558,39 @@ window.glassUpdateRow = function(i, field, value){
   window.glassRows[i][field] = value;
   const cell = document.getElementById('glassArea_'+i);
   if(cell) cell.textContent = glassRowArea(window.glassRows[i]).toFixed(2);
+  if(field==='length'){ const el=document.getElementById('glassLenFt_'+i); if(el) el.textContent = cmToFeetLabel(value); }
+  if(field==='width'){ const el=document.getElementById('glassWidFt_'+i); if(el) el.textContent = cmToFeetLabel(value); }
   glassUpdateTotal();
+  glassSaveState();
 };
 window.glassAddRow = function(){
   window.glassRows.push({length:'',width:'',qty:1});
   document.getElementById('glassCalcBox').innerHTML = glassTableHtml();
+  glassSaveState();
 };
 window.glassRemoveRow = function(i){
   window.glassRows.splice(i,1);
   if(!window.glassRows.length) window.glassRows = [{length:'',width:'',qty:1}];
   document.getElementById('glassCalcBox').innerHTML = glassTableHtml();
+  glassSaveState();
 };
 window.glassClearAll = function(){
   window.glassRows = [{length:'',width:'',qty:1}];
   document.getElementById('glassCalcBox').innerHTML = glassTableHtml();
+  glassSaveState();
+};
+function glassBuildText(rows, total){
+  return `السلام عليكم\nطلب قياسات زجاج\nنوع الزجاج: ${window.glassType||''}\n` +
+    rows.map((r,i)=>`${i+1}) ${r.length}×${r.width} سم × ${r.qty} = ${glassRowArea(r).toFixed(2)} فوت²`).join('\n') +
+    `\nالإجمالي: ${total.toFixed(2)} فوت²`;
+}
+window.glassCopyText = async function(){
+  const rows = window.glassRows.filter(r => Number(r.length)>0 && Number(r.width)>0 && Number(r.qty)>0);
+  if(!rows.length){ toast('أدخل قياسات صحيحة أولاً', true); return; }
+  const total = rows.reduce((s,r)=>s+glassRowArea(r),0);
+  const text = glassBuildText(rows, total);
+  try{ await navigator.clipboard.writeText(text); toast('تم نسخ النص'); }
+  catch(e){ toast('تعذّر النسخ التلقائي — انسخه يدوياً', true); }
 };
 window.glassExportShare = async function(){
   const rows = window.glassRows.filter(r => Number(r.length)>0 && Number(r.width)>0 && Number(r.qty)>0);
@@ -1192,9 +1618,7 @@ window.glassExportShare = async function(){
   </div>`;
   document.body.insertAdjacentHTML('beforeend', printHtml);
   const node = document.getElementById('glassPrintCard');
-  const waText = `السلام عليكم\nطلب قياسات زجاج\nنوع الزجاج: ${window.glassType||''}\n` +
-    rows.map((r,i)=>`${i+1}) ${r.length}×${r.width} سم × ${r.qty} = ${glassRowArea(r).toFixed(2)} فوت²`).join('\n') +
-    `\nالإجمالي: ${total.toFixed(2)} فوت²`;
+  const waText = glassBuildText(rows, total);
   try{
     const canvas = await html2canvas(node, {scale:2, backgroundColor:'#ffffff'});
     node.remove();
@@ -1225,6 +1649,7 @@ async function admSettings(){
   <div style="max-width:520px">
     ${fld({key:'workshop_name',label:'اسم الورشة'},s.workshop_name)}
     ${fld({key:'description',label:'وصف مختصر',type:'textarea'},s.description)}
+    <div class="row2">${fld({key:'founded_year',label:'سنة التأسيس (لعرض سنوات الخبرة بالرئيسية)',type:'number'},s.founded_year)}${fld({key:'projects_completed',label:'عدد المشاريع المنفذة (اختياري)',type:'number'},s.projects_completed)}</div>
     <div class="row2">${fld({key:'phone',label:'الهاتف'},s.phone)}${fld({key:'whatsapp_number',label:'رقم واتساب'},s.whatsapp_number)}</div>
     ${fld({key:'country_code',label:'رمز الدولة'},s.country_code||'+964')}
     <div class="row2">${fld({key:'governorate',label:'المحافظة'},s.governorate)}${fld({key:'address',label:'العنوان'},s.address)}</div>
@@ -1244,6 +1669,7 @@ async function admSettings(){
 window.settingsSave = async function(){
   const row = {
     workshop_name: readFld({key:'workshop_name'}), description: readFld({key:'description'}),
+    founded_year: readFld({key:'founded_year',type:'number'}), projects_completed: readFld({key:'projects_completed',type:'number'}),
     phone: readFld({key:'phone'}), whatsapp_number: readFld({key:'whatsapp_number'}),
     country_code: readFld({key:'country_code'}), governorate: readFld({key:'governorate'}),
     address: readFld({key:'address'}), work_hours: readFld({key:'work_hours'}), email: readFld({key:'email'}),
