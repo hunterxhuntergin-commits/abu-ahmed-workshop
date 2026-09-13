@@ -161,6 +161,10 @@ footer.site{border-top:1px solid var(--line);padding:26px 0;margin-top:30px;colo
 .empty-state{text-align:center;padding:50px 10px;color:var(--muted)}
 .empty-state b{display:block;color:var(--text);font-size:15px;margin-bottom:6px}
 .wa-fab{position:fixed;left:14px;bottom:76px;z-index:45;background:#25d366;color:#08240f;width:48px;height:48px;border-radius:50%;display:grid;place-items:center;font-weight:900;font-size:20px;box-shadow:0 12px 26px rgba(15,23,42,.22)}
+.glass-table{width:100%;border-collapse:collapse;margin-top:6px}
+.glass-table th,.glass-table td{border:1px solid var(--line);padding:8px 6px;text-align:center;font-size:12.5px}
+.glass-table th{background:var(--panel2);font-weight:800}
+.glass-table input{width:100%;background:transparent;border:1px solid var(--line);border-radius:8px;padding:6px;font-size:12.5px;text-align:center}
 </style>
 </head>
 <body>
@@ -168,6 +172,7 @@ footer.site{border-top:1px solid var(--line);padding:26px 0;margin-top:30px;colo
 <div id="modals"></div>
 <div id="toastHost"></div>
 
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 <script type="module">
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 
@@ -673,7 +678,7 @@ function bindPublicEvents(){
 const ADM_TABS = [
   {key:'overview',label:'نظرة عامة'},{key:'categories',label:'الأقسام'},{key:'products',label:'المنتجات'},
   {key:'orders',label:'الطلبات'},{key:'quotes',label:'طلبات الأسعار'},
-  {key:'customers',label:'الزبائن'},{key:'settings',label:'الإعدادات'}
+  {key:'customers',label:'الزبائن'},{key:'glass-calc',label:'حاسبة الزجاج'},{key:'settings',label:'الإعدادات'}
 ];
 async function getSession(){ const {data}=await sb.auth.getSession(); state.session=data.session; return state.session; }
 async function renderAdminRoute(parts, app){
@@ -691,6 +696,7 @@ async function renderAdminRoute(parts, app){
     else if(tab==='orders') target.innerHTML = await admOrders();
     else if(tab==='quotes') target.innerHTML = await admQuotes();
     else if(tab==='customers') target.innerHTML = await admCustomers();
+    else if(tab==='glass-calc') target.innerHTML = admGlassCalc();
     else if(tab==='settings') target.innerHTML = await admSettings();
     else if(tab==='change-password') target.innerHTML = admChangePassword();
   }catch(e){ console.error(e); target.innerHTML = '<div class="empty-state"><b>صار خطأ</b>'+esc(e.message)+'</div>'; }
@@ -1086,6 +1092,128 @@ window.custAddAdjSave = async function(){
   const {error} = await sb.from('customer_adjustments').insert(row);
   if(error){ toast(error.message, true); return; }
   toast('تم الحفظ'); custDetail(window.__CUST_CTX.id); render();
+};
+
+// ---- glass calculator ----
+function ensureGlassState(){
+  if(!window.glassRows) window.glassRows = [{length:'',width:'',qty:1}];
+  if(window.glassType==null) window.glassType = '';
+  if(window.glassPhone==null) window.glassPhone = '';
+}
+function glassRowArea(r){ return (Number(r.length)||0)/100 * (Number(r.width)||0)/100 * (Number(r.qty)||0); }
+function glassUpdateTotal(){
+  const total = window.glassRows.reduce((s,r)=>s+glassRowArea(r),0);
+  const el = document.getElementById('glassTotalVal');
+  if(el) el.textContent = total.toFixed(2);
+}
+function glassTableHtml(){
+  const rows = window.glassRows;
+  const rowsHtml = rows.map((r,i)=>`
+    <tr>
+      <td><input type="number" min="0" step="0.5" value="${esc(r.length)}" oninput="glassUpdateRow(${i},'length',this.value)"></td>
+      <td><input type="number" min="0" step="0.5" value="${esc(r.width)}" oninput="glassUpdateRow(${i},'width',this.value)"></td>
+      <td><input type="number" min="1" step="1" value="${esc(r.qty)}" oninput="glassUpdateRow(${i},'qty',this.value)"></td>
+      <td class="mono" id="glassArea_${i}">${glassRowArea(r).toFixed(2)}</td>
+      <td><button class="btn sm danger" onclick="glassRemoveRow(${i})">حذف</button></td>
+    </tr>`).join('');
+  const total = rows.reduce((s,r)=>s+glassRowArea(r),0);
+  return `
+  <div style="background:var(--panel);padding:14px;border-radius:12px;border:1px solid var(--line)">
+    <div style="font-weight:900;font-size:15px;margin-bottom:10px">نوع الزجاج: <span class="mono" id="glassTypeDisplay">${esc(window.glassType||'—')}</span></div>
+    <table class="glass-table">
+      <thead><tr><th>الطول (سم)</th><th>العرض (سم)</th><th>العدد</th><th>المساحة (م²)</th><th></th></tr></thead>
+      <tbody>${rowsHtml}</tbody>
+    </table>
+    <div style="margin-top:10px;font-weight:900;text-align:left">الإجمالي: <span id="glassTotalVal">${total.toFixed(2)}</span> م²</div>
+  </div>
+  <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap">
+    <button class="btn" onclick="glassAddRow()">+ إضافة صف</button>
+    <button class="btn primary" onclick="glassExportShare()">📤 تصدير ومشاركة عبر واتساب</button>
+    <button class="btn danger" onclick="glassClearAll()">مسح الكل</button>
+  </div>`;
+}
+function admGlassCalc(){
+  ensureGlassState();
+  return `<div class="adm-topbar"><h2>حاسبة الزجاج</h2></div>
+  <div style="max-width:640px">
+    <div class="field"><label>نوع الزجاج</label>
+      <input id="glassTypeInput" value="${esc(window.glassType)}" placeholder="مثال: زجاج سيكوريت 8 ملم شفاف"
+        oninput="window.glassType=this.value; const d=document.getElementById('glassTypeDisplay'); if(d) d.textContent=this.value||'—';">
+    </div>
+    <div class="field"><label>رقم واتساب محل الزجاج (اختياري)</label>
+      <input id="glassPhone" value="${esc(window.glassPhone)}" placeholder="مثال: 07701234567" oninput="window.glassPhone=this.value">
+      <div class="hint">إذا تركته فاضي، رح يفتح واتساب على رقم الورشة المسجّل بالإعدادات.</div>
+    </div>
+    <div id="glassCalcBox">${glassTableHtml()}</div>
+  </div>`;
+}
+window.glassUpdateRow = function(i, field, value){
+  window.glassRows[i][field] = value;
+  const cell = document.getElementById('glassArea_'+i);
+  if(cell) cell.textContent = glassRowArea(window.glassRows[i]).toFixed(2);
+  glassUpdateTotal();
+};
+window.glassAddRow = function(){
+  window.glassRows.push({length:'',width:'',qty:1});
+  document.getElementById('glassCalcBox').innerHTML = glassTableHtml();
+};
+window.glassRemoveRow = function(i){
+  window.glassRows.splice(i,1);
+  if(!window.glassRows.length) window.glassRows = [{length:'',width:'',qty:1}];
+  document.getElementById('glassCalcBox').innerHTML = glassTableHtml();
+};
+window.glassClearAll = function(){
+  window.glassRows = [{length:'',width:'',qty:1}];
+  document.getElementById('glassCalcBox').innerHTML = glassTableHtml();
+};
+window.glassExportShare = async function(){
+  const rows = window.glassRows.filter(r => Number(r.length)>0 && Number(r.width)>0 && Number(r.qty)>0);
+  if(!rows.length){ toast('أدخل قياسات صحيحة أولاً', true); return; }
+  if(!(window.glassPhone||'').trim()) await getSettings();
+  let total = 0;
+  const trs = rows.map((r,i)=>{
+    const area = glassRowArea(r); total += area;
+    return `<tr><td style="padding:8px;border:1px solid #e2e8f0">${i+1}</td><td style="padding:8px;border:1px solid #e2e8f0">${esc(r.length)}</td><td style="padding:8px;border:1px solid #e2e8f0">${esc(r.width)}</td><td style="padding:8px;border:1px solid #e2e8f0">${esc(r.qty)}</td><td style="padding:8px;border:1px solid #e2e8f0">${area.toFixed(2)}</td></tr>`;
+  }).join('');
+  const printHtml = `<div id="glassPrintCard" style="position:fixed;left:-9999px;top:0;width:420px;background:#fff;padding:20px;font-family:Tajawal,sans-serif;direction:rtl;color:#0F172A">
+    <div style="font-weight:900;font-size:18px;margin-bottom:4px">طلب قياسات زجاج</div>
+    <div style="font-weight:700;font-size:14px;color:#0EA5E9;margin-bottom:14px">نوع الزجاج: ${esc(window.glassType||'—')}</div>
+    <table style="width:100%;border-collapse:collapse;font-size:13px">
+      <thead><tr style="background:#F1F5F9">
+        <th style="padding:8px;border:1px solid #e2e8f0">#</th>
+        <th style="padding:8px;border:1px solid #e2e8f0">الطول(سم)</th>
+        <th style="padding:8px;border:1px solid #e2e8f0">العرض(سم)</th>
+        <th style="padding:8px;border:1px solid #e2e8f0">العدد</th>
+        <th style="padding:8px;border:1px solid #e2e8f0">المساحة(م²)</th>
+      </tr></thead>
+      <tbody>${trs}</tbody>
+    </table>
+    <div style="margin-top:12px;font-weight:900;font-size:15px;text-align:left">الإجمالي: ${total.toFixed(2)} م²</div>
+  </div>`;
+  document.body.insertAdjacentHTML('beforeend', printHtml);
+  const node = document.getElementById('glassPrintCard');
+  const waText = `طلب قياسات زجاج\nنوع الزجاج: ${window.glassType||''}\n` +
+    rows.map((r,i)=>`${i+1}) ${r.length}×${r.width} سم × ${r.qty} = ${glassRowArea(r).toFixed(2)} م²`).join('\n') +
+    `\nالإجمالي: ${total.toFixed(2)} م²`;
+  try{
+    const canvas = await html2canvas(node, {scale:2, backgroundColor:'#ffffff'});
+    node.remove();
+    canvas.toBlob(async (blob)=>{
+      if(!blob){ toast('صار خطأ بإنشاء الصورة', true); return; }
+      const file = new File([blob], 'قياسات-زجاج.png', {type:'image/png'});
+      if(navigator.canShare && navigator.canShare({files:[file]})){
+        try{ await navigator.share({files:[file], title:'قياسات زجاج', text: waText}); return; }
+        catch(e){ /* المستخدم ألغى المشاركة أو فشلت — نكمل بالطريقة البديلة */ }
+      }
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a'); a.href = url; a.download = 'قياسات-زجاج.png'; a.click();
+      URL.revokeObjectURL(url);
+      const phone = (window.glassPhone||'').trim();
+      const link = phone ? waLinkToPhone(phone, waText) : waLinkWorkshop(waText);
+      if(link) window.open(link, '_blank');
+      toast('تم تنزيل الصورة — أرفقها يدوياً بمحادثة واتساب اللي فتحناها');
+    }, 'image/png');
+  }catch(e){ node.remove(); console.error(e); toast('صار خطأ بالتصدير', true); }
 };
 
 // ---- settings ----
