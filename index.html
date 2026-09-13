@@ -136,14 +136,21 @@ table.admtbl td{padding:9px 8px;border-bottom:1px solid var(--line);vertical-ali
 .status-pill.completed,.status-pill.quoted{color:#15803D;border-color:rgba(21,128,61,.3)}
 .status-pill.cancelled,.status-pill.closed{color:#64748B}
 /* admin shell */
-.adm-shell{display:grid;grid-template-columns:190px 1fr;min-height:100vh;align-content:start}
-@media(max-width:760px){.adm-shell{grid-template-columns:1fr}}
+.adm-shell{display:grid;grid-template-columns:190px minmax(0,1fr);min-height:100vh;align-content:start}
+@media(max-width:760px){.adm-shell{grid-template-columns:minmax(0,1fr)}}
 .adm-side{border-left:1px solid var(--line);background:var(--panel);padding:16px 10px;position:sticky;top:0;height:100vh;overflow:auto}
-@media(max-width:760px){.adm-side{position:static;height:auto;display:flex;align-items:center;overflow-x:auto;padding:10px;gap:4px;border-left:0;border-bottom:1px solid var(--line)}}
+.adm-title{font-weight:900;padding:8px 10px 16px}
+.adm-side-sep{margin-top:10px}
+@media(max-width:760px){
+  .adm-side{position:static;height:auto;display:flex;align-items:center;overflow-x:auto;padding:10px 14px;gap:4px;border-left:0;border-bottom:1px solid var(--line)}
+  .adm-side>*{flex-shrink:0;white-space:nowrap}
+  .adm-title{padding:8px 12px}
+  .adm-side-sep{margin-top:0}
+}
 .adm-side a{display:block;padding:10px 12px;border-radius:10px;font-size:13px;font-weight:700;color:var(--muted);white-space:nowrap}
 .adm-side a.active{background:var(--accent);color:#ffffff}
-.adm-main{padding:20px}
-.adm-topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+.adm-main{padding:20px;min-width:0}
+.adm-topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;flex-wrap:wrap;gap:10px}
 .adm-topbar h2{margin:0;font-size:19px;font-weight:900}
 .stat-card{border:1px solid var(--line);border-radius:14px;padding:16px;background:var(--panel)}
 .stat-card b{font-size:24px;display:block;margin-top:4px}
@@ -1067,11 +1074,11 @@ window.adminLogout = async function(){ teardownOrderAlerts(); await sb.auth.sign
 function adminShell(tab, content){
   return `<div class="adm-shell">
     <aside class="adm-side">
-      <div style="font-weight:900;padding:8px 10px 16px">لوحة التحكم</div>
+      <div class="adm-title">لوحة التحكم</div>
       ${ADM_TABS.map(t=>`<a href="#/${ADMIN_ROUTE}/${t.key}" class="${tab===t.key?'active':''}">${t.label}${tabBadge(t)}</a>`).join('')}
       <a href="#/${ADMIN_ROUTE}/change-password" class="${tab==='change-password'?'active':''}">تغيير كلمة المرور</a>
       <a onclick="adminLogout()" style="color:var(--red);cursor:pointer">تسجيل خروج</a>
-      <a href="#/" style="margin-top:10px">↩ الموقع العام</a>
+      <a href="#/" class="adm-side-sep">↩ الموقع العام</a>
     </aside>
     <main class="adm-main" id="admContent">${content}</main>
   </div>`;
