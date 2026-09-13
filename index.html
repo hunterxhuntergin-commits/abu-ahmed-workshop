@@ -9,9 +9,9 @@
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#12161a; --panel:#1b2126; --panel2:#20272e; --line:rgba(255,255,255,.09);
-  --text:#eef1f3; --muted:#93a2ab; --accent:#c9884a; --accent2:#7fa0b3;
-  --green:#4caf7d; --red:#e2685f; --radius:14px;
+  --bg:#F8FAFC; --panel:#ffffff; --panel2:#F1F5F9; --line:rgba(15,23,42,.10);
+  --text:#0F172A; --muted:#64748B; --accent:#38BDF8; --accent2:#0EA5E9;
+  --green:#16A34A; --red:#DC2626; --radius:14px;
 }
 *{box-sizing:border-box}
 html[data-admin-light="1"]{--bg:#f3f5f6;--panel:#fff;--panel2:#f7f8f9;--line:#e4e8ea;--text:#171b1e;--muted:#66727a}
@@ -22,20 +22,20 @@ button,input,select,textarea{font-family:inherit;color:inherit}
 img{max-width:100%;display:block}
 .wrap{max-width:1100px;margin:0 auto;padding:0 16px}
 /* header */
-header.site{position:sticky;top:0;z-index:40;background:rgba(18,22,26,.9);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+header.site{position:sticky;top:0;z-index:40;background:rgba(248,250,252,.88);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
 .hbar{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;max-width:1100px;margin:0 auto}
 .brand{font-weight:900;font-size:19px;display:flex;align-items:center;gap:8px}
-.brand .mark{width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,var(--accent),#8a5a28);display:grid;place-items:center;font-weight:900;color:#12161a}
+.brand .mark{width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,var(--accent),#0284C7);display:grid;place-items:center;font-weight:900;color:#ffffff}
 .nav{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}
 .nav::-webkit-scrollbar{display:none}
 .nav a{padding:9px 13px;border-radius:999px;font-size:13px;font-weight:700;color:var(--muted);white-space:nowrap}
 .nav a.active,.nav a:hover{color:var(--text);background:var(--panel2)}
 .icon-btn{border:1px solid var(--line);background:var(--panel);color:var(--text);border-radius:12px;width:42px;height:42px;display:grid;place-items:center;cursor:pointer;position:relative;flex:0 0 auto}
-.cart-badge{position:absolute;top:-6px;left:-6px;background:var(--accent);color:#12161a;font-size:10px;font-weight:900;border-radius:99px;min-width:18px;height:18px;display:grid;place-items:center;padding:0 4px}
+.cart-badge{position:absolute;top:-6px;left:-6px;background:var(--accent);color:#ffffff;font-size:10px;font-weight:900;border-radius:99px;min-width:18px;height:18px;display:grid;place-items:center;padding:0 4px}
 /* buttons */
 .btn{border:1px solid var(--line);background:var(--panel2);color:var(--text);border-radius:12px;padding:11px 16px;font-weight:800;font-size:13px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px}
-.btn:hover{border-color:rgba(201,136,74,.5)}
-.btn.primary{background:var(--accent);border-color:var(--accent);color:#171308}
+.btn:hover{border-color:rgba(56,189,248,.5)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#ffffff}
 .btn.primary:hover{filter:brightness(1.08)}
 .btn.danger{color:#ffb4ac;border-color:rgba(226,104,95,.4);background:rgba(226,104,95,.08)}
 .btn.block{width:100%}
@@ -53,18 +53,18 @@ header.site{position:sticky;top:0;z-index:40;background:rgba(18,22,26,.9);backdr
 @media(max-width:760px){.grid.cols-3,.grid.cols-4{grid-template-columns:1fr 1fr}}
 /* hero */
 .hero{position:relative;padding:52px 0 40px;overflow:hidden;background:
-  repeating-linear-gradient(115deg, rgba(255,255,255,.025) 0 2px, transparent 2px 26px),
-  radial-gradient(circle at 85% 0%, rgba(201,136,74,.16), transparent 45%), var(--bg)}
+  repeating-linear-gradient(115deg, rgba(15,23,42,.035) 0 2px, transparent 2px 26px),
+  radial-gradient(circle at 85% 0%, rgba(56,189,248,.16), transparent 45%), var(--bg)}
 .hero h1{font-size:34px;line-height:1.25;margin:0 0 10px;font-weight:900;max-width:520px}
 .hero .accent{color:var(--accent)}
 .hero p{color:var(--muted);max-width:460px;font-size:14px;margin:0 0 20px}
 .hero-actions{display:flex;gap:10px;flex-wrap:wrap}
 /* category tile */
 .cat-tile{border:1px solid var(--line);border-radius:18px;background:var(--panel);overflow:hidden;cursor:pointer;transition:.15s border-color,.15s transform}
-.cat-tile:hover{border-color:rgba(201,136,74,.45);transform:translateY(-2px)}
+.cat-tile:hover{border-color:rgba(56,189,248,.45);transform:translateY(-2px)}
 .cat-tile .thumb{aspect-ratio:4/3;background:var(--panel2);position:relative;overflow:hidden}
 .cat-tile .thumb img{width:100%;height:100%;object-fit:cover}
-.cat-tile .thumb .ph{position:absolute;inset:0;background:repeating-linear-gradient(125deg,rgba(255,255,255,.05) 0 3px,transparent 3px 22px)}
+.cat-tile .thumb .ph{position:absolute;inset:0;background:repeating-linear-gradient(125deg,rgba(15,23,42,.06) 0 3px,transparent 3px 22px)}
 .cat-tile .body{padding:13px 14px}
 .cat-tile .body b{font-size:15px;font-weight:800}
 .cat-tile .body small{color:var(--muted);font-size:11.5px;display:block;margin-top:4px;line-height:1.7}
@@ -72,8 +72,8 @@ header.site{position:sticky;top:0;z-index:40;background:rgba(18,22,26,.9);backdr
 .prod-card{border:1px solid var(--line);border-radius:16px;background:var(--panel);overflow:hidden;cursor:pointer;display:flex;flex-direction:column}
 .prod-card .thumb{aspect-ratio:1/1;background:var(--panel2);position:relative}
 .prod-card .thumb img{width:100%;height:100%;object-fit:cover}
-.prod-card .thumb .ph{position:absolute;inset:0;background:repeating-linear-gradient(125deg,rgba(255,255,255,.05) 0 3px,transparent 3px 22px)}
-.prod-card .badge{position:absolute;top:8px;right:8px;background:rgba(18,22,26,.85);border:1px solid var(--line);color:#e7d5ae;font-size:9.5px;font-weight:900;padding:4px 8px;border-radius:999px}
+.prod-card .thumb .ph{position:absolute;inset:0;background:repeating-linear-gradient(125deg,rgba(15,23,42,.06) 0 3px,transparent 3px 22px)}
+.prod-card .badge{position:absolute;top:8px;right:8px;background:rgba(15,23,42,.85);border:1px solid var(--line);color:#BAE6FD;font-size:9.5px;font-weight:900;padding:4px 8px;border-radius:999px}
 .prod-card .body{padding:11px 12px;display:flex;flex-direction:column;gap:4px;flex:1}
 .prod-card .code{color:var(--accent2);font-size:10px;font-weight:700}
 .prod-card b{font-size:13.5px;font-weight:800}
@@ -82,7 +82,7 @@ header.site{position:sticky;top:0;z-index:40;background:rgba(18,22,26,.9);backdr
 /* filters bar */
 .filters{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;margin-bottom:16px}
 .chip{border:1px solid var(--line);background:var(--panel);padding:8px 14px;border-radius:999px;font-size:12.5px;font-weight:700;white-space:nowrap;cursor:pointer;color:var(--muted)}
-.chip.active{background:var(--accent);border-color:var(--accent);color:#171308}
+.chip.active{background:var(--accent);border-color:var(--accent);color:#ffffff}
 /* product detail */
 .pd-wrap{display:grid;grid-template-columns:1fr 1fr;gap:28px}
 @media(max-width:760px){.pd-wrap{grid-template-columns:1fr}}
@@ -100,10 +100,10 @@ header.site{position:sticky;top:0;z-index:40;background:rgba(18,22,26,.9);backdr
 .summary-line{display:flex;justify-content:space-between;font-size:13px;padding:5px 0;color:var(--muted)}
 .summary-line b{color:var(--text)}
 /* cart */
-.cart-fab{position:fixed;left:14px;bottom:16px;z-index:50;border:1px solid var(--line);background:var(--panel);color:var(--text);border-radius:999px;padding:13px 17px;font-weight:900;box-shadow:0 16px 36px rgba(0,0,0,.4);cursor:pointer;display:flex;align-items:center;gap:8px}
-.cart-fab span{background:var(--accent);color:#171308;border-radius:99px;min-width:20px;height:20px;display:grid;place-items:center;font-size:11px;padding:0 5px}
-.overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:60;padding:14px;overflow:auto;display:flex;align-items:flex-start;justify-content:center}
-.sheet{max-width:520px;width:100%;margin:24px auto;background:var(--panel);border:1px solid var(--line);border-radius:22px;padding:20px;box-shadow:0 30px 80px rgba(0,0,0,.5)}
+.cart-fab{position:fixed;left:14px;bottom:16px;z-index:50;border:1px solid var(--line);background:var(--panel);color:var(--text);border-radius:999px;padding:13px 17px;font-weight:900;box-shadow:0 16px 36px rgba(15,23,42,.16);cursor:pointer;display:flex;align-items:center;gap:8px}
+.cart-fab span{background:var(--accent);color:#ffffff;border-radius:99px;min-width:20px;height:20px;display:grid;place-items:center;font-size:11px;padding:0 5px}
+.overlay{position:fixed;inset:0;background:rgba(15,23,42,.55);z-index:60;padding:14px;overflow:auto;display:flex;align-items:flex-start;justify-content:center}
+.sheet{max-width:520px;width:100%;margin:24px auto;background:var(--panel);border:1px solid var(--line);border-radius:22px;padding:20px;box-shadow:0 30px 80px rgba(15,23,42,.22)}
 .sheet.wide{max-width:760px}
 .sheet-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
 .sheet-head h3{margin:0;font-size:18px;font-weight:900}
@@ -121,10 +121,10 @@ table.admtbl{width:100%;border-collapse:collapse;font-size:12.5px}
 table.admtbl th{text-align:right;color:var(--muted);font-weight:700;padding:8px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
 table.admtbl td{padding:9px 8px;border-bottom:1px solid var(--line);vertical-align:middle}
 .status-pill{display:inline-flex;padding:4px 9px;border-radius:999px;font-size:10.5px;font-weight:800;border:1px solid var(--line)}
-.status-pill.new{color:#e7d5ae;border-color:rgba(199,164,94,.35)}
-.status-pill.in_progress,.status-pill.contacted{color:#8fc2e0;border-color:rgba(143,194,224,.35)}
-.status-pill.completed,.status-pill.quoted{color:#7fe2b5;border-color:rgba(15,166,109,.35)}
-.status-pill.cancelled,.status-pill.closed{color:#9aa29d}
+.status-pill.new{color:#B45309;border-color:rgba(180,83,9,.3)}
+.status-pill.in_progress,.status-pill.contacted{color:#0369A1;border-color:rgba(56,189,248,.35)}
+.status-pill.completed,.status-pill.quoted{color:#15803D;border-color:rgba(21,128,61,.3)}
+.status-pill.cancelled,.status-pill.closed{color:#64748B}
 /* admin shell */
 .adm-shell{display:grid;grid-template-columns:190px 1fr;min-height:100vh}
 @media(max-width:760px){.adm-shell{grid-template-columns:1fr}}
@@ -147,14 +147,14 @@ table.admtbl td{padding:9px 8px;border-bottom:1px solid var(--line);vertical-ali
 .img-grid .im{position:relative;border-radius:9px;overflow:hidden;aspect-ratio:1/1;background:var(--panel2)}
 .img-grid .im img{width:100%;height:100%;object-fit:cover}
 .img-grid .im button{position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:6px;border:0;background:rgba(0,0,0,.6);color:#fff;font-size:12px;cursor:pointer}
-.toast{position:fixed;bottom:18px;right:18px;z-index:80;background:var(--panel);border:1px solid var(--line);color:var(--text);padding:12px 16px;border-radius:12px;font-size:13px;font-weight:700;box-shadow:0 10px 30px rgba(0,0,0,.4)}
-.toast.err{border-color:rgba(226,104,95,.5);color:#ffb4ac}
-.spin{width:16px;height:16px;border-radius:50%;border:2px solid rgba(255,255,255,.25);border-top-color:var(--text);animation:sp .7s linear infinite;display:inline-block}
+.toast{position:fixed;bottom:18px;right:18px;z-index:80;background:var(--panel);border:1px solid var(--line);color:var(--text);padding:12px 16px;border-radius:12px;font-size:13px;font-weight:700;box-shadow:0 10px 30px rgba(15,23,42,.18)}
+.toast.err{border-color:rgba(220,38,38,.4);color:#DC2626}
+.spin{width:16px;height:16px;border-radius:50%;border:2px solid rgba(148,163,184,.35);border-top-color:currentColor;animation:sp .7s linear infinite;display:inline-block}
 @keyframes sp{to{transform:rotate(360deg)}}
 footer.site{border-top:1px solid var(--line);padding:26px 0;margin-top:30px;color:var(--muted);font-size:12px;text-align:center}
 .empty-state{text-align:center;padding:50px 10px;color:var(--muted)}
 .empty-state b{display:block;color:var(--text);font-size:15px;margin-bottom:6px}
-.wa-fab{position:fixed;left:14px;bottom:76px;z-index:45;background:#25d366;color:#08240f;width:48px;height:48px;border-radius:50%;display:grid;place-items:center;font-weight:900;font-size:20px;box-shadow:0 12px 26px rgba(0,0,0,.4)}
+.wa-fab{position:fixed;left:14px;bottom:76px;z-index:45;background:#25d366;color:#08240f;width:48px;height:48px;border-radius:50%;display:grid;place-items:center;font-weight:900;font-size:20px;box-shadow:0 12px 26px rgba(15,23,42,.22)}
 </style>
 </head>
 <body>
@@ -170,6 +170,8 @@ const SUPABASE_ANON_KEY = "sb_publishable_EAV6Xz5dUouN8abhz3HbVQ_DnS3XcSi";
 const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 const CART_KEY = "workshop_cart_v1";
+// مسار لوحة التحكم — غيّره لأي كلمة تفضلها (بدون فراغات)، هذا هو المكان الوحيد اللي تحتاج تعدله
+const ADMIN_ROUTE = "qwert-2026";
 const state = { settings:null, categories:[], session:null, cart: loadCart() };
 
 function loadCart(){ try{ return JSON.parse(localStorage.getItem(CART_KEY))||[]; }catch(e){ return []; } }
@@ -187,30 +189,44 @@ function toast(msg, isErr){
 function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function money(n){ n = Number(n||0); return n.toLocaleString('ar-IQ',{maximumFractionDigits:0}) + ' د.ع'; }
 
-// -------------------- pricing --------------------
-function roundDim(v, rule){
-  if(rule === 'round_up_10cm'){ return Math.ceil(v/10)*10; }
-  return v;
+// -------------------- pricing engine --------------------
+// قاعدة تقريب الورشة: كل بُعد يُعامل بشكل مستقل.
+// إذا كان الباقي بعد أقرب 10سم أقل من 5 -> يبقى القياس كما هو (بدون تقريب لأسفل).
+// إذا كان 5 أو أكثر -> يُرفع للعشرة التالية فقط.
+function roundPricingDim(v, enabled){
+  v = Number(v||0);
+  if(!enabled) return v;
+  const rem = v % 10;
+  if(rem === 0) return v;
+  if(rem < 5) return v;
+  return v + (10 - rem);
 }
+// محرك تسعير مركزي: يرجع القياس/المساحة الفعلية (بدون تقريب) والمحتسبة للتسعير (بعد التقريب إن كان مفعّلاً) منفصلتين.
+// الكاونترات (product.no_rounding === true) لا تُقرَّب أبداً مهما كان إعداد rounding_rule.
 function calcLine(product, opts){
   const method = product.pricing_method;
   const price = Number(product.unit_price||0);
   const qty = Number(opts.quantity||1);
+  const roundingEnabled = product.rounding_rule === 'round_up_10cm' && !product.no_rounding;
   if(method === 'piece'){
-    return { areaOrLength: qty, lineTotal: price*qty };
+    return { areaOrLength: qty, lineTotal: price*qty, actualArea:null, pricingArea:null, actualW:null, actualH:null, pricingW:null, pricingH:null };
   }
   if(method === 'sqm'){
-    const w = roundDim(Number(opts.widthCm||0), product.rounding_rule)/100;
-    const h = roundDim(Number(opts.heightCm||0), product.rounding_rule)/100;
-    const area = w*h*qty;
-    return { areaOrLength: area, lineTotal: price*area };
+    const actualW = Number(opts.widthCm||0), actualH = Number(opts.heightCm||0);
+    const pricingWcm = roundPricingDim(actualW, roundingEnabled);
+    const pricingHcm = roundPricingDim(actualH, roundingEnabled);
+    const actualArea = (actualW/100)*(actualH/100)*qty;
+    const pricingArea = (pricingWcm/100)*(pricingHcm/100)*qty;
+    return { areaOrLength: pricingArea, lineTotal: price*pricingArea, actualArea, pricingArea, actualW, actualH, pricingW:pricingWcm, pricingH:pricingHcm };
   }
   if(method === 'linear_meter'){
-    const len = roundDim(Number(opts.widthCm||0), product.rounding_rule)/100;
-    const total = len*qty;
-    return { areaOrLength: total, lineTotal: price*total };
+    const actualLenCm = Number(opts.widthCm||0);
+    const pricingLenCm = roundPricingDim(actualLenCm, roundingEnabled);
+    const actualLen = (actualLenCm/100)*qty;
+    const pricingLen = (pricingLenCm/100)*qty;
+    return { areaOrLength: pricingLen, lineTotal: price*pricingLen, actualArea:actualLen, pricingArea:pricingLen, actualW:actualLenCm, pricingW:pricingLenCm, actualH:null, pricingH:null };
   }
-  return { areaOrLength: 0, lineTotal: 0 };
+  return { areaOrLength: 0, lineTotal: 0, actualArea:null, pricingArea:null };
 }
 
 // -------------------- cart --------------------
@@ -220,9 +236,11 @@ function addToCart(product, opts){
     id: uid(), productId: product.id, name: product.name, code: product.code,
     image: (product.product_images&&product.product_images[0]&&product.product_images[0].url)||null,
     pricingMethod: product.pricing_method, unitPrice: Number(product.unit_price||0),
-    roundingRule: product.rounding_rule, quantity: Number(opts.quantity||1),
+    roundingRule: product.rounding_rule, noRounding: !!product.no_rounding, quantity: Number(opts.quantity||1),
     widthCm: opts.widthCm||null, heightCm: opts.heightCm||null, note: opts.note||'',
-    areaOrLength: calc.areaOrLength, lineTotal: calc.lineTotal
+    areaOrLength: calc.areaOrLength, lineTotal: calc.lineTotal,
+    actualArea: calc.actualArea, pricingArea: calc.pricingArea,
+    pricingW: calc.pricingW||null, pricingH: calc.pricingH||null
   };
   state.cart.push(item); saveCart();
   toast('أُضيف للسلة');
@@ -257,7 +275,7 @@ async function render(){
   window.scrollTo(0,0);
   const parts = hash.split('/').filter(Boolean);
   try{
-    if(parts[0]==='admin'){ return renderAdminRoute(parts, app); }
+    if(parts[0]===ADMIN_ROUTE){ return renderAdminRoute(parts, app); }
     if(!parts.length) return app.innerHTML = await pageHome();
     if(parts[0]==='category') return app.innerHTML = await pageCategory(parts[1]);
     if(parts[0]==='product') return app.innerHTML = await pageProduct(parts[1]);
@@ -289,9 +307,14 @@ function header(activePath){
 }
 function footer(){
   const s = state.settings||{};
+  const socials = [];
+  if(s.facebook_url) socials.push(`<a href="${esc(s.facebook_url)}" target="_blank" style="margin:0 6px">فيسبوك</a>`);
+  if(s.instagram_url) socials.push(`<a href="${esc(s.instagram_url)}" target="_blank" style="margin:0 6px">انستغرام</a>`);
   return `<footer class="site wrap">
     ${s.phone? `هاتف: <span class="mono">${esc(s.phone)}</span> · `:''}${s.address? esc(s.address):''}
+    ${socials.length? `<div style="margin-top:8px">${socials.join(' · ')}</div>`:''}
     <div style="margin-top:6px">© ${new Date().getFullYear()} ${esc(s.workshop_name||'أبو أحمد للألمنيوم')}</div>
+    <div style="margin-top:10px;font-size:11px;opacity:.75">برمجة وتطوير <a href="https://wa.me/9647707436380" target="_blank" style="text-decoration:underline">صباح الموسوي</a></div>
   </footer>`;
 }
 function waFab(){
@@ -300,6 +323,20 @@ function waFab(){
   const num = (s.country_code||'')+String(s.whatsapp_number).replace(/^0+/,'');
   return `<a class="wa-fab" target="_blank" href="https://wa.me/${num.replace(/\D/g,'')}">📞</a>`;
 }
+// رابط واتساب لرقم الورشة (للاستفسارات) مع رسالة جاهزة معبأة مسبقاً — لا يرسل تلقائياً، فقط يفتح المحادثة
+function waLinkWorkshop(message){
+  const s = state.settings||{};
+  if(!s.whatsapp_number) return null;
+  const num = ((s.country_code||'')+String(s.whatsapp_number).replace(/^0+/,'')).replace(/\D/g,'');
+  return `https://wa.me/${num}?text=${encodeURIComponent(message)}`;
+}
+// رابط واتساب لرقم زبون محدد (لإرسال كشف حساب/إشعار دفعة) — يفتح المحادثة فقط، الموظف يضغط إرسال بنفسه
+function waLinkToPhone(phone, message){
+  if(!phone) return null;
+  const digits = String(phone).replace(/^0+/,'').replace(/\D/g,'');
+  return `https://wa.me/${digits}?text=${encodeURIComponent(message)}`;
+}
+function unitAr(u){ return {piece:'قطعة', sqm:'م²', meter:'م.ط'}[u] || u||''; }
 function catImg(c){ return c.image_url? `<img src="${esc(c.image_url)}">` : `<div class="ph"></div>`; }
 function prodImg(p){ const url = p.product_images&&p.product_images[0]&&p.product_images[0].url; return url? `<img src="${esc(url)}">` : `<div class="ph"></div>`; }
 function priceLabel(p){
@@ -390,6 +427,8 @@ async function pageProduct(slug){
           <div id="pdLiveTotal" class="summary-box" style="text-align:center;font-weight:900;font-size:16px">أدخل البيانات لحساب السعر</div>
           <button class="btn primary block" onclick="pdAddToCart()">أضف للسلة</button>
         </div>`:`<a class="btn primary block" href="#/quote">اطلب عرض سعر لهذا المنتج</a>`}
+        ${(()=>{ const link = waLinkWorkshop(`السلام عليكم،\nأرغب بالاستفسار عن المنتج:\n${p.name}\nالكود: ${p.code}`);
+          return link? `<a class="btn block" style="margin-top:8px;border-color:rgba(37,211,102,.4);color:#1ba851" target="_blank" href="${link}">💬 استفسار عن هذا المنتج عبر واتساب</a>` : ''; })()}
       </div>
     </div>
   </section>${footer()} ${waFab()}`;
@@ -412,7 +451,14 @@ function pdLiveUpdate(){
   if(p.pricing_method==='sqm' && (!w||!h)) { box.textContent='أدخل القياسات أولاً'; return; }
   if(p.pricing_method==='linear_meter' && !w) { box.textContent='أدخل القياس أولاً'; return; }
   const calc = calcLine(p, {quantity:qty, widthCm:w, heightCm:h});
-  box.textContent = 'الإجمالي: ' + money(calc.lineTotal);
+  const roundingApplied = p.pricing_method==='sqm'? (calc.pricingW!==Number(w||0) || calc.pricingH!==Number(h||0))
+    : p.pricing_method==='linear_meter'? (calc.pricingW!==Number(w||0)) : false;
+  let extra = '';
+  if(roundingApplied){
+    if(p.pricing_method==='sqm') extra = `<div style="font-size:11px;color:var(--muted);font-weight:600;margin-top:4px">القياس الفعلي: ${esc(w)}×${esc(h)} سم · القياس المحتسب للتسعير: ${calc.pricingW}×${calc.pricingH} سم</div>`;
+    else extra = `<div style="font-size:11px;color:var(--muted);font-weight:600;margin-top:4px">الطول الفعلي: ${esc(w)} سم · الطول المحتسب للتسعير: ${calc.pricingW} سم</div>`;
+  }
+  box.innerHTML = 'الإجمالي: ' + money(calc.lineTotal) + extra;
 }
 async function pageWorks(){
   await getSettings();
@@ -464,13 +510,24 @@ window.submitQuote = async function(){
       const {error:upErr}=await sb.storage.from('quote-images').upload(path,file);
       if(!upErr){ image_url = sb.storage.from('quote-images').getPublicUrl(path).data.publicUrl; }
     }
+    const width=document.getElementById('qW').value||null, height=document.getElementById('qH').value||null;
+    const gov=document.getElementById('qGov').value.trim()||null, area=document.getElementById('qArea').value.trim()||null;
+    const notes=document.getElementById('qNotes').value.trim()||null;
     const row={ name, phone, whatsapp: document.getElementById('qWa').value.trim()||null, work_type,
-      width_cm: document.getElementById('qW').value||null, height_cm: document.getElementById('qH').value||null,
-      governorate: document.getElementById('qGov').value.trim()||null, area: document.getElementById('qArea').value.trim()||null,
-      notes: document.getElementById('qNotes').value.trim()||null, image_url };
+      width_cm: width, height_cm: height, governorate: gov, area: area, notes: notes, image_url };
     const {error}=await sb.from('quote_requests').insert(row);
     if(error) throw error;
-    document.querySelector('#app .section.wrap').innerHTML = `<div class="empty-state"><b>تم إرسال طلبك ✅</b>راح نتواصل وياك قريبًا لتحديد السعر.<div style="margin-top:14px"><a class="btn primary" href="#/">الرجوع للرئيسية</a></div></div>`;
+    const waMsg = [
+      'السلام عليكم،', 'يوجد طلب عرض سعر جديد من الموقع:', '',
+      `الاسم: ${name}`, `الهاتف: ${phone}`, `نوع الشغل: ${work_type}`,
+      (width||height)? `المقاس: ${width||'-'} × ${height||'-'} سم` : null,
+      gov? `المحافظة: ${gov}` : null, area? `المنطقة: ${area}` : null, notes? `ملاحظات: ${notes}` : null
+    ].filter(Boolean).join('\n');
+    const waLink = waLinkWorkshop(waMsg);
+    if(waLink) window.open(waLink, '_blank');
+    document.querySelector('#app .section.wrap').innerHTML = `<div class="empty-state"><b>تم إرسال طلبك ✅</b>راح نتواصل وياك قريبًا لتحديد السعر.
+      ${waLink? `<div style="margin-top:14px"><a class="btn block" style="border-color:rgba(37,211,102,.4);color:#1ba851" target="_blank" href="${waLink}">💬 لو ما انفتح واتساب تلقائياً، اضغط هنا</a></div>`:''}
+      <div style="margin-top:10px"><a class="btn primary" href="#/">الرجوع للرئيسية</a></div></div>`;
   }catch(e){ toast('صار خطأ: '+e.message, true); btn.disabled=false; btn.textContent='إرسال الطلب'; }
 };
 async function pageTrack(){
@@ -510,6 +567,21 @@ window.doTrack = async function(){
 function statusAr(s){ return {new:'جديد',in_progress:'قيد التنفيذ',completed:'مكتمل',cancelled:'ملغي'}[s]||s; }
 function payAr(s){ return {pending:'بانتظار الدفع',paid:'مدفوع',failed:'فشل',cod:'دفع عند الاستلام',refunded:'مسترجع'}[s]||s; }
 
+// -------------------- payment providers (modular) --------------------
+// كل مزود دفع إلكتروني حقيقي (مستقبلاً) يُضاف هنا كمفتاح جديد بنفس الشكل:
+// zaincash: { label:'زين كاش', async createPayment(order, amount){ /* نداء API الحقيقي هنا */ return {status:'pending', reference:'...'}; } }
+// هذا يخلي الموقع غير مرتبط بمزود دفع محدد، ويسهل إضافة مزود لاحقاً بدون إعادة بناء المتجر.
+const PaymentProviders = {};
+function getActiveElectronicProvider(){
+  const s = state.settings||{};
+  if(!s.electronic_payment_enabled) return null;
+  const key = s.payment_provider||'';
+  if(PaymentProviders[key]) return PaymentProviders[key];
+  // لا يوجد مزود مبرمج فعلياً بعد؛ نعرض خياراً عاماً بالاسم الذي يحدده المدير ونعلّم الطلب "بانتظار الدفع" لحين ربط مزود حقيقي
+  if(s.payment_provider_name) return { label: s.payment_provider_name, async createPayment(){ return {status:'pending', reference:null}; } };
+  return null;
+}
+
 // -------------------- cart & checkout modals --------------------
 window.openCart = function(){
   const modals=document.getElementById('modals');
@@ -543,8 +615,17 @@ window.openCheckout = async function(){
       <div class="field"><label>المنطقة</label><input id="coArea"></div>
       <div class="field"><label>تفاصيل العنوان</label><textarea id="coAddr"></textarea></div>
       <div class="field"><label>ملاحظات</label><textarea id="coNotes"></textarea></div>
-      <div class="summary-box"><div class="summary-line"><span>الإجمالي</span><b>${money(cartTotal())}</b></div>
-      <div class="summary-line"><span>الدفع</span><b>عند الاستلام</b></div></div>
+      ${(()=>{
+        const provider = getActiveElectronicProvider();
+        const codOn = state.settings.cod_enabled!==false;
+        const methods = [];
+        if(codOn) methods.push({value:'cod', label:'الدفع عند الاستلام'});
+        if(provider) methods.push({value:'electronic', label:provider.label});
+        if(!methods.length) methods.push({value:'cod', label:'الدفع عند الاستلام'});
+        if(methods.length===1) return `<div class="summary-box"><div class="summary-line"><span>الدفع</span><b>${esc(methods[0].label)}</b></div></div><input type="hidden" id="coPayMethodFixed" value="${methods[0].value}">`;
+        return `<div class="field"><label>طريقة الدفع</label>${methods.map((m,i)=>`<label style="display:flex;align-items:center;gap:8px;padding:8px 0;font-size:13px"><input type="radio" name="coPayMethod" value="${m.value}" ${i===0?'checked':''} style="width:auto">${esc(m.label)}</label>`).join('')}</div>`;
+      })()}
+      <div class="summary-box"><div class="summary-line"><span>الإجمالي</span><b>${money(cartTotal())}</b></div></div>
       <button class="btn primary block" id="coBtn" onclick="submitOrder()">تأكيد الطلب</button>
     </div></div>`;
 };
@@ -555,13 +636,24 @@ window.submitOrder = async function(){
   const btn=document.getElementById('coBtn'); btn.disabled=true; btn.innerHTML='<span class="spin"></span>';
   try{
     const subtotal=cartTotal();
+    const payMethod = document.getElementById('coPayMethodFixed')?.value
+      || document.querySelector('input[name="coPayMethod"]:checked')?.value || 'cod';
     const {data:order,error}=await sb.from('orders').insert({
       customer_name:name, customer_phone:phone, customer_whatsapp:document.getElementById('coWa').value.trim()||null,
       governorate:document.getElementById('coGov').value.trim()||null, area:document.getElementById('coArea').value.trim()||null,
       address_details:document.getElementById('coAddr').value.trim()||null, notes:document.getElementById('coNotes').value.trim()||null,
-      subtotal, total:subtotal, payment_method:'cod', payment_status:'cod'
+      subtotal, total:subtotal, payment_method:payMethod, payment_status: payMethod==='cod'? 'cod':'pending'
     }).select().single();
     if(error) throw error;
+    if(payMethod==='electronic'){
+      const provider = getActiveElectronicProvider();
+      if(provider){
+        try{
+          const res = await provider.createPayment(order, subtotal);
+          await sb.from('orders').update({ payment_status: res.status||'pending', transaction_reference: res.reference||null }).eq('id', order.id);
+        }catch(e){ /* المزود لم يُربط فعلياً بعد؛ يبقى الطلب بحالة "بانتظار الدفع" ليتابعه الموظف يدوياً */ }
+      }
+    }
     const items = state.cart.map(i=>({
       order_id:order.id, product_id:i.productId, product_name_snapshot:i.name, product_code_snapshot:i.code,
       unit_price_snapshot:i.unitPrice, pricing_method_snapshot:i.pricingMethod, quantity:i.quantity,
@@ -595,7 +687,7 @@ async function renderAdminRoute(parts, app){
   document.documentElement.setAttribute('data-admin-light','1');
   await getSession();
   if(parts[1]==='login'){ app.innerHTML = adminLoginPage(); return; }
-  if(!state.session){ location.hash='#/admin/login'; return; }
+  if(!state.session){ location.hash='#/'+ADMIN_ROUTE+'/login'; return; }
   const tab = parts[1] || 'overview';
   app.innerHTML = adminShell(tab, '<div style="padding:40px;text-align:center;color:var(--muted)">جارِ التحميل…</div>');
   const target = document.getElementById('admContent');
@@ -608,6 +700,7 @@ async function renderAdminRoute(parts, app){
     else if(tab==='quotes') target.innerHTML = await admQuotes();
     else if(tab==='customers') target.innerHTML = await admCustomers();
     else if(tab==='settings') target.innerHTML = await admSettings();
+    else if(tab==='change-password') target.innerHTML = admChangePassword();
   }catch(e){ console.error(e); target.innerHTML = '<div class="empty-state"><b>صار خطأ</b>'+esc(e.message)+'</div>'; }
 }
 function adminLoginPage(){
@@ -626,14 +719,15 @@ window.adminLogin = async function(){
   const btn=document.getElementById('loginBtn'); btn.disabled=true; btn.innerHTML='<span class="spin"></span>';
   const {error}=await sb.auth.signInWithPassword({email,password});
   if(error){ toast('فشل الدخول: تأكد من البريد وكلمة المرور', true); btn.disabled=false; btn.textContent='دخول'; return; }
-  location.hash='#/admin/overview'; render();
+  location.hash='#/'+ADMIN_ROUTE+'/overview'; render();
 };
-window.adminLogout = async function(){ await sb.auth.signOut(); location.hash='#/admin/login'; render(); };
+window.adminLogout = async function(){ await sb.auth.signOut(); location.hash='#/'+ADMIN_ROUTE+'/login'; render(); };
 function adminShell(tab, content){
   return `<div class="adm-shell">
     <aside class="adm-side">
       <div style="font-weight:900;padding:8px 10px 16px">لوحة التحكم</div>
-      ${ADM_TABS.map(t=>`<a href="#/admin/${t.key}" class="${tab===t.key?'active':''}">${t.label}</a>`).join('')}
+      ${ADM_TABS.map(t=>`<a href="#/${ADMIN_ROUTE}/${t.key}" class="${tab===t.key?'active':''}">${t.label}</a>`).join('')}
+      <a href="#/${ADMIN_ROUTE}/change-password" class="${tab==='change-password'?'active':''}">تغيير كلمة المرور</a>
       <a onclick="adminLogout()" style="color:var(--red);cursor:pointer">تسجيل خروج</a>
       <a href="#/" style="margin-top:10px">↩ الموقع العام</a>
     </aside>
@@ -739,7 +833,9 @@ window.prodForm = function(id){
     ${fld({key:'pricing_method',label:'طريقة التسعير',type:'select',options:[
       {value:'piece',label:'بالقطعة'},{value:'sqm',label:'بالمتر المربع'},{value:'linear_meter',label:'بالمتر الطولي'},{value:'quote_only',label:'عرض سعر فقط'}]},p.pricing_method||'quote_only')}
     <div class="row2">${fld({key:'unit_price',label:'سعر الوحدة',type:'number'},p.unit_price)}
-      ${fld({key:'rounding_rule',label:'قاعدة التقريب',type:'select',options:[{value:'none',label:'بدون'},{value:'round_up_10cm',label:'تقريب لأعلى 10سم'}]},p.rounding_rule||'none')}</div>
+      ${fld({key:'rounding_rule',label:'قاعدة التقريب',type:'select',options:[{value:'none',label:'بدون'},{value:'round_up_10cm',label:'تقريب لأعلى (قاعدة الـ5سم)'}]},p.rounding_rule||'none')}</div>
+    ${fld({key:'no_rounding',label:'استثناء دائم من التقريب (للكاونترات) — يتجاهل قاعدة التقريب أعلاه دائماً',type:'checkbox'},!!p.no_rounding)}
+    <div class="field hint" style="margin-top:-8px">القياس الفعلي يُحفظ دائماً كما هو ولا يتغير؛ التقريب (إن وُجد) يُستخدم فقط لحساب السعر.</div>
     <div class="row2">${fld({key:'sort_order',label:'ترتيب العرض',type:'number'},p.sort_order||0)}
       <div></div></div>
     ${fld({key:'is_purchasable',label:'قابل للشراء المباشر',type:'checkbox'},p.is_purchasable!==false)}
@@ -763,6 +859,7 @@ window.prodSave = async function(id){
     material: readFld({key:'material'}), color: readFld({key:'color'}), glass_type: readFld({key:'glass_type'}),
     design: readFld({key:'design'}), pricing_method: readFld({key:'pricing_method'}),
     unit_price: readFld({key:'unit_price',type:'number'}), rounding_rule: readFld({key:'rounding_rule'}),
+    no_rounding: readFld({key:'no_rounding',type:'checkbox'}),
     sort_order: readFld({key:'sort_order',type:'number'})||0,
     is_purchasable: readFld({key:'is_purchasable',type:'checkbox'}), is_featured: readFld({key:'is_featured',type:'checkbox'}),
     is_active: readFld({key:'is_active',type:'checkbox'})
@@ -923,23 +1020,54 @@ window.custSave = async function(){
   if(error){ toast(error.message, true); return; }
   toast('تم الحفظ'); closeModal(); render();
 };
+function buildStatementMessage(cust, items, pays, summary){
+  const lines = [`السلام عليكم ${cust.name}`, '', 'هذا كشف حسابكم:', ''];
+  (items||[]).forEach(it=>{ lines.push(`${it.product_name_snapshot||it.work_type} — ${it.quantity} ${unitAr(it.unit)} — ${money(it.total_price)}`); });
+  lines.push('');
+  lines.push(`المبلغ الكلي: ${money(summary?.subtotal ?? summary?.agreed_total)}`);
+  if(summary?.agreed_total!=null) lines.push(`المبلغ المتفق عليه: ${money(summary.agreed_total)}`);
+  lines.push(`المبلغ الواصل: ${money(summary?.paid_total)}`);
+  lines.push(`المبلغ المتبقي: ${money(summary?.remaining)}`);
+  if((pays||[]).length){ lines.push(''); lines.push('الدفعات:'); pays.forEach(p=> lines.push(`${money(p.amount)} — ${p.payment_date}`)); }
+  lines.push(''); lines.push('مع الشكر والتقدير.');
+  return lines.join('\n');
+}
+function buildPaymentMessage(cust, payment, summary){
+  return [
+    `السلام عليكم ${cust.name}`, '',
+    'تم تسجيل دفعة بقيمة:', money(payment.amount), '',
+    'المبلغ الكلي:', money(summary?.agreed_total ?? summary?.subtotal), '',
+    'إجمالي المبلغ الواصل:', money(summary?.paid_total), '',
+    'المبلغ المتبقي:', money(summary?.remaining), '',
+    'شكرًا لكم.'
+  ].join('\n');
+}
 window.custDetail = async function(id){
-  const [{data:cust},{data:items},{data:pays},{data:adjs},{data:prods}] = await Promise.all([
+  const [{data:cust},{data:items},{data:pays},{data:adjs},{data:prods},{data:summary}] = await Promise.all([
     sb.from('customers').select('*').eq('id',id).single(),
     sb.from('customer_work_items').select('*').eq('customer_id',id).order('created_at',{ascending:false}),
     sb.from('customer_payments').select('*').eq('customer_id',id).order('payment_date',{ascending:false}),
     sb.from('customer_adjustments').select('*').eq('customer_id',id).order('created_at',{ascending:false}),
-    sb.from('products').select('id,name,code,unit_price,pricing_method')
+    sb.from('products').select('id,name,code,unit_price,pricing_method'),
+    sb.from('customer_account_summary').select('*').eq('customer_id',id).maybeSingle()
   ]);
-  window.__CUST_CTX = {id, prods: prods||[]};
+  window.__CUST_CTX = {id, prods: prods||[], cust, items: items||[], pays: pays||[], summary: summary||{}};
+  const statementLink = waLinkToPhone(cust.phone, buildStatementMessage(cust, items||[], pays||[], summary||{}));
+  const lastPaymentLink = (pays&&pays[0])? waLinkToPhone(cust.phone, buildPaymentMessage(cust, pays[0], summary||{})) : null;
   const itemsHtml = (items||[]).map(it=>`<div class="card-item"><div class="meta"><b>${esc(it.product_name_snapshot||it.work_type)}</b><small>${it.quantity} ${esc(it.unit)} × ${money(it.unit_price)} = ${money(it.total_price)}</small></div></div>`).join('') || '<div class="empty-state" style="padding:14px">لا توجد أعمال</div>';
   const paysHtml = (pays||[]).map(p=>`<div class="card-item"><div class="meta"><b>${money(p.amount)}</b><small>${esc(p.payment_date)} ${p.note?'· '+esc(p.note):''}</small></div></div>`).join('') || '<div class="empty-state" style="padding:14px">لا توجد دفعات</div>';
   const adjsHtml = (adjs||[]).map(a=>`<div class="card-item"><div class="meta"><b>${a.amount>=0?'+':''}${money(a.amount)}</b><small>${esc(a.reason||'')}</small></div></div>`).join('') || '';
   openModal(`<div class="sheet-head"><h3>حساب ${esc(cust.name)}</h3><div class="sheet-close" onclick="closeModal()">×</div></div>
     <p class="mono" style="color:var(--muted)">${esc(cust.phone)}</p>
+    <div class="summary-box" style="margin:0 0 14px">
+      <div class="summary-line"><span>الإجمالي</span><b>${money(summary?.agreed_total ?? summary?.subtotal)}</b></div>
+      <div class="summary-line"><span>الواصل</span><b>${money(summary?.paid_total)}</b></div>
+      <div class="summary-line"><span>المتبقي</span><b>${money(summary?.remaining)}</b></div>
+    </div>
+    ${statementLink? `<a class="btn block" style="border-color:rgba(37,211,102,.4);color:#1ba851;margin-bottom:14px" target="_blank" href="${statementLink}">📤 إرسال كشف الحساب عبر واتساب</a>` : `<div class="field hint" style="margin-bottom:14px">أضف رقم هاتف صحيح للزبون لتفعيل إرسال كشف الحساب عبر واتساب</div>`}
     <div class="toolbar"><b>الأعمال</b><button class="btn sm primary" onclick="custAddWorkForm()">+ إضافة عمل</button></div>
     <div class="card-list">${itemsHtml}</div>
-    <div class="toolbar" style="margin-top:16px"><b>الدفعات</b><button class="btn sm primary" onclick="custAddPayForm()">+ دفعة</button></div>
+    <div class="toolbar" style="margin-top:16px"><b>الدفعات</b><div style="display:flex;gap:6px">${lastPaymentLink?`<a class="btn sm" style="border-color:rgba(37,211,102,.4);color:#1ba851" target="_blank" href="${lastPaymentLink}">💬 إشعار آخر دفعة</a>`:''}<button class="btn sm primary" onclick="custAddPayForm()">+ دفعة</button></div></div>
     <div class="card-list">${paysHtml}</div>
     <div class="toolbar" style="margin-top:16px"><b>تعديلات (خصم/إضافة)</b><button class="btn sm primary" onclick="custAddAdjForm()">+ تعديل</button></div>
     <div class="card-list">${adjsHtml}</div>`);
@@ -1012,7 +1140,12 @@ async function admSettings(){
     <div class="row2">${fld({key:'governorate',label:'المحافظة'},s.governorate)}${fld({key:'address',label:'العنوان'},s.address)}</div>
     <div class="row2">${fld({key:'work_hours',label:'ساعات الدوام'},s.work_hours)}${fld({key:'email',label:'البريد الإلكتروني'},s.email)}</div>
     ${fld({key:'google_maps_url',label:'رابط خرائط قوقل'},s.google_maps_url)}
+    <div class="row2">${fld({key:'facebook_url',label:'رابط فيسبوك (اختياري)'},s.facebook_url)}${fld({key:'instagram_url',label:'رابط انستغرام (اختياري)'},s.instagram_url)}</div>
     ${fld({key:'cod_enabled',label:'الدفع عند الاستلام مفعّل',type:'checkbox'},s.cod_enabled!==false)}
+    <div class="toolbar" style="margin-top:16px"><b>الدفع الإلكتروني</b></div>
+    ${fld({key:'electronic_payment_enabled',label:'تفعيل خيار الدفع الإلكتروني بالسلة',type:'checkbox'},!!s.electronic_payment_enabled)}
+    ${fld({key:'payment_provider_name',label:'اسم مزود الدفع (يظهر للزبون، مثال: زين كاش)'},s.payment_provider_name)}
+    <div class="field hint" style="margin-top:-8px">ملاحظة: هذا يجهّز الموقع لاستقبال مزود دفع حقيقي لاحقاً بدون تعديل الصفحات. لحين ربط مزود فعلي عبر المطوّر، الطلبات الإلكترونية تُسجَّل بحالة "بانتظار الدفع" ويتابعها الموظف يدوياً.</div>
     <div class="field"><label>شعار الورشة</label><input type="file" id="logoFile" accept="image/*">${s.logo_url?`<img src="${esc(s.logo_url)}" style="width:60px;margin-top:8px;border-radius:8px">`:''}</div>
     <button class="btn primary block" onclick="settingsSave()">حفظ الإعدادات</button>
   </div>`;
@@ -1023,7 +1156,10 @@ window.settingsSave = async function(){
     phone: readFld({key:'phone'}), whatsapp_number: readFld({key:'whatsapp_number'}),
     country_code: readFld({key:'country_code'}), governorate: readFld({key:'governorate'}),
     address: readFld({key:'address'}), work_hours: readFld({key:'work_hours'}), email: readFld({key:'email'}),
-    google_maps_url: readFld({key:'google_maps_url'}), cod_enabled: readFld({key:'cod_enabled',type:'checkbox'})
+    google_maps_url: readFld({key:'google_maps_url'}), cod_enabled: readFld({key:'cod_enabled',type:'checkbox'}),
+    facebook_url: readFld({key:'facebook_url'}), instagram_url: readFld({key:'instagram_url'}),
+    electronic_payment_enabled: readFld({key:'electronic_payment_enabled',type:'checkbox'}),
+    payment_provider_name: readFld({key:'payment_provider_name'})
   };
   const file = document.getElementById('logoFile').files[0];
   if(file){
@@ -1036,8 +1172,35 @@ window.settingsSave = async function(){
   toast('تم حفظ الإعدادات'); state.settings=null;
 };
 
+// ---- change password ----
+function admChangePassword(){
+  return `<div class="adm-topbar"><h2>تغيير كلمة المرور</h2></div>
+  <div style="max-width:420px">
+    <div class="field hint" style="margin-bottom:14px">اكتب كلمة مرور جديدة لحسابك (٦ أحرف على الأقل).</div>
+    ${fld({key:'new_password',label:'كلمة المرور الجديدة',type:'password'})}
+    ${fld({key:'confirm_password',label:'تأكيد كلمة المرور',type:'password'})}
+    <button class="btn primary block" id="changePassBtn" onclick="changePasswordSave()">تحديث كلمة المرور</button>
+  </div>`;
+}
+window.changePasswordSave = async function(){
+  const p1 = readFld({key:'new_password'});
+  const p2 = readFld({key:'confirm_password'});
+  if(!p1 || p1.length<6){ toast('كلمة المرور لازم تكون ٦ أحرف على الأقل', true); return; }
+  if(p1!==p2){ toast('كلمتا المرور غير متطابقتين', true); return; }
+  const btn=document.getElementById('changePassBtn'); btn.disabled=true; btn.innerHTML='<span class="spin"></span>';
+  const {error} = await sb.auth.updateUser({password:p1});
+  btn.disabled=false; btn.textContent='تحديث كلمة المرور';
+  if(error){ toast('صار خطأ: '+error.message, true); return; }
+  toast('تم تحديث كلمة المرور بنجاح');
+  document.getElementById('f_new_password').value='';
+  document.getElementById('f_confirm_password').value='';
+};
+
 // -------------------- boot --------------------
-sb.auth.onAuthStateChange((_e, session)=>{ state.session=session; });
+sb.auth.onAuthStateChange((_e, session)=>{
+  state.session=session;
+  if(_e==='PASSWORD_RECOVERY'){ location.hash='#/'+ADMIN_ROUTE+'/change-password'; render(); }
+});
 render();
 </script>
 </body>
