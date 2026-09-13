@@ -36,7 +36,7 @@ header.site{position:sticky;top:0;z-index:40;background:rgba(248,250,252,.88);ba
 .brand{font-weight:900;font-size:19px;display:flex;align-items:center;gap:8px;min-width:0;flex-shrink:1}
 .brand img{flex:0 0 auto}
 .brand-name{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:170px}
-@media (max-width:420px){.brand-name{max-width:96px;font-size:16px}}
+@media (max-width:480px){.brand-name{display:none}}
 .brand .mark{width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,var(--accent),#0284C7);display:grid;place-items:center;font-weight:900;color:#ffffff;flex:0 0 auto}
 .nav{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;min-width:0;flex-shrink:1;
   -webkit-mask-image:linear-gradient(to right, transparent 0, #000 14px, #000 calc(100% - 14px), transparent 100%);
@@ -386,7 +386,7 @@ function header(activePath){
   return `
   <header class="site">
     <div class="hbar">
-      <a class="brand" href="#/">${state.settings?.logo_url?`<img src="${esc(state.settings.logo_url)}" style="width:32px;height:32px;border-radius:8px;object-fit:cover">`:'<span class="mark">أح</span>'}<span class="brand-name">${esc(state.settings?.workshop_name||'أبو أحمد للألمنيوم')}</span></a>
+      <a class="brand" href="#/" title="${esc(state.settings?.workshop_name||'أبو أحمد للألمنيوم')}">${state.settings?.logo_url?`<img src="${esc(state.settings.logo_url)}" style="width:32px;height:32px;border-radius:8px;object-fit:cover">`:'<span class="mark">أح</span>'}<span class="brand-name">${esc(state.settings?.workshop_name||'أبو أحمد للألمنيوم')}</span></a>
       <nav class="nav">${items.map(i=>`<a href="${i.href}" class="${activePath===i.href?'active':''}">${i.label}</a>`).join('')}</nav>
       <button class="icon-btn" onclick="openCart()">🛒<span class="cart-badge cart-count" style="display:none">0</span></button>
     </div>
