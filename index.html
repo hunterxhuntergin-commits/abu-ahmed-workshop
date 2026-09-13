@@ -251,7 +251,7 @@ function addToCart(product, opts){
   state.cart.push(item); saveCart();
   toast('أُضيف للسلة');
 }
-function removeCartItem(id){ state.cart = state.cart.filter(i=>i.id!==id); saveCart(); openCart(); }
+window.removeCartItem = function(id){ state.cart = state.cart.filter(i=>i.id!==id); saveCart(); openCart(); }
 function cartTotal(){ return state.cart.reduce((s,i)=>s+i.lineTotal,0); }
 function renderCartBadge(){
   document.querySelectorAll('.cart-count').forEach(el=>{ el.textContent = state.cart.length; el.style.display = state.cart.length? 'grid':'none'; });
@@ -740,7 +740,7 @@ function readFld(f){
   return el.value.trim()===''? null: el.value.trim();
 }
 function openModal(html){ document.getElementById('modals').innerHTML = `<div class="overlay" onclick="if(event.target===this)this.remove()"><div class="sheet wide">${html}</div></div>`; }
-function closeModal(){ document.getElementById('modals').innerHTML=''; }
+window.closeModal = function(){ document.getElementById('modals').innerHTML=''; }
 
 // ---- overview ----
 async function admOverview(){
