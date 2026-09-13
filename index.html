@@ -21,13 +21,15 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:'Tajawal',sans-
 a{color:inherit;text-decoration:none}
 button,input,select,textarea{font-family:inherit;color:inherit}
 img{max-width:100%;display:block}
-.wrap{max-width:1100px;margin:0 auto;padding:0 16px}
+.wrap{max-width:1100px;margin:0 auto;padding:0 20px}
 /* header */
 header.site{position:sticky;top:0;z-index:40;background:rgba(248,250,252,.88);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
 .hbar{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;max-width:1100px;margin:0 auto}
 .brand{font-weight:900;font-size:19px;display:flex;align-items:center;gap:8px}
 .brand .mark{width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,var(--accent),#0284C7);display:grid;place-items:center;font-weight:900;color:#ffffff}
-.nav{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}
+.nav{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;
+  -webkit-mask-image:linear-gradient(to right, transparent 0, #000 14px, #000 calc(100% - 14px), transparent 100%);
+  mask-image:linear-gradient(to right, transparent 0, #000 14px, #000 calc(100% - 14px), transparent 100%);}
 .nav::-webkit-scrollbar{display:none}
 .nav a{padding:9px 13px;border-radius:999px;font-size:13px;font-weight:700;color:var(--muted);white-space:nowrap}
 .nav a.active,.nav a:hover{color:var(--text);background:var(--panel2)}
@@ -43,7 +45,7 @@ header.site{position:sticky;top:0;z-index:40;background:rgba(248,250,252,.88);ba
 .btn.sm{padding:8px 11px;font-size:12px;border-radius:10px}
 .btn[disabled]{opacity:.5;cursor:not-allowed}
 /* layout helpers */
-.section{padding:34px 0}
+.section{padding-top:34px;padding-bottom:34px}
 .section-head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:16px}
 .section-head h2{margin:0;font-size:21px;font-weight:900}
 .section-head p{margin:4px 0 0;color:var(--muted);font-size:12.5px}
@@ -64,7 +66,8 @@ header.site{position:sticky;top:0;z-index:40;background:rgba(248,250,252,.88);ba
 .cat-tile{border:1px solid var(--line);border-radius:18px;background:var(--panel);overflow:hidden;cursor:pointer;transition:.15s border-color,.15s transform}
 .cat-tile:hover{border-color:rgba(56,189,248,.45);transform:translateY(-2px)}
 .cat-tile .thumb{aspect-ratio:4/3;background:var(--panel2);position:relative;overflow:hidden}
-.cat-tile .thumb img{width:100%;height:100%;object-fit:cover}
+.cat-tile .thumb:has(img){aspect-ratio:auto}
+.cat-tile .thumb img{width:100%;height:auto;display:block;object-fit:initial}
 .cat-tile .thumb .ph{position:absolute;inset:0;background:repeating-linear-gradient(125deg,rgba(15,23,42,.06) 0 3px,transparent 3px 22px)}
 .cat-tile .body{padding:13px 14px}
 .cat-tile .body b{font-size:15px;font-weight:800}
@@ -72,7 +75,8 @@ header.site{position:sticky;top:0;z-index:40;background:rgba(248,250,252,.88);ba
 /* product card */
 .prod-card{border:1px solid var(--line);border-radius:16px;background:var(--panel);overflow:hidden;cursor:pointer;display:flex;flex-direction:column}
 .prod-card .thumb{aspect-ratio:1/1;background:var(--panel2);position:relative}
-.prod-card .thumb img{width:100%;height:100%;object-fit:cover}
+.prod-card .thumb:has(img){aspect-ratio:auto}
+.prod-card .thumb img{width:100%;height:auto;display:block;object-fit:initial}
 .prod-card .thumb .ph{position:absolute;inset:0;background:repeating-linear-gradient(125deg,rgba(15,23,42,.06) 0 3px,transparent 3px 22px)}
 .prod-card .badge{position:absolute;top:8px;right:8px;background:rgba(15,23,42,.85);border:1px solid var(--line);color:#BAE6FD;font-size:9.5px;font-weight:900;padding:4px 8px;border-radius:999px}
 .prod-card .body{padding:11px 12px;display:flex;flex-direction:column;gap:4px;flex:1}
@@ -88,7 +92,8 @@ header.site{position:sticky;top:0;z-index:40;background:rgba(248,250,252,.88);ba
 .pd-wrap{display:grid;grid-template-columns:1fr 1fr;gap:28px}
 @media(max-width:760px){.pd-wrap{grid-template-columns:1fr}}
 .pd-gallery{border-radius:18px;overflow:hidden;background:var(--panel);border:1px solid var(--line);aspect-ratio:1/1;position:relative}
-.pd-gallery img{width:100%;height:100%;object-fit:cover}
+.pd-gallery:has(img){aspect-ratio:auto}
+.pd-gallery img{width:100%;height:auto;display:block}
 .pd-thumbs{display:flex;gap:8px;margin-top:8px}
 .pd-thumbs img{width:56px;height:56px;object-fit:cover;border-radius:8px;border:1px solid var(--line);cursor:pointer}
 .field{margin-bottom:14px}
@@ -130,9 +135,9 @@ table.admtbl td{padding:9px 8px;border-bottom:1px solid var(--line);vertical-ali
 .adm-shell{display:grid;grid-template-columns:190px 1fr;min-height:100vh}
 @media(max-width:760px){.adm-shell{grid-template-columns:1fr}}
 .adm-side{border-left:1px solid var(--line);background:var(--panel);padding:16px 10px;position:sticky;top:0;height:100vh;overflow:auto}
-@media(max-width:760px){.adm-side{position:static;height:auto;display:flex;overflow-x:auto;padding:10px;gap:4px;border-left:0;border-bottom:1px solid var(--line)}}
+@media(max-width:760px){.adm-side{position:static;height:auto;display:flex;align-items:center;overflow-x:auto;padding:10px;gap:4px;border-left:0;border-bottom:1px solid var(--line)}}
 .adm-side a{display:block;padding:10px 12px;border-radius:10px;font-size:13px;font-weight:700;color:var(--muted);white-space:nowrap}
-.adm-side a.active{background:var(--panel2);color:var(--text)}
+.adm-side a.active{background:var(--accent);color:#ffffff}
 .adm-main{padding:20px}
 .adm-topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
 .adm-topbar h2{margin:0;font-size:19px;font-weight:900}
@@ -298,7 +303,7 @@ function header(activePath){
   return `
   <header class="site">
     <div class="hbar">
-      <a class="brand" href="#/"><span class="mark">أح</span> ${esc(state.settings?.workshop_name||'أبو أحمد للألمنيوم')}</span></a>
+      <a class="brand" href="#/">${state.settings?.logo_url?`<img src="${esc(state.settings.logo_url)}" style="width:32px;height:32px;border-radius:8px;object-fit:cover">`:'<span class="mark">أح</span>'} ${esc(state.settings?.workshop_name||'أبو أحمد للألمنيوم')}</span></a>
       <nav class="nav">${items.map(i=>`<a href="${i.href}" class="${activePath===i.href?'active':''}">${i.label}</a>`).join('')}</nav>
       <button class="icon-btn" onclick="openCart()">🛒<span class="cart-badge cart-count" style="display:none">0</span></button>
     </div>
@@ -342,6 +347,7 @@ function priceLabel(p){
   if(p.pricing_method==='piece') return money(p.unit_price)+` <small>/قطعة</small>`;
   if(p.pricing_method==='sqm') return money(p.unit_price)+` <small>/م²</small>`;
   if(p.pricing_method==='linear_meter') return money(p.unit_price)+` <small>/م.ط</small>`;
+  if(p.unit_price) return money(p.unit_price);
   return `<small>حسب الطلب - اطلب عرض سعر</small>`;
 }
 
@@ -351,9 +357,9 @@ async function pageHome(){
   const {data: featured} = await sb.from('products').select('*, product_images(*)').eq('is_active',true).eq('is_featured',true).order('sort_order').limit(8);
   return `
   ${header('#/')}
-  <section class="hero"><div class="wrap">
-    <h1>${esc(state.settings.workshop_name||'أبو أحمد للألمنيوم')}<br><span class="accent">جودة تصنيع تدوم</span></h1>
-    <p>${esc(state.settings.description||'أبواب، شبابيك، كاونترات، ومحجر درج بمقاسات مضبوطة حسب طلبك.')}</p>
+  <section class="hero" ${state.settings.cover_url?`style="background-image:linear-gradient(rgba(15,23,42,.35),rgba(15,23,42,.15)),url('${esc(state.settings.cover_url)}');background-size:cover;background-position:center"`:''}><div class="wrap">
+    <h1 ${state.settings.cover_url?'style="color:#fff"':''}>${esc(state.settings.workshop_name||'أبو أحمد للألمنيوم')}<br><span class="accent">جودة تصنيع تدوم</span></h1>
+    <p ${state.settings.cover_url?'style="color:#f1f5f9"':''}>${esc(state.settings.description||'أبواب، شبابيك، كاونترات، ومحجر درج بمقاسات مضبوطة حسب طلبك.')}</p>
     <div class="hero-actions">
       <a class="btn primary" href="#/quote">اطلب عرض سعر</a>
     </div>
@@ -1103,6 +1109,7 @@ async function admSettings(){
     ${fld({key:'payment_provider_name',label:'اسم مزود الدفع (يظهر للزبون، مثال: زين كاش)'},s.payment_provider_name)}
     <div class="field hint" style="margin-top:-8px">ملاحظة: هذا يجهّز الموقع لاستقبال مزود دفع حقيقي لاحقاً بدون تعديل الصفحات. لحين ربط مزود فعلي عبر المطوّر، الطلبات الإلكترونية تُسجَّل بحالة "بانتظار الدفع" ويتابعها الموظف يدوياً.</div>
     <div class="field"><label>شعار الورشة</label><input type="file" id="logoFile" accept="image/*">${s.logo_url?`<img src="${esc(s.logo_url)}" style="width:60px;margin-top:8px;border-radius:8px">`:''}</div>
+    <div class="field"><label>صورة غلاف الموقع (تظهر بأعلى الصفحة الرئيسية)</label><input type="file" id="coverFile" accept="image/*">${s.cover_url?`<img src="${esc(s.cover_url)}" style="width:100%;max-width:260px;margin-top:8px;border-radius:8px">`:''}</div>
     <button class="btn primary block" onclick="settingsSave()">حفظ الإعدادات</button>
   </div>`;
 }
@@ -1122,6 +1129,12 @@ window.settingsSave = async function(){
     const path = `${Date.now()}_${uid()}.${file.name.split('.').pop()}`;
     const {error:upErr} = await sb.storage.from('site-assets').upload(path,file);
     if(!upErr) row.logo_url = sb.storage.from('site-assets').getPublicUrl(path).data.publicUrl;
+  }
+  const coverFile = document.getElementById('coverFile').files[0];
+  if(coverFile){
+    const path = `${Date.now()}_${uid()}.${coverFile.name.split('.').pop()}`;
+    const {error:upErr} = await sb.storage.from('site-assets').upload(path,coverFile);
+    if(!upErr) row.cover_url = sb.storage.from('site-assets').getPublicUrl(path).data.publicUrl;
   }
   const {error} = await sb.from('site_settings').update(row).eq('id',1);
   if(error){ toast(error.message, true); return; }
