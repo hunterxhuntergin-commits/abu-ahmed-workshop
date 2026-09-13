@@ -1092,7 +1092,7 @@ function adminShell(tab, content){
       ${ADM_TABS.map(t=>`<a href="#/${ADMIN_ROUTE}/${t.key}" class="${tab===t.key?'active':''}">${t.label}${tabBadge(t)}</a>`).join('')}
       <a href="#/${ADMIN_ROUTE}/change-password" class="${tab==='change-password'?'active':''}">تغيير كلمة المرور</a>
       <a onclick="adminLogout()" style="color:var(--red);cursor:pointer">تسجيل خروج</a>
-      <a onclick="toast('اضغط مطوّلاً على أيقونة التطبيق بالشاشة الرئيسية، واختر «الإعدادات» من القائمة اللي تطلع')" style="cursor:pointer">📲 اختصار الدخول من الأيقونة</a>
+      <a onclick="showAdminShortcutHelp()" style="cursor:pointer">📲 اختصار الدخول من الأيقونة</a>
       <a href="#/" class="adm-side-sep">↩ الموقع العام</a>
     </aside>
     <main class="adm-main" id="admContent">${content}</main>
@@ -1794,6 +1794,17 @@ window.addEventListener('appinstalled', ()=>{
   toast('تم تثبيت التطبيق بنجاح');
 });
 if(isIOS && !isStandalone){ showInstallBtn(); }
+window.showAdminShortcutHelp = function(){
+  if(isIOS){
+    openModal(`<div class="sheet-head"><h3>اختصار سريع بالآيفون</h3><div class="sheet-close" onclick="closeModal()">×</div></div>
+      <p>آيفون ما يدعم قائمة الاختصارات بالضغط المطوّل، لكن تقدر تسوي اختصار مباشر لهذي الصفحة على شاشتك الرئيسية:</p>
+      <p>1. اضغط زر المشاركة <b>⬆️</b> في أسفل المتصفح (Safari) وأنت بهذي الصفحة بالذات.</p>
+      <p>2. اختر <b>"إضافة إلى الشاشة الرئيسية"</b> (Add to Home Screen).</p>
+      <p>3. اضغط <b>"إضافة"</b> — بتصير عندك أيقونة توديك مباشرة لهذي الصفحة بأي وقت.</p>`);
+    return;
+  }
+  toast('اضغط مطوّلاً على أيقونة التطبيق بالشاشة الرئيسية، واختر «الإعدادات» من القائمة اللي تطلع');
+};
 window.handleInstallClick = async function(){
   if(__deferredInstallPrompt){
     __deferredInstallPrompt.prompt();
