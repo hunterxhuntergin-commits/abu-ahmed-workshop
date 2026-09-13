@@ -347,6 +347,7 @@ async function render(){
   app.innerHTML = '<div style="padding:80px 20px;text-align:center;color:var(--muted)"><span class="spin" style="width:26px;height:26px;border-width:3px;margin-bottom:12px"></span><div>جارِ التحميل…</div></div>';
   window.scrollTo(0,0);
   const parts = hash.split('/').filter(Boolean);
+  try{ if(typeof setManifestForRoute==='function') setManifestForRoute(parts[0]===ADMIN_ROUTE); }catch(e){ /* لسا سكربت التثبيت ما جهز، رح ينضبط بالمرة الجاية */ }
   try{
     if(parts[0]===ADMIN_ROUTE){ return renderAdminRoute(parts, app); }
     if(!parts.length) return app.innerHTML = await pageHome();
@@ -408,7 +409,11 @@ function footer(){
     ${s.phone? `هاتف: <span class="mono">${esc(s.phone)}</span> · `:''}${s.address? esc(s.address):''}
     ${socials.length? `<div style="margin-top:8px">${socials.join(' · ')}</div>`:''}
     <div style="margin-top:6px">© ${new Date().getFullYear()} ${esc(s.workshop_name||'أبو أحمد للألمنيوم')}</div>
-    <div style="margin-top:10px;font-size:11px;opacity:.75">برمجة وتطوير <a href="https://wa.me/9647707436380" target="_blank" style="text-decoration:underline">صباح الموسوي</a></div>
+    <div style="margin-top:14px">
+      <a href="https://www.instagram.com/sbah.almwswy?stkn=MTZhMTJqeTlxOThjNQ==" target="_blank" rel="noopener" style="display:inline-block;font-size:16px;font-weight:900;color:var(--accent2, #0EA5E9);text-decoration:underline">
+        برمجة وتطوير صباح الموسوي
+      </a>
+    </div>
   </footer>`;
 }
 function waFab(){
@@ -1088,6 +1093,7 @@ function adminShell(tab, content){
       ${ADM_TABS.map(t=>`<a href="#/${ADMIN_ROUTE}/${t.key}" class="${tab===t.key?'active':''}">${t.label}${tabBadge(t)}</a>`).join('')}
       <a href="#/${ADMIN_ROUTE}/change-password" class="${tab==='change-password'?'active':''}">تغيير كلمة المرور</a>
       <a onclick="adminLogout()" style="color:var(--red);cursor:pointer">تسجيل خروج</a>
+      <a onclick="handleInstallClick()" style="cursor:pointer">📲 إضافة لوحة التحكم للشاشة الرئيسية</a>
       <a href="#/" class="adm-side-sep">↩ الموقع العام</a>
     </aside>
     <main class="adm-main" id="admContent">${content}</main>
@@ -1772,7 +1778,32 @@ sb.auth.onAuthStateChange((_e, session)=>{
 });
 render();
 
-// -------------------- PWA install --------------------
+// -------------------- PWA install (لوحة التحكم على الشاشة الرئيسية) --------------------
+const __manifestLink = document.querySelector('link[rel="manifest"]');
+const __origManifestHref = __manifestLink ? __manifestLink.getAttribute('href') : null;
+let __adminManifestHref = null;
+function __decodeDataManifest(href){
+  try{
+    const b64 = href.split(',')[1];
+    return JSON.parse(decodeURIComponent(escape(atob(b64))));
+  }catch(e){ return null; }
+}
+function setManifestForRoute(isAdmin){
+  if(!__manifestLink || !__origManifestHref) return;
+  if(!isAdmin){ __manifestLink.setAttribute('href', __origManifestHref); return; }
+  if(!__adminManifestHref){
+    const base = __decodeDataManifest(__origManifestHref) || {};
+    const adminManifest = Object.assign({}, base, {
+      name: 'لوحة تحكم ' + (state.settings?.workshop_name || 'أبو أحمد للألمنيوم'),
+      short_name: 'لوحة التحكم',
+      description: 'لوحة تحكم صاحب الورشة',
+      start_url: '/#/' + ADMIN_ROUTE + '/overview',
+      scope: '/',
+    });
+    __adminManifestHref = URL.createObjectURL(new Blob([JSON.stringify(adminManifest)], {type:'application/manifest+json'}));
+  }
+  __manifestLink.setAttribute('href', __adminManifestHref);
+}
 let __deferredInstallPrompt = null;
 const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
 const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
