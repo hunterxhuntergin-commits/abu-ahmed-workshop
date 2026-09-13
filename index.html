@@ -13,7 +13,8 @@
   --text:#0F172A; --muted:#64748B; --accent:#38BDF8; --accent2:#0EA5E9;
   --green:#16A34A; --red:#DC2626; --radius:14px;
 }
-*{box-sizing:border-box}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+a,button,.nav a,.chip,.cat-tile,.prod-card,.icon-btn,.btn,.adm-side a,.tab,header.site{-webkit-user-select:none;user-select:none}
 html[data-admin-light="1"]{--bg:#f3f5f6;--panel:#fff;--panel2:#f7f8f9;--line:#e4e8ea;--text:#171b1e;--muted:#66727a}
 body{margin:0;background:var(--bg);color:var(--text);font-family:'Tajawal',sans-serif;line-height:1.6}
 .mono{font-family:'IBM Plex Mono',monospace}
@@ -279,7 +280,6 @@ async function render(){
     if(!parts.length) return app.innerHTML = await pageHome();
     if(parts[0]==='category') return app.innerHTML = await pageCategory(parts[1]);
     if(parts[0]==='product') return app.innerHTML = await pageProduct(parts[1]);
-    if(parts[0]==='works') return app.innerHTML = await pageWorks();
     if(parts[0]==='quote') return app.innerHTML = await pageQuote();
     if(parts[0]==='track') return app.innerHTML = await pageTrack();
     app.innerHTML = await pageHome();
@@ -292,7 +292,6 @@ window.addEventListener('hashchange', render);
 function header(activePath){
   const items = [
     {href:'#/', label:'الرئيسية'},
-    {href:'#/works', label:'أعمالنا'},
     {href:'#/quote', label:'اطلب عرض سعر'},
     {href:'#/track', label:'تتبع طلبك'},
   ];
@@ -357,7 +356,6 @@ async function pageHome(){
     <p>${esc(state.settings.description||'أبواب، شبابيك، كاونترات، ومحجر درج بمقاسات مضبوطة حسب طلبك.')}</p>
     <div class="hero-actions">
       <a class="btn primary" href="#/quote">اطلب عرض سعر</a>
-      <a class="btn" href="#/works">شوف أعمالنا</a>
     </div>
   </div></section>
   <section class="section wrap">
@@ -459,17 +457,6 @@ function pdLiveUpdate(){
     else extra = `<div style="font-size:11px;color:var(--muted);font-weight:600;margin-top:4px">الطول الفعلي: ${esc(w)} سم · الطول المحتسب للتسعير: ${calc.pricingW} سم</div>`;
   }
   box.innerHTML = 'الإجمالي: ' + money(calc.lineTotal) + extra;
-}
-async function pageWorks(){
-  await getSettings();
-  const {data: works} = await sb.from('completed_works').select('*, categories(name)').eq('is_active',true).order('sort_order');
-  return `${header('#/works')}
-  <section class="section wrap">
-    <div class="section-head"><div><h2>أعمالنا المنفذة</h2><p>نماذج من شغلنا الفعلي عند الزبائن</p></div></div>
-    <div class="grid cols-3">
-      ${(works||[]).map(w=>`<div class="cat-tile"><div class="thumb"><img src="${esc(w.image_url)}"></div><div class="body"><b>${esc(w.title)}</b><small>${esc(w.location_area||'')}${w.categories?' · '+esc(w.categories.name):''}</small></div></div>`).join('') || '<div class="empty-state">لا توجد أعمال منشورة بعد</div>'}
-    </div>
-  </section>${footer()} ${waFab()}`;
 }
 async function pageQuote(){
   await getSettings(); const cats = await getCategories();
@@ -679,7 +666,7 @@ function bindPublicEvents(){
 // ==================== ADMIN ====================
 const ADM_TABS = [
   {key:'overview',label:'نظرة عامة'},{key:'categories',label:'الأقسام'},{key:'products',label:'المنتجات'},
-  {key:'works',label:'الأعمال'},{key:'orders',label:'الطلبات'},{key:'quotes',label:'طلبات الأسعار'},
+  {key:'orders',label:'الطلبات'},{key:'quotes',label:'طلبات الأسعار'},
   {key:'customers',label:'الزبائن'},{key:'settings',label:'الإعدادات'}
 ];
 async function getSession(){ const {data}=await sb.auth.getSession(); state.session=data.session; return state.session; }
@@ -695,7 +682,6 @@ async function renderAdminRoute(parts, app){
     if(tab==='overview') target.innerHTML = await admOverview();
     else if(tab==='categories') target.innerHTML = await admCategories();
     else if(tab==='products') target.innerHTML = await admProducts();
-    else if(tab==='works') target.innerHTML = await admWorks();
     else if(tab==='orders') target.innerHTML = await admOrders();
     else if(tab==='quotes') target.innerHTML = await admQuotes();
     else if(tab==='customers') target.innerHTML = await admCustomers();
@@ -886,49 +872,6 @@ window.prodDelete = async function(id){
   if(error) toast(error.message, true); else { toast('تم الحذف'); render(); }
 };
 
-// ---- works ----
-async function admWorks(){
-  const {data:cats} = await sb.from('categories').select('id,name');
-  const {data} = await sb.from('completed_works').select('*, categories(name)').order('sort_order');
-  window.__WORKS_ADM = data||[]; window.__CATS_ADM = cats||[];
-  return `<div class="adm-topbar"><h2>الأعمال المنفذة</h2><button class="btn primary" onclick="workForm()">+ عمل جديد</button></div>
-  <div class="card-list">${(data||[]).map(w=>`<div class="card-item"><div class="meta"><b>${esc(w.title)}</b><small>${esc(w.categories?.name||'')} ${w.is_active?'':'· موقوف'}</small></div>
-  <div style="display:flex;gap:6px"><button class="btn sm" onclick="workForm('${w.id}')">تعديل</button><button class="btn sm danger" onclick="workDelete('${w.id}')">حذف</button></div></div>`).join('') || '<div class="empty-state">لا توجد أعمال</div>'}</div>`;
-}
-window.workForm = function(id){
-  const w = id? window.__WORKS_ADM.find(x=>x.id===id): {};
-  const cats = window.__CATS_ADM||[];
-  openModal(`<div class="sheet-head"><h3>${id?'تعديل عمل':'عمل جديد'}</h3><div class="sheet-close" onclick="closeModal()">×</div></div>
-    ${fld({key:'title',label:'العنوان'},w.title)}
-    ${fld({key:'category_id',label:'القسم',type:'select',options:[{value:'',label:'بدون'},...cats.map(c=>({value:c.id,label:c.name}))]},w.category_id)}
-    ${fld({key:'description',label:'الوصف',type:'textarea'},w.description)}
-    ${fld({key:'location_area',label:'المنطقة'},w.location_area)}
-    ${fld({key:'sort_order',label:'ترتيب العرض',type:'number'},w.sort_order||0)}
-    ${fld({key:'is_active',label:'مفعّل',type:'checkbox'},w.is_active!==false)}
-    <div class="field"><label>صورة *</label><input type="file" id="workImgFile" accept="image/*">${w.image_url?`<img src="${esc(w.image_url)}" style="width:70px;margin-top:8px;border-radius:8px">`:''}</div>
-    <button class="btn primary block" onclick="workSave('${id||''}')">حفظ</button>`);
-};
-window.workSave = async function(id){
-  const row = { title: readFld({key:'title'}), category_id: readFld({key:'category_id'})||null,
-    description: readFld({key:'description'}), location_area: readFld({key:'location_area'}),
-    sort_order: readFld({key:'sort_order',type:'number'})||0, is_active: readFld({key:'is_active',type:'checkbox'}) };
-  const file = document.getElementById('workImgFile').files[0];
-  if(file){
-    const path = `${Date.now()}_${uid()}.${file.name.split('.').pop()}`;
-    const {error:upErr} = await sb.storage.from('work-images').upload(path,file);
-    if(!upErr) row.image_url = sb.storage.from('work-images').getPublicUrl(path).data.publicUrl;
-  }
-  if(!row.image_url && !id){ toast('الصورة مطلوبة', true); return; }
-  const {error} = id? await sb.from('completed_works').update(row).eq('id',id) : await sb.from('completed_works').insert(row);
-  if(error){ toast(error.message, true); return; }
-  toast('تم الحفظ'); closeModal(); render();
-};
-window.workDelete = async function(id){
-  if(!confirm('تأكيد الحذف؟')) return;
-  const {error} = await sb.from('completed_works').delete().eq('id',id);
-  if(error) toast(error.message, true); else { toast('تم الحذف'); render(); }
-};
-
 // ---- orders ----
 async function admOrders(){
   const {data} = await sb.from('orders').select('*, order_items(*)').order('created_at',{ascending:false}).limit(100);
@@ -975,12 +918,17 @@ async function admQuotes(){
   <table class="admtbl"><thead><tr><th>الاسم</th><th>الهاتف</th><th>النوع</th><th>الحالة</th><th></th></tr></thead><tbody>
   ${(data||[]).map(q=>`<tr><td>${esc(q.name)}</td><td class="mono">${esc(q.phone)}</td><td>${esc(q.work_type)}</td>
     <td><select onchange="quoteStatusChange('${q.id}',this.value)">${['new','contacted','quoted','closed'].map(s=>`<option value="${s}" ${q.status===s?'selected':''}>${statusAr(s)}</option>`).join('')}</select></td>
-    <td><button class="btn sm" onclick="quoteDetail('${q.id}')">تفاصيل</button></td></tr>`).join('') || `<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:20px">لا توجد طلبات</td></tr>`}
+    <td style="display:flex;gap:6px"><button class="btn sm" onclick="quoteDetail('${q.id}')">تفاصيل</button><button class="btn sm danger" onclick="quoteDelete('${q.id}')">حذف</button></td></tr>`).join('') || `<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:20px">لا توجد طلبات</td></tr>`}
   </tbody></table>`;
 }
 window.quoteStatusChange = async function(id, status){
   const {error} = await sb.from('quote_requests').update({status}).eq('id',id);
   if(error) toast(error.message, true); else toast('تم التحديث');
+};
+window.quoteDelete = async function(id){
+  if(!confirm('تأكيد حذف طلب السعر؟')) return;
+  const {error} = await sb.from('quote_requests').delete().eq('id',id);
+  if(error) toast(error.message, true); else { toast('تم الحذف'); render(); }
 };
 window.quoteDetail = function(id){
   const q = window.__QUOTES_ADM.find(x=>x.id===id);
