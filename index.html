@@ -191,6 +191,8 @@ html[data-theme="dark"] .status-pill.completed,html[data-theme="dark"] .status-p
 .img-grid .im img{width:100%;height:100%;object-fit:cover}
 .img-grid .im button{position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:6px;border:0;background:rgba(0,0,0,.6);color:#fff;font-size:12px;cursor:pointer}
 .toast{position:fixed;bottom:18px;right:18px;z-index:80;background:var(--panel);border:1px solid var(--line);color:var(--text);padding:12px 16px;border-radius:12px;font-size:13px;font-weight:700;box-shadow:0 10px 30px rgba(15,23,42,.18)}
+.offline-banner{position:sticky;top:0;z-index:41;background:#B45309;color:#fff;text-align:center;font-size:12.5px;font-weight:800;padding:7px 10px;display:none}
+.offline-banner.show{display:block}
 .toast.err{border-color:rgba(220,38,38,.4);color:#DC2626}
 .spin{width:16px;height:16px;border-radius:50%;border:2px solid rgba(148,163,184,.35);border-top-color:currentColor;animation:sp .7s linear infinite;display:inline-block}
 @keyframes sp{to{transform:rotate(360deg)}}
@@ -215,6 +217,7 @@ footer.site{border-top:1px solid var(--line);padding:26px 0;margin-top:30px;colo
 </style>
 </head>
 <body>
+<div id="offlineBanner" class="offline-banner"></div>
 <div id="app"></div>
 <div id="modals"></div>
 <button id="installBtn" class="install-fab" hidden onclick="handleInstallClick()">⬇ تثبيت التطبيق</button>
@@ -786,6 +789,20 @@ window.submitQuote = async function(){
   if(!name||!phone||!work_type){ toast('عبّي الحقول المطلوبة (*)', true); return; }
   if(!isValidIraqiPhone(phone)){ toast('رقم الهاتف غير صحيح — يجب أن يبدأ بـ07 ويتكون من 11 رقم', true); return; }
   const btn=document.getElementById('qSubmitBtn'); btn.disabled=true; btn.innerHTML='<span class="spin"></span>';
+  const width=document.getElementById('qW').value||null, height=document.getElementById('qH').value||null;
+  const gov=document.getElementById('qGov').value.trim()||null, area=document.getElementById('qArea').value.trim()||null;
+  const notes=document.getElementById('qNotes').value.trim()||null;
+  const hasImage = !!document.getElementById('qImg').files[0];
+  const row={ name, phone, whatsapp: document.getElementById('qWa').value.trim()||null, work_type,
+    width_cm: width, height_cm: height, governorate: gov, area: area, notes: notes, image_url: null };
+  const offlineSuccessHtml = `<div class="empty-state"><b>تم حفظ طلبك ✅</b>سيرسل تلقائيًا عند توفر النت.
+    ${hasImage? '<div style="margin-top:8px;color:var(--muted);font-size:12.5px">ملاحظة: الصورة المرفقة ما راح تنرسل بهذي الحالة — تقدر ترسلها بعدين عبر واتساب.</div>':''}
+    <div style="margin-top:10px"><a class="btn primary" href="#/">الرجوع للرئيسية</a></div></div>`;
+  if(!navigator.onLine){
+    enqueueOffline({type:'quote', payload: row});
+    document.querySelector('#app .section.wrap').innerHTML = offlineSuccessHtml;
+    return;
+  }
   try{
     let image_url=null;
     const file=document.getElementById('qImg').files[0];
@@ -794,11 +811,7 @@ window.submitQuote = async function(){
       const {error:upErr}=await sb.storage.from('quote-images').upload(path,file);
       if(!upErr){ image_url = sb.storage.from('quote-images').getPublicUrl(path).data.publicUrl; }
     }
-    const width=document.getElementById('qW').value||null, height=document.getElementById('qH').value||null;
-    const gov=document.getElementById('qGov').value.trim()||null, area=document.getElementById('qArea').value.trim()||null;
-    const notes=document.getElementById('qNotes').value.trim()||null;
-    const row={ name, phone, whatsapp: document.getElementById('qWa').value.trim()||null, work_type,
-      width_cm: width, height_cm: height, governorate: gov, area: area, notes: notes, image_url };
+    row.image_url = image_url;
     const {error}=await sb.from('quote_requests').insert(row);
     if(error) throw error;
     const waMsg = [
@@ -812,7 +825,15 @@ window.submitQuote = async function(){
     document.querySelector('#app .section.wrap').innerHTML = `<div class="empty-state"><b>تم إرسال طلبك ✅</b>راح نتواصل وياك قريبًا لتحديد السعر.
       ${waLink? `<div style="margin-top:14px"><a class="btn block" style="border-color:rgba(37,211,102,.4);color:#1ba851" target="_blank" href="${waLink}">💬 لو ما انفتح واتساب تلقائياً، اضغط هنا</a></div>`:''}
       <div style="margin-top:10px"><a class="btn primary" href="#/">الرجوع للرئيسية</a></div></div>`;
-  }catch(e){ console.error(e); toast('تعذّر إرسال الطلب، تأكد من الاتصال وحاول مرة ثانية', true); btn.disabled=false; btn.textContent='إرسال الطلب'; }
+  }catch(e){
+    console.error(e);
+    if(!navigator.onLine){
+      enqueueOffline({type:'quote', payload: row});
+      document.querySelector('#app .section.wrap').innerHTML = offlineSuccessHtml;
+    }else{
+      toast('تعذّر إرسال الطلب، تأكد من الاتصال وحاول مرة ثانية', true); btn.disabled=false; btn.textContent='إرسال الطلب';
+    }
+  }
 };
 async function pageTrack(){
   await getSettings();
@@ -925,16 +946,46 @@ window.submitOrder = async function(){
   if(!name||!phone){ toast('عبّي الاسم والهاتف', true); return; }
   if(!isValidIraqiPhone(phone)){ toast('رقم الهاتف غير صحيح — يجب أن يبدأ بـ07 ويتكون من 11 رقم', true); return; }
   const btn=document.getElementById('coBtn'); btn.disabled=true; btn.innerHTML='<span class="spin"></span>';
+  const subtotal=cartTotal();
+  const payMethod = document.getElementById('coPayMethodFixed')?.value
+    || document.querySelector('input[name="coPayMethod"]:checked')?.value || 'cod';
+  const customerFields = {
+    name, phone, whatsapp: document.getElementById('coWa').value.trim()||'',
+    governorate: document.getElementById('coGov').value.trim()||'',
+    area: document.getElementById('coArea').value.trim()||'',
+    address: document.getElementById('coAddr').value.trim()||''
+  };
+  const orderRow = {
+    customer_name:name, customer_phone:phone, customer_whatsapp:customerFields.whatsapp||null,
+    governorate:customerFields.governorate||null, area:customerFields.area||null,
+    address_details:customerFields.address||null, notes:document.getElementById('coNotes').value.trim()||null,
+    subtotal, total:subtotal, payment_method:payMethod, payment_status: payMethod==='cod'? 'cod':'pending'
+  };
+  const itemsPayload = state.cart.map(i=>({
+    product_id:i.productId, product_name_snapshot:i.name, product_code_snapshot:i.code,
+    unit_price_snapshot:i.unitPrice, pricing_method_snapshot:i.pricingMethod, quantity:i.quantity,
+    width_cm:i.widthCm||null, height_cm:i.heightCm||null, calculated_area_or_length:i.areaOrLength,
+    note:i.note||null, total_price:i.lineTotal
+  }));
+  function saveOfflineOrder(){
+    enqueueOffline({type:'order', payload:{orderRow, items: itemsPayload}});
+    saveCustomerInfo(customerFields);
+    state.cart=[]; saveCart();
+    document.getElementById('modals').innerHTML = `<div class="overlay"><div class="sheet" style="text-align:center">
+      <div style="font-size:40px">📶</div><h3>تم حفظ طلبك</h3>
+      <p style="color:var(--muted)">سيرسل تلقائيًا عند توفر النت.</p>
+      <button class="btn primary block" onclick="document.getElementById('modals').innerHTML='';location.hash='#/'">تمام</button>
+    </div></div>`;
+  }
+  if(!navigator.onLine){
+    if(payMethod==='electronic'){
+      toast('الدفع الإلكتروني يحتاج اتصال بالإنترنت — اختر «الدفع عند الاستلام» أو حاول لما يرجع النت', true);
+      btn.disabled=false; btn.textContent='تأكيد الطلب'; return;
+    }
+    saveOfflineOrder(); return;
+  }
   try{
-    const subtotal=cartTotal();
-    const payMethod = document.getElementById('coPayMethodFixed')?.value
-      || document.querySelector('input[name="coPayMethod"]:checked')?.value || 'cod';
-    const {data:order,error}=await sb.from('orders').insert({
-      customer_name:name, customer_phone:phone, customer_whatsapp:document.getElementById('coWa').value.trim()||null,
-      governorate:document.getElementById('coGov').value.trim()||null, area:document.getElementById('coArea').value.trim()||null,
-      address_details:document.getElementById('coAddr').value.trim()||null, notes:document.getElementById('coNotes').value.trim()||null,
-      subtotal, total:subtotal, payment_method:payMethod, payment_status: payMethod==='cod'? 'cod':'pending'
-    }).select().single();
+    const {data:order,error}=await sb.from('orders').insert(orderRow).select().single();
     if(error) throw error;
     if(payMethod==='electronic'){
       const provider = getActiveElectronicProvider();
@@ -945,20 +996,10 @@ window.submitOrder = async function(){
         }catch(e){ /* المزود لم يُربط فعلياً بعد؛ يبقى الطلب بحالة "بانتظار الدفع" ليتابعه الموظف يدوياً */ }
       }
     }
-    const items = state.cart.map(i=>({
-      order_id:order.id, product_id:i.productId, product_name_snapshot:i.name, product_code_snapshot:i.code,
-      unit_price_snapshot:i.unitPrice, pricing_method_snapshot:i.pricingMethod, quantity:i.quantity,
-      width_cm:i.widthCm||null, height_cm:i.heightCm||null, calculated_area_or_length:i.areaOrLength,
-      note:i.note||null, total_price:i.lineTotal
-    }));
+    const items = itemsPayload.map(i=>({...i, order_id:order.id}));
     const {error:itErr}=await sb.from('order_items').insert(items);
     if(itErr) throw itErr;
-    saveCustomerInfo({
-      name, phone, whatsapp: document.getElementById('coWa').value.trim()||'',
-      governorate: document.getElementById('coGov').value.trim()||'',
-      area: document.getElementById('coArea').value.trim()||'',
-      address: document.getElementById('coAddr').value.trim()||''
-    });
+    saveCustomerInfo(customerFields);
     window.__LAST_ORDER = {
       order,
       total: subtotal,
@@ -973,7 +1014,11 @@ window.submitOrder = async function(){
       <button class="btn block" style="margin-bottom:8px" onclick="downloadOrderSummary()">⬇ تحميل ملخص الطلب</button>
       <button class="btn primary block" onclick="document.getElementById('modals').innerHTML='';location.hash='#/'">تمام</button>
     </div></div>`;
-  }catch(e){ console.error(e); toast('تعذّر تأكيد الطلب، تأكد من الاتصال وحاول مرة ثانية', true); btn.disabled=false; btn.textContent='تأكيد الطلب'; }
+  }catch(e){
+    console.error(e);
+    if(!navigator.onLine && payMethod!=='electronic'){ saveOfflineOrder(); }
+    else{ toast('تعذّر تأكيد الطلب، تأكد من الاتصال وحاول مرة ثانية', true); btn.disabled=false; btn.textContent='تأكيد الطلب'; }
+  }
 };
 window.downloadOrderSummary = async function(){
   const data = window.__LAST_ORDER; if(!data) return;
@@ -1023,7 +1068,8 @@ function bindPublicEvents(){
 const ADM_TABS = [
   {key:'overview',label:'نظرة عامة'},{key:'categories',label:'الأقسام'},{key:'products',label:'المنتجات'},
   {key:'orders',label:'الطلبات'},{key:'quotes',label:'طلبات الأسعار'},
-  {key:'customers',label:'الزبائن'},{key:'gallery',label:'معرض الأعمال'},{key:'glass-calc',label:'حاسبة الزجاج'},{key:'settings',label:'الإعدادات'}
+  {key:'customers',label:'الزبائن'},{key:'gallery',label:'معرض الأعمال'},{key:'glass-calc',label:'حاسبة الزجاج'},
+  {key:'materials-list',label:'قائمة المواد'},{key:'settings',label:'الإعدادات'}
 ];
 async function getSession(){ const {data}=await sb.auth.getSession(); state.session=data.session; return state.session; }
 // -------------------- تنبيه الطلبات الجديدة (صوتي + بصري) بلوحة التحكم --------------------
@@ -1083,6 +1129,7 @@ async function renderAdminRoute(parts, app){
     else if(tab==='customers') target.innerHTML = await admCustomers();
     else if(tab==='gallery') target.innerHTML = await admGallery();
     else if(tab==='glass-calc') target.innerHTML = admGlassCalc();
+    else if(tab==='materials-list') target.innerHTML = admMaterialsList();
     else if(tab==='settings') target.innerHTML = await admSettings();
     else if(tab==='change-password') target.innerHTML = admChangePassword();
   }catch(e){ console.error(e); target.innerHTML = '<div class="empty-state"><b>صار خطأ</b>'+esc(e.message)+'</div>'; }
@@ -1713,6 +1760,100 @@ window.glassExportShare = async function(){
   }catch(e){ node.remove(); console.error(e); toast('صار خطأ بالتصدير', true); }
 };
 
+// ---- قائمة المواد (بسيطة، بدون حسابات) ----
+const MATERIALS_LIST_KEY = "workshop_materials_list_v1";
+function ensureMaterialsState(){
+  if(!window.materialsRows){
+    try{
+      const saved = JSON.parse(localStorage.getItem(MATERIALS_LIST_KEY));
+      if(saved && Array.isArray(saved.rows) && saved.rows.length) window.materialsRows = saved.rows;
+    }catch(e){}
+  }
+  if(!window.materialsRows) window.materialsRows = [{name:'', qty:''}];
+}
+function materialsSaveState(){
+  try{ localStorage.setItem(MATERIALS_LIST_KEY, JSON.stringify({rows:window.materialsRows})); }catch(e){}
+}
+function materialsTableHtml(){
+  const rows = window.materialsRows;
+  const rowsHtml = rows.map((r,i)=>`
+    <tr>
+      <td><input value="${esc(r.name)}" placeholder="اسم المادة" oninput="materialsUpdateRow(${i},'name',this.value)"></td>
+      <td><input type="number" min="0" step="1" value="${esc(r.qty)}" oninput="materialsUpdateRow(${i},'qty',this.value)"></td>
+      <td><button class="btn sm danger" onclick="materialsRemoveRow(${i})">حذف</button></td>
+    </tr>`).join('');
+  return `
+  <table class="glass-table">
+    <thead><tr><th>المواد</th><th>العدد</th><th></th></tr></thead>
+    <tbody>${rowsHtml}</tbody>
+  </table>
+  <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap">
+    <button class="btn" onclick="materialsAddRow()">+ إضافة صف</button>
+    <button class="btn primary" onclick="materialsExport()">🖼️ طباعة القائمة كصورة</button>
+    <button class="btn danger" onclick="materialsClearAll()">مسح الكل</button>
+  </div>`;
+}
+function admMaterialsList(){
+  ensureMaterialsState();
+  return `<div class="adm-topbar"><h2>قائمة المواد</h2></div>
+  <div style="max-width:520px">
+    <div id="materialsBox">${materialsTableHtml()}</div>
+  </div>`;
+}
+window.materialsUpdateRow = function(i, field, value){
+  window.materialsRows[i][field] = value;
+  materialsSaveState();
+};
+window.materialsAddRow = function(){
+  window.materialsRows.push({name:'', qty:''});
+  document.getElementById('materialsBox').innerHTML = materialsTableHtml();
+  materialsSaveState();
+};
+window.materialsRemoveRow = function(i){
+  window.materialsRows.splice(i,1);
+  if(!window.materialsRows.length) window.materialsRows = [{name:'', qty:''}];
+  document.getElementById('materialsBox').innerHTML = materialsTableHtml();
+  materialsSaveState();
+};
+window.materialsClearAll = function(){
+  window.materialsRows = [{name:'', qty:''}];
+  document.getElementById('materialsBox').innerHTML = materialsTableHtml();
+  materialsSaveState();
+};
+window.materialsExport = async function(){
+  const rows = window.materialsRows.filter(r => String(r.name||'').trim() && Number(r.qty)>0);
+  if(!rows.length){ toast('أضف مادة وعدد صحيح أولاً', true); return; }
+  const trs = rows.map(r=>`<tr><td style="padding:9px;border:1px solid #e2e8f0">${esc(r.name)}</td><td style="padding:9px;border:1px solid #e2e8f0">${esc(r.qty)}</td></tr>`).join('');
+  const printHtml = `<div id="materialsPrintCard" style="position:fixed;left:-9999px;top:0;width:380px;background:#fff;padding:20px;font-family:Tajawal,sans-serif;direction:rtl;color:#0F172A">
+    <div style="font-weight:900;font-size:17px;margin-bottom:14px">السلام عليكم</div>
+    <table style="width:100%;border-collapse:collapse;font-size:13.5px">
+      <thead><tr style="background:#F1F5F9">
+        <th style="padding:9px;border:1px solid #e2e8f0">المواد</th>
+        <th style="padding:9px;border:1px solid #e2e8f0">العدد</th>
+      </tr></thead>
+      <tbody>${trs}</tbody>
+    </table>
+  </div>`;
+  document.body.insertAdjacentHTML('beforeend', printHtml);
+  const node = document.getElementById('materialsPrintCard');
+  try{
+    const canvas = await html2canvas(node, {scale:2, backgroundColor:'#ffffff'});
+    node.remove();
+    canvas.toBlob(async (blob)=>{
+      if(!blob){ toast('صار خطأ بإنشاء الصورة', true); return; }
+      const file = new File([blob], 'قائمة-مواد.png', {type:'image/png'});
+      if(navigator.canShare && navigator.canShare({files:[file]})){
+        try{ await navigator.share({files:[file], title:'قائمة مواد'}); return; }
+        catch(e){ /* المستخدم ألغى المشاركة أو فشلت — نكمل بالتنزيل */ }
+      }
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a'); a.href = url; a.download = 'قائمة-مواد.png'; a.click();
+      URL.revokeObjectURL(url);
+      toast('تم تنزيل صورة القائمة');
+    }, 'image/png');
+  }catch(e){ node.remove(); console.error(e); toast('صار خطأ بالتصدير', true); }
+};
+
 // ---- settings ----
 async function admSettings(){
   const {data} = await sb.from('site_settings').select('*').eq('id',1).maybeSingle();
@@ -1807,6 +1948,61 @@ window.toggleTheme = function(){
   syncThemeBtn();
 };
 
+// -------------------- أوفلاين (تصفح + طلبات معلّقة) --------------------
+const OFFLINE_QUEUE_KEY = 'offline_queue_v1';
+function getOfflineQueue(){ try{ return JSON.parse(localStorage.getItem(OFFLINE_QUEUE_KEY))||[]; }catch(e){ return []; } }
+function saveOfflineQueue(q){ localStorage.setItem(OFFLINE_QUEUE_KEY, JSON.stringify(q)); updateOfflineBanner(); }
+function enqueueOffline(item){
+  const q = getOfflineQueue();
+  q.push(Object.assign({ id: uid(), createdAt: Date.now() }, item));
+  saveOfflineQueue(q);
+}
+function updateOfflineBanner(){
+  const el = document.getElementById('offlineBanner');
+  if(!el) return;
+  const q = getOfflineQueue();
+  if(!navigator.onLine){
+    el.textContent = q.length
+      ? `📶 غير متصل بالإنترنت — ${q.length} طلب بانتظار الإرسال عند رجوع النت`
+      : '📶 غير متصل بالإنترنت — تعرض آخر بيانات محفوظة';
+    el.classList.add('show');
+  }else if(q.length){
+    el.textContent = `⏳ جارِ إرسال ${q.length} طلب معلّق تلقائيًا...`;
+    el.classList.add('show');
+  }else{
+    el.classList.remove('show');
+  }
+}
+async function flushOfflineQueue(){
+  if(!navigator.onLine) return;
+  const q = getOfflineQueue();
+  if(!q.length) return;
+  updateOfflineBanner();
+  const remaining = [];
+  for(const item of q){
+    try{
+      if(item.type==='quote'){
+        const {error} = await sb.from('quote_requests').insert(item.payload);
+        if(error) throw error;
+      }else if(item.type==='order'){
+        const {data:order, error} = await sb.from('orders').insert(item.payload.orderRow).select().single();
+        if(error) throw error;
+        const items = item.payload.items.map(i=>({...i, order_id:order.id}));
+        const {error:itErr} = await sb.from('order_items').insert(items);
+        if(itErr) throw itErr;
+        toast(`✅ تم تأكيد طلبك المعلّق — رقم الطلب: ${order.order_number}`);
+      }
+    }catch(e){ console.warn('[offline queue] فشلت إعادة المحاولة، بيضل الطلب محفوظ:', e); remaining.push(item); }
+  }
+  saveOfflineQueue(remaining);
+  updateOfflineBanner();
+}
+window.addEventListener('online', ()=>{ updateOfflineBanner(); flushOfflineQueue(); });
+window.addEventListener('offline', updateOfflineBanner);
+if('serviceWorker' in navigator){
+  window.addEventListener('load', ()=>{ navigator.serviceWorker.register('/sw.js').catch(e=>console.warn('[SW] register failed', e)); });
+}
+
 // -------------------- boot --------------------
 sb.auth.onAuthStateChange((_e, session)=>{
   state.session=session;
@@ -1814,6 +2010,8 @@ sb.auth.onAuthStateChange((_e, session)=>{
 });
 render();
 syncThemeBtn();
+updateOfflineBanner();
+if(navigator.onLine) flushOfflineQueue();
 
 // -------------------- PWA install (أيقونة واحدة فقط + اختصار "لوحة التحكم" بالضغط المطوّل) --------------------
 let __deferredInstallPrompt = null;
