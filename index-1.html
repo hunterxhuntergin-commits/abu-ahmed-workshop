@@ -1,0 +1,1866 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<script>
+// تطبيق الوضع الليلي فوراً قبل الرسم لتفادي وميض اللون الخاطئ
+(function(){
+  try{
+    var t = localStorage.getItem('theme');
+    if(!t) t = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
+    if(t==='dark') document.documentElement.setAttribute('data-theme','dark');
+  }catch(e){}
+})();
+</script>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>أبو أحمد للألمنيوم</title>
+<meta name="description" content="أبو أحمد للألمنيوم — أبواب وشبابيك وكاونترات ومحجر درج بجودة تصنيع عالية.">
+<link rel="manifest" href="data:application/manifest+json;base64,eyJuYW1lIjogItij2KjZiCDYo9it2YXYryDZhNmE2KPZhNmF2YbZitmI2YUiLCAic2hvcnRfbmFtZSI6ICLYo9io2Ygg2KPYrdmF2K8iLCAiZGVzY3JpcHRpb24iOiAi2KXYr9in2LHYqSDYrdiz2KfYqNin2Kog2KfZhNiy2KjYp9im2YYg2YjYp9mE2KPYudmF2KfZhCAtINij2KjZiCDYo9it2YXYryDZhNmE2KPZhNmF2YbZitmI2YUg2YjYp9mE2LLYrNin2KwiLCAic3RhcnRfdXJsIjogIi8iLCAic2NvcGUiOiAiLyIsICJkaXNwbGF5IjogInN0YW5kYWxvbmUiLCAiYmFja2dyb3VuZF9jb2xvciI6ICIjRjhGQUZDIiwgInRoZW1lX2NvbG9yIjogIiMwRUE1RTkiLCAib3JpZW50YXRpb24iOiAicG9ydHJhaXQtcHJpbWFyeSIsICJsYW5nIjogImFyIiwgImRpciI6ICJydGwiLCAiaWNvbnMiOiBbeyJzcmMiOiAiZGF0YTppbWFnZS9wbmc7YmFzZTY0LGlWQk9SdzBLR2dvQUFBQU5TVWhFVWdBQUFNQUFBQURBQ0FZQUFBQlMzR3dIQUFBRDlVbEVRVlI0bk8zZFRXNVVWeFNGMFNKS0czcGhibUY4TURmb2hRbVFSbFNTZ3hMczk5NzlPZWZ0dGZxSUs5Zis2cFpkbHV2eEFBQUFBQUFBQUFDNGpYZTdEM0RGKzg5ZmYrdytBLy80L3Vsanl5MjFPYlN4OTlNaGl0SUhOUHI3cUJwRHlVTVovbjFWQzZIVVlRdy9SNVVRU2h6QzhIUHREbUhyZjI3NFBPMEs0YmNkLytuallmejgyNjQ5TEsvTzhIbk55dHRnNlExZy9MekZ5cDBzQzhENE9XTFZYcFlFWVB5Y3NXSTMwd013ZnE2WXZaK3BBUmcvSTh6YzBiUUFqSitSWnUxcFNnREd6d3d6ZGpVOEFPTm5wdEg3R2hxQThiUEN5SjF0KzFVSXFHQllBSjc5V1duVTNvWUVZUHpzTUdKM1hnSVI3WElBbnYzWjZlciszQUJFdXhTQVozOHF1TEpETndEUlRnZmcyWjlLenU3UkRVQzBVd0Y0OXFlaU03dDBBeEJOQUVRN0hJQ1hQMVIyZEo5dUFLSUpnR2dDSU5ydnV3OHcwbDkvL3JIN0NERStmUG0yK3doREhQb2JqRlcvQVRiOGZhcUc4TmEvTDlyK0paRHg3OVg5Njk4NmdPNWYvTHZvL0RpMERnQ3VhaHRBNTJlZE8rcjZlTFFOQUVZUUFORnU5VDdBUzFWL1BQZDR2UDV5b2VyWnU3N00rUlUzQU5FRVFEUUJFRTBBUkJNQTBRUkFOQUVRVFFCRUV3RFJCRUEwQVJCTkFFUVRBTkVFUURRQkVFMEFSQk1BMFFSQU5BRVFUUUJFRXdEUkJFQTBBUkJOQUVRVEFORUVRRFFCRUUwQVJCTUEwUVJBTkFFUVRRQkVFd0RSQkVBMEFSQk5BRVFUQU5FRVFMVGJma3hxNTQvMDdIejJidHdBUkJNQTBRUkFOQUVRVFFCRUV3RFJCRUMwMjc0UDhPSEx0OTFIK0Yrdi9aeS82dG52K1A2RUc0Qm9BaUNhQUlnbUFLSUpnR2dDSUpvQWlDWUFvZ21BYUFJZ21nQ0lKZ0NpQ1lCb0FpQ2FBSWdtQUtJSmdHZ0NJSm9BaUNZQW9nbUFhQUlnbWdDSUpnQ2lDWUJvQWlDYUFJZ21BS0lKZ0dnQ0lKb0FpQ1lBb2dtQWFBSWdtZ0NJSmdDaUNZQm90LzJVeU02ZmFOajU3TjI0QVlnbUFLSzFEYURxaDBtbjZ2cDR0QTBBUm1nZFFOZG5uYnZwL0RpMER1RHg2UDNGdjRQdVgvOTNSLy9CKzg5ZmY4dzR5QWgrZkxoTzVlRi8vL1R4emJ1KzFmc0FsUjhVYW1yL0VnaXVFQURSQkVDMHd3RWMrUVlEVmp1NlR6Y0EwUVJBdEZNQmVCbEVSV2QyNlFZZzJ1a0EzQUpVY25hUGJnQ2lYUXJBTFVBRlYzYm9CaURhNVFEY0F1eDBkWDl1QUtJTkNjQXR3QTRqZGpmc0JoQUJLNDNhbTVkQVJCc2FnRnVBRlVidWJQZ05JQUptR3IydktTK0JSTUFNTTNZMTdYc0FFVERTckQxTi9TWllCSXd3YzBmVGZ3b2tBcTZZdlo4bFB3WVZBV2VzMk0yeTl3RkV3QkdyOXJMMGpUQVI4QllyZDdKdGtKWC94aWg3N0hpQzNQYXJFRzREWHRxMWh4SWpkQnZrMnYxRVdDS0FKeUhrMkQzOHB4S0grSmtRN3F2SzhKOUtIZVpuUXJpUGFzTi9Lbm1vL3lLR2ZxcU8vcVh5Qi93VlVkVFJZZXdBQUFBQUFBQUFKUGdiUUNqN2RRZ25hODBBQUFBQVNVVk9SSzVDWUlJPSIsICJzaXplcyI6ICIxOTJ4MTkyIiwgInR5cGUiOiAiaW1hZ2UvcG5nIiwgInB1cnBvc2UiOiAiYW55In0sIHsic3JjIjogImRhdGE6aW1hZ2UvcG5nO2Jhc2U2NCxpVkJPUncwS0dnb0FBQUFOU1VoRVVnQUFBZ0FBQUFJQUNBWUFBQUQwZU5UNkFBQU13RWxFUVZSNG5PM2RUWFlWTnhTRlVaSGxOdlRNM016NFlHN1Fnd21RQmlFWSs5bCtQMVdsZTNYMkhrQlNxNlRTL1pZZUpHTUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQU1DdDNzMStBR3A1Ly9ucno5blBBT3pueDZlUHpuM0dHQUlnamdFUHZFWWc1TERRQ3pQc2dTMklnalZaMUlVWStNQVJCTUVhTEdKakJqNVFnU0RveWFJMVkrZ0RsWW1CUGl4VUE0WSswSkVZcU0zaUZHWG9BeXNSQS9WWWtHSU1mbUJsUXFBT0MxR0FvUThrRWdOemVma1RHZndBUW1BV0wzMENneC9nT1NGd0xDLzdRQVkvd051RXdERzg1QU1ZL0FDWEV3TDc4bkozWlBBRDNFNEk3T09mMlErd0tzTWZZQnZPMDMyb3FvM1pxQUQ3Y1J1d0hTOXlJd1kvd0hHRXdPMzhCTEFCd3gvZ1dNN2QyeW1vRzlpQUFQTzVEYmlPRzRBckdmNEFOVGlQcnlNQXJtQ3pBZFRpWEw2Y2E1TUwyR0FBOWZsSjREeHVBTTVrK0FQMDRMdytqd0E0ZzgwRTBJdHorMjJ1U1Y1aEF3SDA1eWVCMDl3QXZNRHdCMWlEOC93MEFYQ0N6UUt3RnVmNmN3TGdDWnNFWUUzTzk3OEpnRWRzRG9DMU9lZi9FQUQvc1NrQU1qanZmeEVBdzJZQVNPUGNGd0EyQVVDbzlQTS9PZ0RTRng4Z1hmSWNpQTJBNUVVSDRJL1VlUkFaQUttTERjQnBpWE1oTGdBU0Z4bUF0NlhOaDZnQVNGdGNBQzZUTkNkaUFpQnBVUUc0WHNxOGlBaUFsTVVFWUJzSmMyUDVBRWhZUkFDMnQvcjhXRG9BVmw4OEFQYTE4aHhaT2dBQWdOT1dEWUNWcXcyQTQ2dzZUNVlNZ0ZVWEM0QTVWcHdyeXdYQWlvc0V3SHlyelpmbEFnQUFlTnRTQWJCYW5RRlF5MHB6WnBrQVdHbFJBS2hybFhtelJBQ3NzaGdBOUxEQzNGa2lBQUNBeTdRUGdCVXFESUIrdXMrZjFnSFEvZVVEMEZ2bk9kUTZBQUNBNjdRTmdNN1ZCY0E2dXM2anRnRUFBRnl2WlFCMHJTMEExdFJ4THJVTGdJNHZHWUQxZFp0UDdRSUFBTGhkcXdEb1ZsY0FaT2swcDFvRkFBQ3dqVFlCMEttcUFNalZaVjYxQ1FBQVlEc3RBcUJMVFFIQUdEM21Wb3NBQUFDMlZUNEFPbFFVQUR4VmZYNlZEd0FBWUh1bEE2QjZQUUhBYXlyUHNkSUJBQURzUXdBQVFLQ3lBVkQ1MmdRQXpsVjFucFVOQUFCZ1B5VURvR290QWNBMUtzNjFrZ0VBQU94TEFBQkFvSElCVVBHYUJBQnVWVzIrbFFzQUFHQi9BZ0FBQXBVS2dHclhJd0N3cFVwenJsUUFBQURIRUFBQUVLaE1BRlM2RmdHQXZWU1pkMlVDQUFBNGpnQUFnRUFDQUFBQ2xRaUFLcitIQU1BUktzeTlFZ0VBQUJ4TEFBQkFJQUVBQUlHbUIwQ0YzMEVBNEdpejU5LzBBQUFBamljQUFDRFEzZXdIb0lmdkQvZXpId0c0d0ljdjMyWS9Bc1VKQUY1azZFTmZqNzlmTWNBcDcyYit5MmYvQVFoT00vaGhUVUtncGgrZlBrNlp4VzRBK0ovQkQydjcvWTBMQWNid2h3RDVqK0VQT1h6dmpDRUFHQTREU09TN1J3Q0Vjd2hBTHQ5L05nRVF6TWNQT0FkeUNZQlFQbnJnTitkQkpnRVF5TWNPUE9WY3lETXRBUHczQUFCZzNqeDBBeEJHNVFNdmNUNWtFUUFBRUVnQUJGSDN3RnVjRXprRUFBQUVFZ0FBRUVnQWhIQ3RCNXpMZVpGQkFBQkFJQUVBQUlFRUFBQUVFZ0FBRUVnQUFFQWdBUUFBZ2U1bVB3RDlmZmp5YmZZajhNaWVmNFhMV3RmaXIrdHhDemNBQUJCSUFBQkFJQUVBQUlFRUFBQUVFZ0FBRUVnQUFFQWdBUUFBZ1FRQUFBUVNBQUFRU0FBQVFDQUJBQUNCQkFBQUJCSUFBQkJJQUFCQUlBRUFBSUVFQUFBRUVnQUFFRWdBQUVBZ0FRQUFnUVFBQUFRU0FBQVFTQUFBUUNBQkFBQ0JCQUFBQkJJQUFCQklBQUJBSUFFQUFJRUVBQUFFRWdBQUVFZ0FBRUFnQVFBQWdRUUFBQVFTQUFBUVNBQUFRQ0FCQUFDQkJBQUFCQklBQUJCSUFBQkFJQUVBQUlFRUFBQUVFZ0FBRUVnQUFFQWdBUUFBZ1FRQUFBUVNBQUFRU0FBQVFDQUJBQUNCQkFBQUJCSUFBQkJJQUFCQUlBRUFBSUVFQUFBRUVnQUFFRWdBQUVBZ0FRQUFnUVFBQUFRU0FBQVFTQUFBUUNBQkFBQ0JCQUFBQkJJQUFCQklBQUJBSUFFQUFJRUVBQUFFRWdBQUVFZ0FBRUFnQVFBQWdRUUFBQVFTQUFBUVNBQUFRQ0FCQUFDQkJBQUFCQklBQUJCSUFBQkFJQUVBQUlFRUFBQUVFZ0FBRUVnQUFFQWdBUUFBZ1FRQUFBUVNBQUFRU0FBQVFDQUJBQUNCQkFBQUJCSUFBQkJJQUFCQUlBRUFBSUVFQUFBRUVnQUFFRWdBQUVBZ0FRQUFnUVFBQUFRU0FBQVFTQUFBUUNBQkFBQ0JCQUFBQkJJQUFCQklBQUJBSUFFQUFJSHVaajhBL1gxL3VKLzlDQnpFV3NNNjNBQUFRQ0FCQUFDQkJBQUFCQklBQUJCSUFBQkFJQUVBQUlFRUFBQUVFZ0FBRUVnQUFFQWdBUUFBZ1FRQUFBUVNBQUFRU0FBQVFDQUJBQUNCQkFBQUJCSUFBQkJJQUFCQUlBRUFBSUVFQUFBRUVnQUFFRWdBQUVBZ0FRQUFnZTVtUHdEOWZmanliZllqOE1qM2gvdmQvdG5XdXBZOTE1cjF1UUVBZ0VBQ0FBQUNDUUFBQ0NRQUFDQ1FBQUNBUUFJQUFBSUpBQUFJSkFBQUlKQUFBSUJBQWdBQUFna0FBQWdrQUFBZ2tBQUFnRUFDQUFBQ0NRQUFDQ1FBQUNDUUFBQ0FRQUlBQUFJSkFBQUlKQUFBSUpBQUFJQkFBZ0FBQWdrQUFBZ2tBQUFna0FBQWdFQUNBQUFDQ1FBQUNDUUFBQ0NRQUFDQVFBSUFBQUlKQUFBSUpBQUFJSkFBQUlCQUFnQUFBZ2tBQUFna0FBQWdrQUFBZ0VBQ0FBQUNDUUFBQ0NRQUFDQ1FBQUNBUUFJQUFBSUpBQUFJSkFBQUlKQUFBSUJBQWdBQUFna0FBQWdrQUFBZ2tBQUFnRUFDQUFBQ0NRQUFDQ1FBQUNDUUFBQ0FRQUlBQUFJSkFBQUlKQUFBSUpBQUFJQkFBZ0FBQWdrQUFBZ2tBQUFna0FBQWdFQUNBQUFDQ1FBQUNDUUFBQ0NRQUFDQVFBSUFBQUlKQUFBSUpBQUFJSkFBQUlCQUFnQUFBZ2tBQUFna0FBQWdrQUFBZ0VBQ0FBQUNDUUFBQ0NRQUFDQ1FBQUNBUUFJQUFBSUpBQUFJSkFBQUlKQUFBSUJBQWdBQUFna0FBQWdrQUFBZ2tBQUFnRUFDQUFBQ0NRQUFDQ1FBQUNDUUFBQ0FRQUlBQUFJSkFBQUlKQUFBSUpBQUFJQkFBZ0FBQWdrQUFBZ2tBQUFna0FBQWdFQUNBQUFDQ1FBQUNIUTMrd0hvNy92RC9leEg0Q0RXR3RiaEJnQUFBZ2tBQUFna0FBQWdrQUFBZ0VBQ0FBQUNDUUFBQ0NRQVFuejQ4bTMySXdCTk9DOHlDQUFBQ0NRQUFDQ1FBQWppV2c5NGkzTWlod0FBZ0VBQ0lJeTZCMTdpZk1neUxRQitmUHI0YnRhL0d3Q3FtRFVQM1FBRVV2bkFVODZGUEFJZ2xJOGQrTTE1a0VrQUJQUFJBODZCWEFJZ25JOGZjdm4rc3drQUhBSVF5SGVQQUdDTTRUQ0FKTDUzeGhqamJ2WURVTWZ2UStIN3cvM2tKd0gyWVBEejJQUy9pLy8rODllZnM1K0IwNFFBck1IZ3Iydm1meFBIRFFBdmVueG9pQUhveGREbkxRS0FzemhNQU5iaUR3RUNRQ0FCQUFDQnBnZUEveWtRQUlsbXo3L3BBUUFBSEU4QUFFQWdBUUFBZ1VvRXdPemZRUURnU0JYbVhva0FBQUNPSlFBQUlKQUFBSUJBWlFLZ3d1OGhBTEMzS3ZPdVRBQUFBTWNSQUFBUXFGUUFWTGtXQVlBOVZKcHpwUUlBQURpR0FBQ0FRT1VDb05MMUNBQnNwZHA4S3hjQUFNRCtCQUFBQkNvWkFOV3VTUURnRmhYbldza0FBQUQyVlRZQUt0WVNBRnlxNmp3ckd3QUF3SDRFQUFBRUtoMEFWYTlOQU9BY2xlZFk2UUFBQVBaUlBnQXExeE1BdktUNi9Db2ZBQURBOWxvRVFQV0tBb0RIT3N5dEZnRUFBR3lyVFFCMHFDa0E2REt2MmdRQUFMQ2RWZ0hRcGFvQXlOUnBUclVLQUFCZ0crMENvRk5kQVpDajIzeHFGd0JqOUh2SkFLeXQ0MXhxR1FBQXdHM2FCa0RIMmdKZ1BWM25VZHNBQUFDdTF6b0F1bFlYQUd2b1BJZGFCOEFZdlY4K0FIMTFuei90QXdBQXVOd1NBZEM5d2dEb1pZVzVzMFFBakxIR1lnQlEzeXJ6WnBrQUdHT2RSUUdncHBYbXpGSUJBQUNjWjdrQVdLbk9BS2hqdGZteVhBQ01zZDRpQVREWGluTmx5UUFZWTgzRkF1QjRxODZUWlFNQUFIalowZ0d3YXJVQmNJeVY1OGpTQVRERzJvc0h3SDVXbngvTEI4QVk2eThpQU50S21Cc1JBVEJHeG1JQ2NMdVVlUkVUQUdQa0xDb0ExMG1hRTFFQk1FYlc0Z0p3dnJUNUVCY0FZK1F0TWdDdlM1d0xrUUV3UnVaaUEvQmM2anlJRFlBeGNoY2RnRitTNTBCMEFJeVJ2ZmdBeWRMUC8vZ0FHTU1tQUVqajNCY0EvN01aQURJNDczOFJBSS9ZRkFCcmM4Ny9JUUNlc0RrQTF1UjgvNXNBT01FbUFWaUxjLzA1QWZBQ213VmdEYzd6MDd5VU03ei8vUFhuN0djQTRESUcvK3ZjQUp6QkpnTG94Ym45TmdGd0pwc0pvQWZuOVhtOHBDdjRTUUNnSG9QL01tNEFybUNUQWRUaVhMNmNBTGlTelFaUWcvUDRPbDdhQnZ3a0FIQThnLzgyYmdBMllCTUNITXU1ZXpzdmNHTnVBd0QyWS9Cdng0dmNpUkFBMkk3QnZ6MC9BZXpFWmdYWWh2TjBIMTdxQWR3R0FGek80TitYbDNzZ0lRRHdOb1AvR0Y3eUJFSUE0RG1ELzFoZTlrUkNBTURnbjhWTEwwQUlBSWtNL3JtOC9HTEVBTEF5UTc4T0MxR1VFQUJXWXZEWFkwRWFFQU5BUjRaK2JSYW5HVEVBVkdibzkyR2hHaE1EUUFXR2ZrOFdiU0dDQURpQ2diOEdpN2d3UVFCc3djQmZrMFVOSXdxQTF4ajJPU3cwZnhFSXNEWURIZ0FBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQU5qTnZ3TytlN2NFTE9QVEFBQUFBRWxGVGtTdVFtQ0MiLCAic2l6ZXMiOiAiNTEyeDUxMiIsICJ0eXBlIjogImltYWdlL3BuZyIsICJwdXJwb3NlIjogImFueSJ9LCB7InNyYyI6ICJkYXRhOmltYWdlL3BuZztiYXNlNjQsaVZCT1J3MEtHZ29BQUFBTlNVaEVVZ0FBQWdBQUFBSUFDQVlBQUFEMGVOVDZBQUFKYkVsRVFWUjRuTzNiUVc3VFVCUkEwWUl5SnJNc0x2c2pleU96ckFCR3FKV2lxa0R3ZjI3dU9RdW9uaXkvNzJzci9mTHQrNCtmTHdCQXl0ZnBBUUNBOVFRQUFBUUpBQUFJRWdBQUVDUUFBQ0JJQUFCQWtBQUFnQ0FCQUFCQkFnQUFnZ1FBQUFRSkFBQUlFZ0FBRUNRQUFDQklBQUJBa0FBQWdDQUJBQUJCQWdBQWdnUUFBQVFKQUFBSUVnQUFFQ1FBQUNCSUFBQkFrQUFBZ0NBQkFBQkJBZ0FBZ2dRQUFBUUpBQUFJRWdBQUVDUUFBQ0JJQUFCQWtBQUFnQ0FCQUFCQkFnQUFnZ1FBQUFRSkFBQUlFZ0FBRUNRQUFDQklBQUJBa0FBQWdDQUJBQUJCQWdBQWdnUUFBQVFKQUFBSUVnQUFFQ1FBQUNCSUFBQkFrQUFBZ0NBQkFBQkJBZ0FBZ2dRQUFBUUpBQUFJRWdBQUVDUUFBQ0JJQUFCQWtBQUFnQ0FCQUFCQkFnQUFnZ1FBQUFRSkFBQUlFZ0FBRUNRQUFDQklBQUJBa0FBQWdDQUJBQUJCQWdBQWdnUUFBQVFKQUFBSUVnQUFFQ1FBQUNCSUFBQkFrQUFBZ0NBQkFBQkJBZ0FBZ2dRQUFBUUpBQUFJRWdBQUVDUUFBQ0JJQUFCQWtBQUFnQ0FCQUFCQkFnQUFnZ1FBQUFRSkFBQUlFZ0FBRUNRQUFDQklBQUJBa0FBQWdDQUJBQUJCQWdBQWdnUUFBQVFKQUFBSUVnQUFFQ1FBQUNCSUFBQkFrQUFBZ0NBQkFBQkJBZ0FBZ2dRQUFBUUpBQUFJRWdBQUVDUUFBQ0JJQUFCQWtBQUFnQ0FCQUFCQkFnQUFnZ1FBQUFRSkFBQUlFZ0FBRUNRQUFDQklBQUJBa0FBQWdDQUJBQUJCQWdBQWdnUUFBQVFKQUFBSUVnQUFFQ1FBQUNCSUFBQkFrQUFBZ0NBQkFBQkJBZ0FBZ2dRQUFBUUpBQUFJRWdBQUVDUUFBQ0JJQUFCQWtBQUFnQ0FCQUFCQkFnQUFnZ1FBQUFRSkFBQUlFZ0FBRUNRQUFDQklBQUJBa0FBQWdDQUJBQUJCQWdBQWdnUUFBQVFKQUFBSUVnQUFFQ1FBQUNCSUFBQkFrQUFBZ0NBQkFBQkJBZ0FBZ2dRQUFBUUpBQUFJRWdBQUVDUUFBQ0JJQUFCQWtBQUFnQ0FCQUFCQmgra0I0Q08zODJsNkJQZ254OHQxZWdSNGx3QmdsenowZVFadjcyTXh3TjRJQUhiRmc1OW45ZnZlRmdMc2hRQmdGeno0cVJBQzdJVWZBVExPdzU4aTl6M1RCQUNqSElLVXVmK1pKQUFZNC9BRGU4QWNBY0FJaHg2OHNnOU1FQUFzNTdDRGUvYUMxUVFBU3puazRIMzJnNVVFQUFBRUNRQ1c4WFlESDdNbnJDSUFBQ0JJQUxDRXR4cjRjL2FGRlFRQUFBUUpBQUFJRWdCc3p1ZE0rSHYyaHEwSkFBQUlFZ0FBRUNRQUFDQklBQUJBa0FBQWdDQUJBQUJCaCtrQjRCSEh5M1Y2aE4zWjh0L0hYTzk3L2wyUHo4b1hBQUFJRWdBQUVDUUFBQ0JJQUFCQWtBQUFnQ0FCQUFCQkFnQUFnZ1FBQUFRSkFBQUlFZ0FBRUNRQUFDQklBQUJBa0FBQWdDQUJBQUJCQWdBQWdnUUFBQVFKQUFBSUVnQUFFQ1FBQUNCSUFBQkFrQUFBZ0NBQkFBQkJBZ0FBZ2dRQUFBUUpBQUFJRWdBQUVDUUFBQ0JJQUFCQWtBQUFnQ0FCQUFCQkFnQUFnZ1FBQUFRSkFBQUlFZ0FBRUNRQUFDQklBQUJBa0FBQWdDQUJBQUJCQWdBQWdnUUFBQVFKQUFBSUVnQUFFQ1FBQUNCSUFBQkFrQUFBZ0NBQkFBQkJBZ0FBZ2dRQUFBUUpBQUFJRWdBQUVDUUFBQ0JJQUFCQWtBQUFnQ0FCQUFCQkFnQUFnZ1FBQUFRSkFBQUlFZ0FBRUNRQUFDQklBQUJBa0FBQWdDQUJBQUJCQWdBQWdnUUFBQVFKQUFBSUVnQUFFQ1FBQUNCSUFBQkEwR0Y2QUhqRTdYeWFIaUhGOVlibjRRc0FBQVFKQUFBSUVnQUFFQ1FBQUNCSUFBQkFrQUFBZ0NBQkFBQkJBZ0FBZ2dRQUFBUUpBQUFJRWdBQUVDUUFBQ0JJQUFCQWtBQUFnQ0FCQUFCQkFnQUFnZ1FBQUFRSkFBQUlFZ0FBRUNRQUFDQklBQUJBa0FBQWdLREQ5QUR3aU9QbE9qM0M3dHpPcDgzK3R1dDliOHZyRFZ2eUJRQUFnZ1FBQUFRSkFBQUlFZ0FBRUNRQUFDQklBQUJBa0FBQWdDQUJBQUJCQWdBQWdnUUFBQVFKQUFBSUVnQUFFQ1FBQUNCSUFBQkFrQUFBZ0NBQkFBQkJBZ0FBZ2dRQUFBUUpBQUFJRWdBQUVDUUFBQ0JJQUFCQWtBQUFnQ0FCQUFCQkFnQUFnZ1FBQUFRSkFBQUlFZ0FBRUNRQUFDQklBQUJBa0FBQWdDQUJBQUJCQWdBQWdnUUFBQVFKQUFBSUVnQUFFQ1FBQUNCSUFBQkFrQUFBZ0NBQkFBQkJBZ0FBZ2dRQUFBUUpBQUFJRWdBQUVDUUFBQ0JJQUFCQWtBQUFnQ0FCQUFCQkFnQUFnZ1FBQUFRSkFBQUlFZ0FBRUNRQUFDQklBQUJBa0FBQWdDQUJBQUJCQWdBQWdnUUFBQVFKQUFBSUVnQUFFQ1FBQUNCSUFBQkFrQUFBZ0NBQkFBQkJBZ0FBZ2dRQUFBUUpBQUFJRWdBQUVIU1lIZ0FlY1R1ZnBrZEljYjNoZWZnQ0FBQkJBZ0FBZ2dRQUFBUUpBQUFJRWdBQUVDUUFBQ0JJQUxDNTQrVTZQUUo4T3ZhR3JRa0FBQWdTQUFBUUpBQll3dWRNK0hQMmhSVUVBQUFFQ1FDVzhWWURIN01uckNJQUFDQklBTENVdHh0NG4vMWdKUUhBY2c0NXVHY3ZXRTBBTU1KaEI2L3NBeE1FQUdNY2VtQVBtQ01BR09Yd284ejl6eVFCd0RpSElFWHVlNllkcGdlQWw1Zlh3L0IyUGcxUEF0dnk0R2N2QkFDN0lnUjRWaDc4N0kwQVlKZmVIcFppZ00vS1E1ODlFd0RzbmtNVTRQL3pJMEFBQ0JJQUFCQWtBQUFnU0FBQVFKQUFBSUFnQVFBQVFRSUFBSUlFQUFBRUNRQUFDQklBQUJBa0FBQWdTQUFBUUpBQUFJQWdBUUFBUVFJQUFJSUVBQUFFQ1FBQUNCSUFBQkFrQUFBZ1NBQUFRSkFBQUlBZ0FRQUFRUUlBQUlJRUFBQUVDUUFBQ0JJQUFCQWtBQUFnU0FBQVFKQUFBSUFnQVFBQVFRSUFBSUlFQUFBRUNRQUFDQklBQUJBa0FBQWdTQUFBUUpBQUFJQWdBUUFBUVFJQUFJSUVBQUFFQ1FBQUNCSUFBQkFrQUFBZ1NBQUFRSkFBQUlBZ0FRQUFRUUlBQUlJRUFBQUVDUUFBQ0JJQUFCQWtBQUFnU0FBQVFKQUFBSUFnQVFBQVFRSUFBSUlFQUFBRUNRQUFDQklBQUJBa0FBQWdTQUFBUUpBQUFJQWdBUUFBUVFJQUFJSUVBQUFFQ1FBQUNCSUFBQkFrQUFBZ1NBQUFRSkFBQUlBZ0FRQUFRUUlBQUlJRUFBQUVDUUFBQ0JJQUFCQWtBQUFnU0FBQVFKQUFBSUFnQVFBQVFRSUFBSUlFQUFBRUNRQUFDQklBQUJBa0FBQWdTQUFBUUpBQUFJQWdBUUFBUVFJQUFJSUVBQUFFQ1FBQUNCSUFBQkFrQUFBZ1NBQUFRSkFBQUlBZ0FRQUFRUUlBQUlJRUFBQUVDUUFBQ0JJQUFCQWtBQUFnU0FBQVFKQUFBSUFnQVFBQVFRSUFBSUlFQUFBRUNRQUFDQklBQUJBa0FBQWdTQUFBUUpBQUFJQWdBUUFBUVFJQUFJSUVBQUFFQ1FBQUNCSUFBQkFrQUFBZ1NBQUFRSkFBQUlBZ0FRQUFRUUlBQUlJRUFBQUVDUUFBQ0JJQUFCQWtBQUFnU0FBQVFKQUFBSUFnQVFBQVFRSUFBSUlFQUFBRUNRQUFDQklBQUJBa0FBQWdTQUFBUUpBQUFJQWdBUUFBUVFJQUFJSUVBQUFFQ1FBQUNCSUFBQkFrQUFBZ1NBQUFRSkFBQUlBZ0FRQUFRUUlBQUlJRUFBQUVDUUFBQ0JJQUFCQWtBQUFnU0FBQVFKQUFBSUFnQVFBQVFRSUFBSUorQWZZTWJkYmJuekhsQUFBQUFFbEZUa1N1UW1DQyIsICJzaXplcyI6ICI1MTJ4NTEyIiwgInR5cGUiOiAiaW1hZ2UvcG5nIiwgInB1cnBvc2UiOiAibWFza2FibGUifV0sICJzaG9ydGN1dHMiOiBbeyJuYW1lIjogItin2YTYpdi52K/Yp9iv2KfYqiIsICJzaG9ydF9uYW1lIjogItin2YTYpdi52K/Yp9iv2KfYqiIsICJkZXNjcmlwdGlvbiI6ICLYp9mE2KfZhtiq2YLYp9mEINin2YTZhdio2KfYtNixINil2YTZiSDYtdmB2K3YqSDYp9mE2KXYudiv2KfYr9in2KoiLCAidXJsIjogIi8jL2tya3ItNzc3L292ZXJ2aWV3IiwgImljb25zIjogW3sic3JjIjogImRhdGE6aW1hZ2UvcG5nO2Jhc2U2NCxpVkJPUncwS0dnb0FBQUFOU1VoRVVnQUFBTUFBQUFEQUNBWUFBQUJTM0d3SEFBQUQ5VWxFUVZSNG5PM2RUVzVVVnhTRjBTSktHM3BoYm1GOE1EZm9oUW1RUmxTU2d4THM5OTc5T2VmdHRmcUlLOWYrNnBaZGx1dnhBQUFBQUFBQUFBQzRqWGU3RDNERis4OWZmK3crQS8vNC91bGp5eTIxT2JTeDk5TWhpdElITlByN3FCcER5VU1aL24xVkM2SFVZUXcvUjVVUVNoekM4SFB0RG1IcmYyNzRQTzBLNGJjZC8rbmpZZno4MjY0OUxLL084SG5OeXR0ZzZRMWcvTHpGeXAwc0M4RDRPV0xWWHBZRVlQeWNzV0kzMHdNd2ZxNll2WitwQVJnL0k4emMwYlFBakorUlp1MXBTZ0RHend3emRqVThBT05ucHRIN0docUE4YlBDeUoxdCsxVUlxR0JZQUo3OVdXblUzb1lFWVB6c01HSjNYZ0lSN1hJQW52M1o2ZXIrM0FCRXV4U0FaMzhxdUxKRE53RFJUZ2ZnMlo5S3p1N1JEVUMwVXdGNDlxZWlNN3QwQXhCTkFFUTdISUNYUDFSMmRKOXVBS0lKZ0dnQ0lOcnZ1dzh3MGw5Ly9ySDdDREUrZlBtMit3aERIUG9iakZXL0FUYjhmYXFHOE5hL0w5citKWkR4NzlYOTY5ODZnTzVmL0x2by9EaTBEZ0N1YWh0QTUyZWRPK3I2ZUxRTkFFWVFBTkZ1OVQ3QVMxVi9QUGQ0dlA1eW9lclp1NzdNK1JVM0FORUVRRFFCRUUwQVJCTUEwUVJBTkFFUVRRQkVFd0RSQkVBMEFSQk5BRVFUQU5FRVFEUUJFRTBBUkJNQTBRUkFOQUVRVFFCRUV3RFJCRUEwQVJCTkFFUVRBTkVFUURRQkVFMEFSQk1BMFFSQU5BRVFUUUJFRXdEUkJFQTBBUkJOQUVRVEFORUVRTFRiZmt4cTU0LzA3SHoyYnR3QVJCTUEwUVJBTkFFUVRRQkVFd0RSQkVDMDI3NFA4T0hMdDkxSCtGK3YvWnkvNnRuditQNkVHNEJvQWlDYUFJZ21BS0lKZ0dnQ0lKb0FpQ1lBb2dtQWFBSWdtZ0NJSmdDaUNZQm9BaUNhQUlnbUFLSUpnR2dDSUpvQWlDWUFvZ21BYUFJZ21nQ0lKZ0NpQ1lCb0FpQ2FBSWdtQUtJSmdHZ0NJSm9BaUNZQW9nbUFhQUlnbWdDSUpnQ2lDWUJvdC8yVXlNNmZhTmo1N04yNEFZZ21BS0sxRGFEcWgwbW42dnA0dEEwQVJtZ2RRTmRubmJ2cC9EaTBEdUR4NlAzRnY0UHVYLzkzUi8vQis4OWZmOHc0eUFoK2ZMaE81ZUYvLy9UeHpidSsxZnNBbFI4VWFtci9FZ2l1RUFEUkJFQzB3d0VjK1FZRFZqdTZUemNBMFFSQXRGTUJlQmxFUldkMjZRWWcydWtBM0FKVWNuYVBiZ0NpWFFyQUxVQUZWM2JvQmlEYTVRRGNBdXgwZFg5dUFLSU5DY0F0d0E0amRqZnNCaEFCSzQzYW01ZEFSQnNhZ0Z1QUZVYnViUGdOSUFKbUdyMnZLUytCUk1BTU0zWTE3WHNBRVREU3JEMU4vU1pZQkl3d2MwZlRmd29rQXE2WXZaOGxQd1lWQVdlczJNMnk5d0ZFd0JHcjlyTDBqVEFSOEJZcmQ3SnRrSlgveGloNzdIaUMzUGFyRUc0RFh0cTFoeElqZEJ2azJ2MUVXQ0tBSnlIazJEMzhweEtIK0prUTdxdks4SjlLSGVablFyaVBhc04vS25tby95S0dmcXFPL3FYeUIvd1ZVZFRSWWV3QUFBQUFBQUFBSlBnYlFDajdkUWduYTgwQUFBQUFTVVZPUks1Q1lJST0iLCAic2l6ZXMiOiAiMTkyeDE5MiIsICJ0eXBlIjogImltYWdlL3BuZyJ9XX1dfQ==">
+<meta name="theme-color" content="#0EA5E9">
+<link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAYAAABS3GwHAAAD9UlEQVR4nO3dTW5UVxSF0SJKG3phbmF8MDfohQmQRlSSgxLs9979OefttfqIK9f+6pZdluvxAAAAAAAAAAC4jXe7D3DF+89ff+w+A//4/uljyy21ObSx99MhitIHNPr7qBpDyUMZ/n1VC6HUYQw/R5UQShzC8HPtDmHrf274PO0K4bcd/+njYfz82649LK/O8HnNyttg6Q1g/LzFyp0sC8D4OWLVXpYEYPycsWI30wMwfq6YvZ+pARg/I8zc0bQAjJ+RZu1pSgDGzwwzdjU8AONnptH7GhqA8bPCyJ1t+1UIqGBYAJ79WWnU3oYEYPzsMGJ3XgIR7XIAnv3Z6er+3ABEuxSAZ38quLJDNwDRTgfg2Z9Kzu7RDUC0UwF49qeiM7t0AxBNAEQ7HICXP1R2dJ9uAKIJgGgCINrvuw8w0l9//rH7CDE+fPm2+whDHPobjFW/ATb8faqG8Na/L9r+JZDx79X96986gO5f/Lvo/Di0DgCuahtA52edO+r6eLQNAEYQANFu9T7AS1V/PPd4vP5yoerZu77M+RU3ANEEQDQBEE0ARBMA0QRANAEQTQBEEwDRBEA0ARBNAEQTANEEQDQBEE0ARBMA0QRANAEQTQBEEwDRBEA0ARBNAEQTANEEQDQBEE0ARBMA0QRANAEQTQBEEwDRBEA0ARBNAEQTANEEQLTbfkxq54/07Hz2btwARBMA0QRANAEQTQBEEwDRBEC0274P8OHLt91H+F+v/Zy/6tnv+P6EG4BoAiCaAIgmAKIJgGgCIJoAiCYAogmAaAIgmgCIJgCiCYBoAiCaAIgmAKIJgGgCIJoAiCYAogmAaAIgmgCIJgCiCYBoAiCaAIgmAKIJgGgCIJoAiCYAogmAaAIgmgCIJgCiCYBot/2UyM6faNj57N24AYgmAKK1DaDqh0mn6vp4tA0ARmgdQNdnnbvp/Di0DuDx6P3Fv4PuX/93R//B+89ff8w4yAh+fLhO5eF///Txzbu+1fsAlR8Uamr/EgiuEADRBEC0wwEc+QYDVju6TzcA0QRAtFMBeBlERWd26QYg2ukA3AJUcnaPbgCiXQrALUAFV3boBiDa5QDcAux0dX9uAKINCcAtwA4jdjfsBhABK43am5dARBsagFuAFUbubPgNIAJmGr2vKS+BRMAMM3Y17XsAETDSrD1N/SZYBIwwc0fTfwokAq6YvZ8lPwYVAWes2M2y9wFEwBGr9rL0jTAR8BYrd7JtkJX/xih77HiC3ParEG4DXtq1hxIjdBvk2v1EWCKAJyHk2D38pxKH+JkQ7qvK8J9KHeZnQriPasN/Knmo/yKGfqqO/qXyB/wVUdTRYewAAAAAAAAAJPgbQCj7dQgna80AAAAASUVORK5CYII=">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="أبو أحمد">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F8FAFC; --panel:#ffffff; --panel2:#F1F5F9; --line:rgba(15,23,42,.10);
+  --text:#0F172A; --muted:#64748B; --accent:#38BDF8; --accent2:#0EA5E9;
+  --green:#16A34A; --red:#DC2626; --radius:14px; --header-bg:rgba(248,250,252,.88);
+}
+html[data-theme="dark"]{
+  --bg:#0B1220; --panel:#111827; --panel2:#1A2436; --line:rgba(255,255,255,.09);
+  --text:#F1F5F9; --muted:#94A3B8; --header-bg:rgba(11,18,32,.85);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+a,button,.nav a,.chip,.cat-tile,.prod-card,.icon-btn,.btn,.adm-side a,.tab,header.site{-webkit-user-select:none;user-select:none}
+html,body{overflow-x:hidden;max-width:100vw}
+body{margin:0;background:var(--bg);color:var(--text);font-family:'Tajawal',sans-serif;line-height:1.6}
+.mono{font-family:'IBM Plex Mono',monospace}
+a{color:inherit;text-decoration:none}
+button,input,select,textarea{font-family:inherit;color:inherit}
+img{max-width:100%;display:block}
+.wrap{max-width:1100px;margin:0 auto;padding:0 20px}
+/* header */
+header.site{position:sticky;top:0;z-index:40;background:var(--header-bg);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.hbar{display:flex;align-items:center;justify-content:space-between;flex-wrap:nowrap;gap:8px;padding:14px 16px;max-width:1100px;margin:0 auto}
+.brand{font-weight:900;font-size:19px;display:flex;align-items:center;gap:8px;min-width:0;flex-shrink:1}
+.brand img{flex:0 0 auto}
+.brand-name{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:170px}
+@media (max-width:480px){.brand-name{display:none}}
+.brand .mark{width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,var(--accent),#0284C7);display:grid;place-items:center;font-weight:900;color:#ffffff;flex:0 0 auto}
+.nav{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;min-width:0;flex-shrink:1;
+  -webkit-mask-image:linear-gradient(to right, transparent 0, #000 14px, #000 calc(100% - 14px), transparent 100%);
+  mask-image:linear-gradient(to right, transparent 0, #000 14px, #000 calc(100% - 14px), transparent 100%);}
+.nav::-webkit-scrollbar{display:none}
+.nav a{padding:9px 13px;border-radius:999px;font-size:13px;font-weight:700;color:var(--muted);white-space:nowrap}
+.nav a.active,.nav a:hover{color:var(--text);background:var(--panel2)}
+.icon-btn{border:1px solid var(--line);background:var(--panel);color:var(--text);border-radius:12px;width:42px;height:42px;display:grid;place-items:center;cursor:pointer;position:relative;flex:0 0 auto}
+.cart-badge{position:absolute;top:-6px;left:-6px;background:var(--accent);color:#ffffff;font-size:10px;font-weight:900;border-radius:99px;min-width:18px;height:18px;display:grid;place-items:center;padding:0 4px}
+/* buttons */
+.btn{border:1px solid var(--line);background:var(--panel2);color:var(--text);border-radius:12px;padding:11px 16px;font-weight:800;font-size:13px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px}
+.btn:hover{border-color:rgba(56,189,248,.5)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#ffffff}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.danger{color:#ffb4ac;border-color:rgba(226,104,95,.4);background:rgba(226,104,95,.08)}
+.btn.block{width:100%}
+.btn.sm{padding:8px 11px;font-size:12px;border-radius:10px}
+.btn[disabled]{opacity:.5;cursor:not-allowed}
+/* layout helpers */
+.section{padding-top:34px;padding-bottom:34px}
+.section-head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:16px}
+.section-head h2{margin:0;font-size:21px;font-weight:900}
+.section-head p{margin:4px 0 0;color:var(--muted);font-size:12.5px}
+.grid{display:grid;gap:14px}
+.grid.cols-2{grid-template-columns:1fr 1fr}
+.grid.cols-3{grid-template-columns:repeat(3,1fr)}
+.grid.cols-4{grid-template-columns:repeat(4,1fr)}
+@media(max-width:760px){.grid.cols-3,.grid.cols-4{grid-template-columns:1fr 1fr}}
+/* hero */
+.hero{position:relative;padding:52px 0 40px;overflow:hidden;background:
+  repeating-linear-gradient(115deg, rgba(15,23,42,.035) 0 2px, transparent 2px 26px),
+  radial-gradient(circle at 85% 0%, rgba(56,189,248,.16), transparent 45%), var(--bg)}
+.hero h1{font-size:34px;line-height:1.25;margin:0 0 10px;font-weight:900;max-width:520px}
+.hero .accent{color:var(--accent)}
+.hero p{color:var(--muted);max-width:460px;font-size:14px;margin:0 0 20px}
+.hero-actions{display:flex;gap:10px;flex-wrap:wrap}
+/* category tile */
+.cat-tile{border:1px solid var(--line);border-radius:18px;background:var(--panel);overflow:hidden;cursor:pointer;transition:.15s border-color,.15s transform}
+.cat-tile:hover{border-color:rgba(56,189,248,.45);transform:translateY(-2px)}
+.cat-tile .thumb{aspect-ratio:4/3;background:var(--panel2);position:relative;overflow:hidden}
+.cat-tile .thumb:has(img){aspect-ratio:auto}
+.cat-tile .thumb img{width:100%;height:auto;display:block;object-fit:initial}
+.cat-tile .thumb .ph{position:absolute;inset:0;background:repeating-linear-gradient(125deg,rgba(15,23,42,.06) 0 3px,transparent 3px 22px)}
+.cat-tile .body{padding:13px 14px}
+.cat-tile .body b{font-size:15px;font-weight:800}
+.cat-tile .body small{color:var(--muted);font-size:11.5px;display:block;margin-top:4px;line-height:1.7}
+/* product card */
+.prod-card{border:1px solid var(--line);border-radius:16px;background:var(--panel);overflow:hidden;cursor:pointer;display:flex;flex-direction:column}
+.prod-card .thumb{aspect-ratio:1/1;background:var(--panel2);position:relative}
+.prod-card .thumb:has(img){aspect-ratio:auto}
+.prod-card .thumb img{width:100%;height:auto;display:block;object-fit:initial}
+.prod-card .thumb .ph{position:absolute;inset:0;background:repeating-linear-gradient(125deg,rgba(15,23,42,.06) 0 3px,transparent 3px 22px)}
+.prod-card .badge{position:absolute;top:8px;right:8px;background:rgba(15,23,42,.85);border:1px solid var(--line);color:#BAE6FD;font-size:9.5px;font-weight:900;padding:4px 8px;border-radius:999px}
+.prod-card .body{padding:11px 12px;display:flex;flex-direction:column;gap:4px;flex:1}
+.prod-card .code{color:var(--accent2);font-size:10px;font-weight:700}
+.prod-card b{font-size:13.5px;font-weight:800}
+.prod-card .price{margin-top:auto;font-weight:900;font-size:14px}
+.prod-card .price small{color:var(--muted);font-weight:600;font-size:10.5px}
+/* filters bar */
+.filters{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;margin-bottom:16px}
+.chip{border:1px solid var(--line);background:var(--panel);padding:8px 14px;border-radius:999px;font-size:12.5px;font-weight:700;white-space:nowrap;cursor:pointer;color:var(--muted)}
+.chip.active{background:var(--accent);border-color:var(--accent);color:#ffffff}
+/* product detail */
+.pd-wrap{display:grid;grid-template-columns:1fr 1fr;gap:28px}
+@media(max-width:760px){.pd-wrap{grid-template-columns:1fr}}
+.pd-gallery{border-radius:18px;overflow:hidden;background:var(--panel);border:1px solid var(--line);aspect-ratio:1/1;position:relative}
+.pd-gallery:has(img){aspect-ratio:auto}
+.pd-gallery img{width:100%;height:auto;display:block}
+.pd-thumbs{display:flex;gap:8px;margin-top:8px}
+.pd-thumbs img{width:56px;height:56px;object-fit:cover;border-radius:8px;border:1px solid var(--line);cursor:pointer}
+.field{margin-bottom:14px}
+.field label{display:block;font-size:12px;color:var(--muted);margin-bottom:6px;font-weight:700}
+.field input,.field select,.field textarea{width:100%;background:var(--panel2);border:1px solid var(--line);border-radius:11px;padding:11px 12px;font-size:14px}
+.field textarea{min-height:90px;resize:vertical}
+.field .hint{font-size:10.5px;color:var(--muted);margin-top:5px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.summary-box{border:1px solid var(--line);border-radius:14px;padding:14px;background:var(--panel2);margin:14px 0}
+.summary-line{display:flex;justify-content:space-between;font-size:13px;padding:5px 0;color:var(--muted)}
+.summary-line b{color:var(--text)}
+/* cart */
+.cart-fab{position:fixed;left:14px;bottom:16px;z-index:50;border:1px solid var(--line);background:var(--panel);color:var(--text);border-radius:999px;padding:13px 17px;font-weight:900;box-shadow:0 16px 36px rgba(15,23,42,.16);cursor:pointer;display:flex;align-items:center;gap:8px}
+.cart-fab span{background:var(--accent);color:#ffffff;border-radius:99px;min-width:20px;height:20px;display:grid;place-items:center;font-size:11px;padding:0 5px}
+.overlay{position:fixed;inset:0;background:rgba(15,23,42,.55);z-index:60;padding:14px;overflow:auto;display:flex;align-items:flex-start;justify-content:center}
+.sheet{max-width:520px;width:100%;margin:24px auto;background:var(--panel);border:1px solid var(--line);border-radius:22px;padding:20px;box-shadow:0 30px 80px rgba(15,23,42,.22)}
+.sheet.wide{max-width:760px}
+.sheet-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.sheet-head h3{margin:0;font-size:18px;font-weight:900}
+.sheet-close{width:36px;height:36px;border:1px solid var(--line);border-radius:10px;background:var(--panel2);display:grid;place-items:center;cursor:pointer;font-size:20px;line-height:1}
+.cart-item{display:flex;gap:10px;padding:12px 0;border-bottom:1px solid var(--line)}
+.cart-item img{width:58px;height:58px;border-radius:10px;object-fit:cover;background:var(--panel2);flex:0 0 auto}
+.cart-item .info{flex:1;min-width:0}
+.cart-item .info b{font-size:13px}
+.cart-item .info small{color:var(--muted);font-size:11px;display:block;margin-top:2px}
+.cart-item .qty-x{display:flex;align-items:center;gap:6px;margin-top:6px}
+.cart-item .qty-x button{width:24px;height:24px;border-radius:7px;border:1px solid var(--line);background:var(--panel2);cursor:pointer}
+.cart-empty{text-align:center;padding:30px 10px;color:var(--muted)}
+/* table (admin) */
+.tbl-scroll{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.tbl-hint{display:none;font-size:11px;color:var(--muted);margin-bottom:6px}
+@media(max-width:760px){.tbl-hint{display:block}}
+table.admtbl{width:100%;min-width:560px;border-collapse:collapse;font-size:12.5px}
+table.admtbl th{text-align:right;color:var(--muted);font-weight:700;padding:8px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
+table.admtbl td{padding:9px 8px;border-bottom:1px solid var(--line);vertical-align:middle}
+.status-pill{display:inline-flex;padding:4px 9px;border-radius:999px;font-size:10.5px;font-weight:800;border:1px solid var(--line)}
+.status-pill.new{color:#B45309;border-color:rgba(180,83,9,.3)}
+.status-pill.in_progress,.status-pill.contacted{color:#0369A1;border-color:rgba(56,189,248,.35)}
+.status-pill.completed,.status-pill.quoted{color:#15803D;border-color:rgba(21,128,61,.3)}
+.status-pill.cancelled,.status-pill.closed{color:#64748B}
+html[data-theme="dark"] .status-pill.new{color:#FBBF24}
+html[data-theme="dark"] .status-pill.in_progress,html[data-theme="dark"] .status-pill.contacted{color:#38BDF8}
+html[data-theme="dark"] .status-pill.completed,html[data-theme="dark"] .status-pill.quoted{color:#4ADE80}
+/* admin shell */
+.adm-shell{display:grid;grid-template-columns:190px minmax(0,1fr);min-height:100vh;align-content:start}
+@media(max-width:760px){.adm-shell{grid-template-columns:minmax(0,1fr)}}
+.adm-side{border-left:1px solid var(--line);background:var(--panel);padding:16px 10px;position:sticky;top:0;height:100vh;overflow:auto}
+.adm-title{font-weight:900;padding:8px 10px 16px}
+.adm-side-sep{margin-top:10px}
+@media(max-width:760px){
+  .adm-side{position:static;height:auto;display:flex;align-items:center;overflow-x:auto;padding:10px 14px;gap:4px;border-left:0;border-bottom:1px solid var(--line)}
+  .adm-side>*{flex-shrink:0;white-space:nowrap}
+  .adm-title{padding:8px 12px}
+  .adm-side-sep{margin-top:0}
+}
+.adm-side a{display:block;padding:10px 12px;border-radius:10px;font-size:13px;font-weight:700;color:var(--muted);white-space:nowrap}
+.adm-side a.active{background:var(--accent);color:#ffffff}
+.adm-main{padding:20px;min-width:0}
+.adm-topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;flex-wrap:wrap;gap:10px}
+.adm-topbar h2{margin:0;font-size:19px;font-weight:900}
+.stat-card{border:1px solid var(--line);border-radius:14px;padding:16px;background:var(--panel)}
+.stat-card b{font-size:24px;display:block;margin-top:4px}
+.stat-card small{color:var(--muted);font-size:11.5px}
+.card-list{display:flex;flex-direction:column;gap:8px}
+.card-item{border:1px solid var(--line);border-radius:12px;padding:12px;background:var(--panel);display:flex;justify-content:space-between;align-items:center;gap:10px}
+.card-item .meta small{display:block;color:var(--muted);font-size:11px;margin-top:3px}
+.toolbar{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap}
+.upload-box{border:1px dashed var(--line);border-radius:12px;padding:14px;text-align:center;cursor:pointer;font-size:12px;color:var(--muted)}
+.img-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(70px,1fr));gap:8px;margin-top:10px}
+.img-grid .im{position:relative;border-radius:9px;overflow:hidden;aspect-ratio:1/1;background:var(--panel2)}
+.img-grid .im img{width:100%;height:100%;object-fit:cover}
+.img-grid .im button{position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:6px;border:0;background:rgba(0,0,0,.6);color:#fff;font-size:12px;cursor:pointer}
+.toast{position:fixed;bottom:18px;right:18px;z-index:80;background:var(--panel);border:1px solid var(--line);color:var(--text);padding:12px 16px;border-radius:12px;font-size:13px;font-weight:700;box-shadow:0 10px 30px rgba(15,23,42,.18)}
+.toast.err{border-color:rgba(220,38,38,.4);color:#DC2626}
+.spin{width:16px;height:16px;border-radius:50%;border:2px solid rgba(148,163,184,.35);border-top-color:currentColor;animation:sp .7s linear infinite;display:inline-block}
+@keyframes sp{to{transform:rotate(360deg)}}
+footer.site{border-top:1px solid var(--line);padding:26px 0;margin-top:30px;color:var(--muted);font-size:12px;text-align:center}
+.empty-state{text-align:center;padding:50px 10px;color:var(--muted)}
+.empty-state b{display:block;color:var(--text);font-size:15px;margin-bottom:6px}
+.wa-fab{position:fixed;left:14px;bottom:76px;z-index:45;background:#25d366;color:#08240f;width:48px;height:48px;border-radius:50%;display:grid;place-items:center;font-weight:900;font-size:20px;box-shadow:0 12px 26px rgba(15,23,42,.22)}
+.install-fab{position:fixed;right:14px;bottom:16px;z-index:55;border:none;background:var(--accent2);color:#ffffff;border-radius:999px;padding:13px 18px;font-weight:900;font-size:13.5px;box-shadow:0 16px 36px rgba(15,23,42,.22);cursor:pointer;display:flex;align-items:center;gap:8px;font-family:inherit}
+.install-fab[hidden]{display:none}
+.glass-table{width:100%;border-collapse:collapse;margin-top:6px}
+.glass-table th,.glass-table td{border:1px solid var(--line);padding:8px 6px;text-align:center;font-size:12.5px}
+.glass-table th{background:var(--panel2);font-weight:800}
+.glass-table input{width:100%;background:transparent;border:1px solid var(--line);border-radius:8px;padding:6px;font-size:12.5px;text-align:center}
+.gallery-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+@media(max-width:760px){.gallery-grid{grid-template-columns:repeat(2,1fr)}}
+.gallery-item{position:relative;border-radius:14px;overflow:hidden;aspect-ratio:1/1;background:var(--panel2)}
+.gallery-item img{width:100%;height:100%;object-fit:cover;display:block}
+.gallery-item .cap{position:absolute;bottom:0;right:0;left:0;background:linear-gradient(transparent,rgba(15,23,42,.78));color:#fff;font-size:11px;font-weight:700;padding:18px 10px 8px}
+.stat-strip{display:flex;gap:22px;margin-top:14px;flex-wrap:wrap}
+.stat-strip .st b{font-size:22px;font-weight:900;display:block}
+.stat-strip .st small{font-size:11px;color:var(--muted)}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div id="modals"></div>
+<button id="installBtn" class="install-fab" hidden onclick="handleInstallClick()">⬇ تثبيت التطبيق</button>
+<div id="toastHost"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<script type="module">
+import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
+
+const SUPABASE_URL = "https://rxbytiypnqmnastydwtl.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_EAV6Xz5dUouN8abhz3HbVQ_DnS3XcSi";
+const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+const CART_KEY = "workshop_cart_v1";
+const CUSTOMER_KEY = "workshop_customer_v1";
+const RECENT_KEY = "workshop_recent_products_v1";
+// مسار لوحة التحكم — غيّره لأي كلمة تفضلها (بدون فراغات)، هذا هو المكان الوحيد اللي تحتاج تعدله
+const ADMIN_ROUTE = "krkr-777";
+const state = { settings:null, categories:[], session:null, cart: loadCart() };
+
+function loadCart(){ try{ return JSON.parse(localStorage.getItem(CART_KEY))||[]; }catch(e){ return []; } }
+function saveCart(){ localStorage.setItem(CART_KEY, JSON.stringify(state.cart)); renderCartBadge(); }
+function uid(){ return Math.random().toString(36).slice(2,10)+Date.now().toString(36); }
+// -------------------- بيانات الزبون المحفوظة (لتعبئة تلقائية بالطلب القادم) --------------------
+function loadSavedCustomer(){ try{ return JSON.parse(localStorage.getItem(CUSTOMER_KEY))||null; }catch(e){ return null; } }
+function saveCustomerInfo(obj){ try{ localStorage.setItem(CUSTOMER_KEY, JSON.stringify(obj)); }catch(e){} }
+// -------------------- آخر منتجات تمت زيارتها (محلياً بالمتصفح) --------------------
+function loadRecentProducts(){ try{ return JSON.parse(localStorage.getItem(RECENT_KEY))||[]; }catch(e){ return []; } }
+function pushRecentProduct(id){
+  try{
+    let list = loadRecentProducts().filter(x=>x!==id);
+    list.unshift(id);
+    localStorage.setItem(RECENT_KEY, JSON.stringify(list.slice(0,8)));
+  }catch(e){}
+}
+
+function toast(msg, isErr){
+  const host = document.getElementById('toastHost');
+  const el = document.createElement('div');
+  el.className = 'toast'+(isErr?' err':'');
+  el.textContent = msg;
+  host.appendChild(el);
+  setTimeout(()=>el.remove(), 3200);
+}
+function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function money(n){ n = Number(n||0); return n.toLocaleString('ar-IQ',{maximumFractionDigits:0}) + ' د.ع'; }
+// رقم عراقي صحيح: يبدأ بـ07 ويتكون من 11 رقم بالضبط
+function isValidIraqiPhone(p){ const digits = String(p||'').replace(/\D/g,''); return /^07\d{9}$/.test(digits); }
+
+// -------------------- pricing engine --------------------
+// قاعدة تقريب الورشة: كل بُعد يُعامل بشكل مستقل.
+// إذا كان الباقي بعد أقرب 10سم أقل من 5 -> يبقى القياس كما هو (بدون تقريب لأسفل).
+// إذا كان 5 أو أكثر -> يُرفع للعشرة التالية فقط.
+function roundPricingDim(v, enabled){
+  v = Number(v||0);
+  if(!enabled) return v;
+  const rem = v % 10;
+  if(rem === 0) return v;
+  if(rem < 5) return v;
+  return v + (10 - rem);
+}
+// محرك تسعير مركزي: يرجع القياس/المساحة الفعلية (بدون تقريب) والمحتسبة للتسعير (بعد التقريب إن كان مفعّلاً) منفصلتين.
+// الكاونترات (product.no_rounding === true) لا تُقرَّب أبداً مهما كان إعداد rounding_rule.
+function calcLine(product, opts){
+  const method = product.pricing_method;
+  const price = Number(product.unit_price||0);
+  const qty = Number(opts.quantity||1);
+  const roundingEnabled = product.rounding_rule === 'round_up_10cm' && !product.no_rounding;
+  if(method === 'piece'){
+    return { areaOrLength: qty, lineTotal: price*qty, actualArea:null, pricingArea:null, actualW:null, actualH:null, pricingW:null, pricingH:null };
+  }
+  if(method === 'sqm'){
+    const actualW = Number(opts.widthCm||0), actualH = Number(opts.heightCm||0);
+    const pricingWcm = roundPricingDim(actualW, roundingEnabled);
+    const pricingHcm = roundPricingDim(actualH, roundingEnabled);
+    const actualArea = (actualW/100)*(actualH/100)*qty;
+    const pricingArea = (pricingWcm/100)*(pricingHcm/100)*qty;
+    return { areaOrLength: pricingArea, lineTotal: price*pricingArea, actualArea, pricingArea, actualW, actualH, pricingW:pricingWcm, pricingH:pricingHcm };
+  }
+  if(method === 'linear_meter'){
+    const actualLenCm = Number(opts.widthCm||0);
+    const pricingLenCm = roundPricingDim(actualLenCm, roundingEnabled);
+    const actualLen = (actualLenCm/100)*qty;
+    const pricingLen = (pricingLenCm/100)*qty;
+    return { areaOrLength: pricingLen, lineTotal: price*pricingLen, actualArea:actualLen, pricingArea:pricingLen, actualW:actualLenCm, pricingW:pricingLenCm, actualH:null, pricingH:null };
+  }
+  return { areaOrLength: 0, lineTotal: 0, actualArea:null, pricingArea:null };
+}
+
+// -------------------- cart --------------------
+function addToCart(product, opts){
+  const calc = calcLine(product, opts);
+  const item = {
+    id: uid(), productId: product.id, name: product.name, code: product.code,
+    image: (product.product_images&&product.product_images[0]&&product.product_images[0].url)||null,
+    pricingMethod: product.pricing_method, unitPrice: Number(product.unit_price||0),
+    roundingRule: product.rounding_rule, noRounding: !!product.no_rounding, quantity: Number(opts.quantity||1),
+    widthCm: opts.widthCm||null, heightCm: opts.heightCm||null, note: opts.note||'',
+    areaOrLength: calc.areaOrLength, lineTotal: calc.lineTotal,
+    actualArea: calc.actualArea, pricingArea: calc.pricingArea,
+    pricingW: calc.pricingW||null, pricingH: calc.pricingH||null
+  };
+  state.cart.push(item); saveCart();
+  toast('أُضيف للسلة');
+}
+window.removeCartItem = function(id){
+  if(!confirm('تأكيد حذف هذا العنصر من السلة؟')) return;
+  state.cart = state.cart.filter(i=>i.id!==id); saveCart(); openCart();
+}
+// تغيير كمية عنصر بالسلة (+/-) وإعادة احتساب سعره عبر نفس محرك التسعير
+window.cartChangeQty = function(id, delta){
+  const item = state.cart.find(i=>i.id===id);
+  if(!item) return;
+  const newQty = item.quantity + delta;
+  if(newQty < 1) return;
+  const pseudoProduct = { pricing_method:item.pricingMethod, unit_price:item.unitPrice, rounding_rule:item.roundingRule, no_rounding:item.noRounding };
+  const calc = calcLine(pseudoProduct, { quantity:newQty, widthCm:item.widthCm, heightCm:item.heightCm });
+  item.quantity = newQty; item.areaOrLength = calc.areaOrLength; item.lineTotal = calc.lineTotal;
+  item.actualArea = calc.actualArea; item.pricingArea = calc.pricingArea;
+  item.pricingW = calc.pricingW||null; item.pricingH = calc.pricingH||null;
+  saveCart(); openCart();
+};
+function cartTotal(){ return state.cart.reduce((s,i)=>s+i.lineTotal,0); }
+function renderCartBadge(){
+  document.querySelectorAll('.cart-count').forEach(el=>{ el.textContent = state.cart.length; el.style.display = state.cart.length? 'grid':'none'; });
+}
+
+// -------------------- data fetchers (cached lightly) --------------------
+async function getSettings(){
+  if(state.settings) return state.settings;
+  const {data} = await sb.from('site_settings').select('*').eq('id',1).maybeSingle();
+  state.settings = data || {};
+  return state.settings;
+}
+async function getCategories(force){
+  if(state.categories.length && !force) return state.categories;
+  const {data} = await sb.from('categories').select('*').eq('is_active',true).order('sort_order');
+  state.categories = data||[];
+  return state.categories;
+}
+
+// -------------------- router --------------------
+const routes = {};
+function route(pattern, handler){ routes[pattern]=handler; }
+async function render(){
+  let hash = location.hash.slice(1) || '/';
+  try{ hash = decodeURIComponent(hash); }catch(e){ /* رابط غير قابل لفك الترميز، نكمل بالنص الخام */ }
+  const app = document.getElementById('app');
+  app.innerHTML = '<div style="padding:80px 20px;text-align:center;color:var(--muted)"><span class="spin" style="width:26px;height:26px;border-width:3px;margin-bottom:12px"></span><div>جارِ التحميل…</div></div>';
+  window.scrollTo(0,0);
+  const parts = hash.split('/').filter(Boolean);
+  try{
+    if(parts[0]===ADMIN_ROUTE){ return renderAdminRoute(parts, app); }
+    if(!parts.length) return app.innerHTML = await pageHome();
+    if(parts[0]==='products') return app.innerHTML = await pageAllProducts();
+    if(parts[0]==='category') return app.innerHTML = await pageCategory(parts[1]);
+    if(parts[0]==='product') return app.innerHTML = await pageProduct(parts[1]);
+    if(parts[0]==='search') return app.innerHTML = await pageSearch(parts[1]||'');
+    if(parts[0]==='quote') return app.innerHTML = await pageQuote();
+    if(parts[0]==='track') return app.innerHTML = await pageTrack();
+    app.innerHTML = await pageHome();
+  }catch(e){ console.error(e); app.innerHTML = '<div class="wrap section"><div class="empty-state"><b>صار خطأ</b>تعذّر تحميل الصفحة، تأكد من الاتصال بالإنترنت وحاول مرة ثانية.</div></div>'; }
+  bindPublicEvents();
+}
+let __suppressLeaveWarning = false;
+window.addEventListener('hashchange', function(e){
+  if(__suppressLeaveWarning){ __suppressLeaveWarning = false; render(); return; }
+  let oldHash = '';
+  try{ oldHash = decodeURIComponent(new URL(e.oldURL).hash.slice(1)); }catch(err){}
+  if(oldHash.indexOf('/product/')===0 && pdLeaveGuardCheck()){
+    const proceed = confirm('أدخلت بُعد واحد بس (عرض أو ارتفاع) ونسيت الثاني، والمنتج لسا ما انضاف للسلة. تريد تطلع من الصفحة بدون إكماله؟');
+    if(!proceed){ __suppressLeaveWarning = true; location.hash = oldHash; return; }
+  }
+  render();
+});
+
+// -------------------- shared chrome --------------------
+function header(activePath){
+  const items = [
+    {href:'#/', label:'الرئيسية'},
+    {href:'#/products', label:'كل المنتجات'},
+    {href:'#/quote', label:'اطلب عرض سعر'},
+    {href:'#/track', label:'تتبع طلبك'},
+  ];
+  return `
+  <header class="site">
+    <div class="hbar">
+      <a class="brand" href="#/" title="${esc(state.settings?.workshop_name||'أبو أحمد للألمنيوم')}">${state.settings?.logo_url?`<img src="${esc(state.settings.logo_url)}" style="width:32px;height:32px;border-radius:8px;object-fit:cover">`:'<span class="mark">أح</span>'}<span class="brand-name">${esc(state.settings?.workshop_name||'أبو أحمد للألمنيوم')}</span></a>
+      <nav class="nav">${items.map(i=>`<a href="${i.href}" class="${activePath===i.href?'active':''}">${i.label}</a>`).join('')}</nav>
+      <button class="icon-btn" id="themeToggleBtn" onclick="toggleTheme()" title="تبديل الوضع الليلي/النهاري">🌙</button>
+      <button class="icon-btn" onclick="openCart()">🛒<span class="cart-badge cart-count" style="display:none">0</span></button>
+    </div>
+    <div class="wrap" style="padding-bottom:12px">
+      <form onsubmit="event.preventDefault(); doSiteSearch();" style="display:flex">
+        <input id="siteSearchInput" type="search" placeholder="🔍 دوّر عن منتج أو كود..." style="width:100%;border:1px solid var(--line);background:var(--panel2);border-radius:999px;padding:10px 16px;font-size:13px">
+      </form>
+    </div>
+  </header>`;
+}
+window.doSiteSearch = function(){
+  const q = document.getElementById('siteSearchInput').value.trim();
+  if(!q) return;
+  location.hash = '#/search/' + encodeURIComponent(q);
+};
+function footer(){
+  const s = state.settings||{};
+  const socials = [];
+  if(s.facebook_url) socials.push(`<a href="${esc(s.facebook_url)}" target="_blank" style="margin:0 6px">فيسبوك</a>`);
+  if(s.instagram_url) socials.push(`<a href="${esc(s.instagram_url)}" target="_blank" style="margin:0 6px">انستغرام</a>`);
+  return `<footer class="site wrap">
+    ${s.phone? `هاتف: <span class="mono">${esc(s.phone)}</span> · `:''}${s.address? esc(s.address):''}
+    ${socials.length? `<div style="margin-top:8px">${socials.join(' · ')}</div>`:''}
+    <div style="margin-top:6px">© ${new Date().getFullYear()} ${esc(s.workshop_name||'أبو أحمد للألمنيوم')}</div>
+    <div style="margin-top:14px">
+      <a href="https://www.instagram.com/sbah.almwswy?stkn=MTZhMTJqeTlxOThjNQ==" target="_blank" rel="noopener" style="display:inline-block;font-size:16px;font-weight:900;color:var(--accent2, #0EA5E9);text-decoration:underline">
+        برمجة وتطوير صباح الموسوي
+      </a>
+    </div>
+  </footer>`;
+}
+function waFab(){
+  const s = state.settings||{};
+  if(!s.whatsapp_number) return '';
+  const num = (s.country_code||'')+String(s.whatsapp_number).replace(/^0+/,'');
+  return `<a class="wa-fab" target="_blank" href="https://wa.me/${num.replace(/\D/g,'')}">📞</a>`;
+}
+// رابط واتساب لرقم الورشة (للاستفسارات) مع رسالة جاهزة معبأة مسبقاً — لا يرسل تلقائياً، فقط يفتح المحادثة
+function waLinkWorkshop(message){
+  const s = state.settings||{};
+  if(!s.whatsapp_number) return null;
+  const num = ((s.country_code||'')+String(s.whatsapp_number).replace(/^0+/,'')).replace(/\D/g,'');
+  return `https://wa.me/${num}?text=${encodeURIComponent(message)}`;
+}
+// رابط واتساب لرقم زبون محدد (لإرسال كشف حساب/إشعار دفعة) — يفتح المحادثة فقط، الموظف يضغط إرسال بنفسه
+function waLinkToPhone(phone, message){
+  if(!phone) return null;
+  const digits = String(phone).replace(/^0+/,'').replace(/\D/g,'');
+  return `https://wa.me/${digits}?text=${encodeURIComponent(message)}`;
+}
+function unitAr(u){ return {piece:'قطعة', sqm:'م²', meter:'م.ط'}[u] || u||''; }
+// -------------------- تصدير CSV (يفتح مباشرة بـ Excel) --------------------
+function toCSVRow(arr){
+  return arr.map(v=>{
+    let s = v==null? '' : String(v);
+    if(/[",\n]/.test(s)) s = '"'+s.replace(/"/g,'""')+'"';
+    return s;
+  }).join(',');
+}
+function downloadCSV(filename, rows){
+  const csv = '\uFEFF' + rows.map(toCSVRow).join('\r\n'); // BOM عشان يقرأ العربي صح بـ Excel
+  const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url; a.download = filename; a.click();
+  URL.revokeObjectURL(url);
+  toast('تم تصدير الملف');
+}
+window.exportOrdersCSV = function(){
+  const data = window.__ORDERS_ADM||[];
+  if(!data.length){ toast('لا توجد طلبات للتصدير', true); return; }
+  const rows = [['رقم الطلب','الزبون','الهاتف','واتساب','المحافظة','المنطقة','العنوان','الملاحظات','الإجمالي','الحالة','حالة الدفع','طريقة الدفع','التاريخ']];
+  data.forEach(o=> rows.push([o.order_number, o.customer_name, o.customer_phone, o.customer_whatsapp||'',
+    o.governorate||'', o.area||'', o.address_details||'', o.notes||'', o.total,
+    statusAr(o.status), payAr(o.payment_status), o.payment_method||'',
+    o.created_at? new Date(o.created_at).toLocaleString('ar-IQ') : '']));
+  downloadCSV('الطلبات-'+new Date().toISOString().slice(0,10)+'.csv', rows);
+};
+window.exportCustomersCSV = function(){
+  const data = window.__CUST_ADM||[];
+  if(!data.length){ toast('لا يوجد زبائن للتصدير', true); return; }
+  const rows = [['الاسم','الهاتف','الإجمالي المتفق عليه','المدفوع','المتبقي','الحالة']];
+  data.forEach(c=> rows.push([c.name, c.phone, c.agreed_total, c.paid_total, c.remaining,
+    c.status==='unpaid'?'غير مدفوع': c.status==='completed'?'مكتمل':'متبقي']));
+  downloadCSV('الزبائن-'+new Date().toISOString().slice(0,10)+'.csv', rows);
+};
+function catImg(c){ return c.image_url? `<img src="${esc(c.image_url)}" loading="lazy">` : `<div class="ph"></div>`; }
+function prodImg(p){ const url = p.product_images&&p.product_images[0]&&p.product_images[0].url; return url? `<img src="${esc(url)}" loading="lazy">` : `<div class="ph"></div>`; }
+function priceLabel(p){
+  if(p.pricing_method==='piece') return money(p.unit_price)+` <small>/قطعة</small>`;
+  if(p.pricing_method==='sqm') return money(p.unit_price)+` <small>/م²</small>`;
+  if(p.pricing_method==='linear_meter') return money(p.unit_price)+` <small>/م.ط</small>`;
+  if(p.unit_price) return money(p.unit_price);
+  return `<small>حسب الطلب - اطلب عرض سعر</small>`;
+}
+
+// -------------------- pages --------------------
+async function pageHome(){
+  await getSettings(); const cats = await getCategories();
+  const {data: featured} = await sb.from('products').select('*, product_images(*)').eq('is_active',true).eq('is_featured',true).order('sort_order').limit(8);
+  const s = state.settings||{};
+  const yearsExp = s.founded_year? (new Date().getFullYear() - Number(s.founded_year)) : null;
+  return `
+  ${header('#/')}
+  <section class="hero" ${state.settings.cover_url?`style="background-image:linear-gradient(rgba(15,23,42,.35),rgba(15,23,42,.15)),url('${esc(state.settings.cover_url)}');background-size:cover;background-position:center"`:''}><div class="wrap">
+    <h1 ${state.settings.cover_url?'style="color:#fff"':''}>${esc(state.settings.workshop_name||'أبو أحمد للألمنيوم')}<br><span class="accent">جودة تصنيع تدوم</span></h1>
+    <p ${state.settings.cover_url?'style="color:#f1f5f9"':''}>${esc(state.settings.description||'أبواب، شبابيك، كاونترات، ومحجر درج بمقاسات مضبوطة حسب طلبك.')}</p>
+    ${(yearsExp || s.projects_completed)? `<div class="stat-strip">
+      ${yearsExp? `<div class="st" ${state.settings.cover_url?'style="color:#fff"':''}><b>+${yearsExp}</b><small ${state.settings.cover_url?'style="color:#e2e8f0"':''}>سنة خبرة</small></div>`:''}
+      ${s.projects_completed? `<div class="st" ${state.settings.cover_url?'style="color:#fff"':''}><b>+${esc(s.projects_completed)}</b><small ${state.settings.cover_url?'style="color:#e2e8f0"':''}>مشروع منفّذ</small></div>`:''}
+    </div>`:''}
+    <div class="hero-actions">
+      <a class="btn primary" href="#/quote">اطلب عرض سعر</a>
+    </div>
+  </div></section>
+  <section class="section wrap">
+    <div class="section-head"><div><h2>أقسامنا</h2><p>اختر القسم اللي تحتاجه</p></div></div>
+    <div class="grid cols-4">
+      ${cats.map(c=>`<a class="cat-tile" href="#/category/${esc(c.slug)}"><div class="thumb">${catImg(c)}</div><div class="body"><b>${esc(c.name)}</b>${c.description?`<small>${esc(c.description)}</small>`:''}</div></a>`).join('') || '<div class="empty-state">لا توجد أقسام بعد</div>'}
+    </div>
+  </section>
+  ${await galleryPreviewSection()}
+  ${featured&&featured.length? `<section class="section wrap">
+    <div class="section-head"><div><h2>منتجات مميزة</h2></div></div>
+    <div class="grid cols-4">${featured.map(prodCard).join('')}</div>
+  </section>`:''}
+  ${await recentProductsSection()}
+  ${footer()} ${waFab()}
+  `;
+}
+async function galleryPreviewSection(){
+  try{
+    const {data} = await sb.from('gallery_items').select('*').eq('is_active',true).order('sort_order').limit(8);
+    if(!data || !data.length) return '';
+    return `<section class="section wrap">
+      <div class="section-head"><div><h2>من أعمالنا</h2><p>نماذج من مشاريع نفّذناها فعلياً</p></div></div>
+      <div class="gallery-grid">${data.map(g=>`<div class="gallery-item"><img src="${esc(g.image_url)}" loading="lazy">${g.caption?`<div class="cap">${esc(g.caption)}</div>`:''}</div>`).join('')}</div>
+    </section>`;
+  }catch(e){ return ''; }
+}
+async function recentProductsSection(){
+  const ids = loadRecentProducts();
+  if(!ids.length) return '';
+  const {data} = await sb.from('products').select('*, product_images(*)').in('id', ids).eq('is_active',true);
+  if(!data || !data.length) return '';
+  const ordered = ids.map(id=>data.find(p=>p.id===id)).filter(Boolean);
+  if(!ordered.length) return '';
+  return `<section class="section wrap">
+    <div class="section-head"><div><h2>تصفّحته مؤخراً</h2></div></div>
+    <div class="grid cols-4">${ordered.map(prodCard).join('')}</div>
+  </section>`;
+}
+async function pageSearch(q){
+  await getSettings();
+  const term = (q||'').trim();
+  let products = [];
+  if(term){
+    const {data} = await sb.from('products').select('*, product_images(*)').eq('is_active',true)
+      .or(`name.ilike.%${term}%,code.ilike.%${term}%`).order('sort_order');
+    products = data||[];
+  }
+  return `${header()}
+  <section class="section wrap">
+    <div class="section-head"><div><h2>نتائج البحث عن "${esc(term)}"</h2><p>${products.length} نتيجة</p></div></div>
+    <div class="grid cols-4">${products.map(prodCard).join('') || '<div class="empty-state"><b>ما لكينا نتائج</b>جرّب كلمة ثانية أو تصفّح الأقسام</div>'}</div>
+  </section>${footer()} ${waFab()}`;
+}
+function prodCard(p){
+  return `<a class="prod-card" href="#/product/${esc(p.slug)}">
+    <div class="thumb">${prodImg(p)}${p.is_featured?'<span class="badge">مميز</span>':''}</div>
+    <div class="body"><span class="code mono">${esc(p.code)}</span><b>${esc(p.name)}</b><div class="price">${priceLabel(p)}</div></div>
+  </a>`;
+}
+async function pageCategory(slug){
+  await getSettings(); const cats = await getCategories();
+  const cat = cats.find(c=>c.slug===slug);
+  if(!cat) return `${header()}<div class="wrap section"><div class="empty-state"><b>القسم غير موجود</b></div></div>${footer()}`;
+  const {data: products} = await sb.from('products').select('*, product_images(*)').eq('category_id',cat.id).eq('is_active',true).order('sort_order');
+  window.__catProducts = products||[];
+  window.__catMaterialFilter = 'all';
+  const materials = [...new Set((products||[]).map(p=>p.material).filter(Boolean))];
+  return `${header()}
+  <section class="section wrap">
+    <div class="section-head"><div><h2>${esc(cat.name)}</h2><p>${esc(cat.description||'')}</p></div>
+      <select id="catSort" onchange="catApplySort()" style="border:1px solid var(--line);background:var(--panel);border-radius:10px;padding:9px 10px;font-size:12.5px">
+        <option value="default">الترتيب الافتراضي</option>
+        <option value="price_asc">السعر: الأقل أولاً</option>
+        <option value="price_desc">السعر: الأعلى أولاً</option>
+        <option value="name">الاسم (أ-ي)</option>
+      </select>
+    </div>
+    ${materials.length>1? `<div class="filters">
+      <div class="chip active" data-mat="all" onclick="catFilterMaterial('all',this)">الكل</div>
+      ${materials.map(m=>`<div class="chip" data-mat="${esc(m)}" onclick="catFilterMaterial('${esc(m)}',this)">${esc(m)}</div>`).join('')}
+    </div>`:''}
+    <div class="grid cols-4" id="catProductsGrid">${(products||[]).map(prodCard).join('') || '<div class="empty-state">لا توجد منتجات بهذا القسم بعد</div>'}</div>
+  </section>${footer()} ${waFab()}`;
+}
+function catRenderGrid(){
+  let list = window.__catProducts.slice();
+  if(window.__catMaterialFilter && window.__catMaterialFilter!=='all') list = list.filter(p=>p.material===window.__catMaterialFilter);
+  const sortVal = document.getElementById('catSort')?.value || 'default';
+  if(sortVal==='price_asc') list.sort((a,b)=>(Number(a.unit_price)||0)-(Number(b.unit_price)||0));
+  else if(sortVal==='price_desc') list.sort((a,b)=>(Number(b.unit_price)||0)-(Number(a.unit_price)||0));
+  else if(sortVal==='name') list.sort((a,b)=>String(a.name).localeCompare(String(b.name),'ar'));
+  const grid = document.getElementById('catProductsGrid');
+  if(grid) grid.innerHTML = list.map(prodCard).join('') || '<div class="empty-state">لا توجد منتجات تطابق الفلتر</div>';
+}
+window.catApplySort = function(){ catRenderGrid(); };
+window.catFilterMaterial = function(mat, el){
+  window.__catMaterialFilter = mat;
+  document.querySelectorAll('.filters .chip').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  catRenderGrid();
+};
+async function pageAllProducts(){
+  await getSettings(); const cats = await getCategories();
+  const {data: products} = await sb.from('products').select('*, product_images(*)').eq('is_active',true).order('sort_order');
+  window.__allProducts = products||[];
+  window.__allCatFilter = 'all';
+  return `${header('#/products')}
+  <section class="section wrap">
+    <div class="section-head"><div><h2>كل المنتجات</h2><p>تصفح جميع منتجاتنا من كل الأقسام دفعة وحدة</p></div>
+      <select id="allSort" onchange="allApplySort()" style="border:1px solid var(--line);background:var(--panel);border-radius:10px;padding:9px 10px;font-size:12.5px">
+        <option value="default">الترتيب الافتراضي</option>
+        <option value="price_asc">السعر: الأقل أولاً</option>
+        <option value="price_desc">السعر: الأعلى أولاً</option>
+        <option value="name">الاسم (أ-ي)</option>
+      </select>
+    </div>
+    ${cats.length? `<div class="filters">
+      <div class="chip active" data-cat="all" onclick="allFilterCategory('all',this)">الكل</div>
+      ${cats.map(c=>`<div class="chip" data-cat="${esc(c.id)}" onclick="allFilterCategory('${esc(c.id)}',this)">${esc(c.name)}</div>`).join('')}
+    </div>`:''}
+    <div class="grid cols-4" id="allProductsGrid">${(products||[]).map(prodCard).join('') || '<div class="empty-state">لا توجد منتجات بعد</div>'}</div>
+  </section>${footer()} ${waFab()}`;
+}
+function allRenderGrid(){
+  let list = window.__allProducts.slice();
+  if(window.__allCatFilter && window.__allCatFilter!=='all') list = list.filter(p=>String(p.category_id)===String(window.__allCatFilter));
+  const sortVal = document.getElementById('allSort')?.value || 'default';
+  if(sortVal==='price_asc') list.sort((a,b)=>(Number(a.unit_price)||0)-(Number(b.unit_price)||0));
+  else if(sortVal==='price_desc') list.sort((a,b)=>(Number(b.unit_price)||0)-(Number(a.unit_price)||0));
+  else if(sortVal==='name') list.sort((a,b)=>String(a.name).localeCompare(String(b.name),'ar'));
+  const grid = document.getElementById('allProductsGrid');
+  if(grid) grid.innerHTML = list.map(prodCard).join('') || '<div class="empty-state">لا توجد منتجات تطابق الفلتر</div>';
+}
+window.allApplySort = function(){ allRenderGrid(); };
+window.allFilterCategory = function(catId, el){
+  window.__allCatFilter = catId;
+  el.closest('.filters').querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  allRenderGrid();
+};
+async function pageProduct(slug){
+  await getSettings();
+  const {data: p} = await sb.from('products').select('*, product_images(*), categories(name,slug)').eq('slug',slug).maybeSingle();
+  if(!p) return `${header()}<div class="wrap section"><div class="empty-state"><b>المنتج غير موجود</b></div></div>${footer()}`;
+  pushRecentProduct(p.id);
+  window.__pdAdded = false;
+  const imgs = (p.product_images||[]).sort((a,b)=>a.sort_order-b.sort_order);
+  const needsDims = p.pricing_method==='sqm' || p.pricing_method==='linear_meter';
+  const purchasable = p.is_purchasable && p.pricing_method!=='quote_only';
+  window.__PD = p;
+  window.__PD_meta = { needsDims, purchasable, pricingMethod: p.pricing_method };
+  return `${header()}
+  <section class="section wrap">
+    ${p.categories? `<a href="#/category/${esc(p.categories.slug)}" style="display:inline-flex;align-items:center;gap:6px;color:var(--muted);font-size:13px;font-weight:700;margin-bottom:14px">→ رجوع لـ${esc(p.categories.name)}</a>`:''}
+    <div class="pd-wrap">
+      <div>
+        <div class="pd-gallery" id="pdMainImg">${imgs[0]? `<img src="${esc(imgs[0].url)}">`:'<div class="ph" style="position:absolute;inset:0"></div>'}</div>
+        ${imgs.length>1? `<div class="pd-thumbs">${imgs.map(im=>`<img src="${esc(im.url)}" loading="lazy" onclick="document.getElementById('pdMainImg').innerHTML='<img src=\\'${esc(im.url)}\\'>'">`).join('')}</div>`:''}
+      </div>
+      <div>
+        <span class="code mono">${esc(p.code)}</span>
+        <h1 style="margin:6px 0">${esc(p.name)}</h1>
+        <div style="font-size:20px;font-weight:900;margin-bottom:10px">${priceLabel(p)}</div>
+        <p style="color:var(--muted);font-size:13.5px">${esc(p.description||'')}</p>
+        ${p.material||p.color||p.glass_type||p.design? `<div class="summary-box">
+          ${p.material?`<div class="summary-line"><span>المادة</span><b>${esc(p.material)}</b></div>`:''}
+          ${p.color?`<div class="summary-line"><span>اللون</span><b>${esc(p.color)}</b></div>`:''}
+          ${p.glass_type?`<div class="summary-line"><span>نوع الزجاج</span><b>${esc(p.glass_type)}</b></div>`:''}
+          ${p.design?`<div class="summary-line"><span>التصميم</span><b>${esc(p.design)}</b></div>`:''}
+        </div>`:''}
+        ${purchasable? `
+        <div id="pdOptions">
+          ${needsDims? `<div class="row2">
+            <div class="field"><label>العرض (سم)</label><input type="number" id="pdW" min="1" placeholder="مثال: 90"></div>
+            <div class="field"><label>الارتفاع (سم)</label><input type="number" id="pdH" min="1" placeholder="مثال: 200"></div>
+          </div>`:''}
+          <div class="field"><label>${p.pricing_method==='piece'?'الكمية (قطعة)':'الكمية (عدد الوحدات)'}</label><input type="number" id="pdQty" min="1" value="1"></div>
+          <div class="field"><label>ملاحظة (اختياري)</label><textarea id="pdNote" placeholder="أي تفاصيل إضافية..."></textarea></div>
+          <div id="pdLiveTotal" class="summary-box" style="text-align:center;font-weight:900;font-size:16px">أدخل البيانات لحساب السعر</div>
+          <button class="btn primary block" onclick="pdAddToCart()">أضف للسلة</button>
+        </div>`:`<a class="btn primary block" href="#/quote">اطلب عرض سعر لهذا المنتج</a>`}
+        ${(()=>{ const link = waLinkWorkshop(`السلام عليكم،\nأرغب بالاستفسار عن المنتج:\n${p.name}\nالكود: ${p.code}`);
+          return link? `<a class="btn block" style="margin-top:8px;border-color:rgba(37,211,102,.4);color:#1ba851" target="_blank" href="${link}">💬 استفسار عن هذا المنتج عبر واتساب</a>` : ''; })()}
+        <button class="btn block" style="margin-top:8px" onclick="shareProduct()">🔗 مشاركة المنتج</button>
+      </div>
+    </div>
+  </section>${footer()} ${waFab()}`;
+}
+window.shareProduct = async function(){
+  const p = window.__PD; if(!p) return;
+  const url = location.origin + location.pathname + '#/product/' + p.slug;
+  const shareData = { title: p.name, text: `${p.name} — ${p.code||''}`, url };
+  if(navigator.share){
+    try{ await navigator.share(shareData); return; }
+    catch(e){ /* المستخدم ألغى المشاركة */ return; }
+  }
+  try{ await navigator.clipboard.writeText(url); toast('تم نسخ رابط المنتج'); }
+  catch(e){ toast('تعذّر نسخ الرابط، انسخه يدوياً', true); }
+};
+window.pdAddToCart = function(){
+  const p = window.__PD;
+  const qty = Number(document.getElementById('pdQty')?.value||1);
+  const w = document.getElementById('pdW')?.value;
+  const h = document.getElementById('pdH')?.value;
+  if((p.pricing_method==='sqm'||p.pricing_method==='linear_meter') && (!w || (p.pricing_method==='sqm' && !h))){
+    toast('أدخل القياسات أولاً', true); return;
+  }
+  addToCart(p, { quantity: qty, widthCm: w, heightCm: h, note: document.getElementById('pdNote')?.value });
+  window.__pdAdded = true;
+};
+// تنبيه لو الزبون طالع من صفحة منتج يحتاج عرض وارتفاع (sqm) وعبّى بُعد وحد بس ونسي الثاني، ولسا ما ضاف المنتج للسلة
+function pdLeaveGuardCheck(){
+  const meta = window.__PD_meta;
+  if(!meta || !meta.needsDims || !meta.purchasable || window.__pdAdded) return false;
+  if(meta.pricingMethod !== 'sqm') return false;
+  const wEl = document.getElementById('pdW'), hEl = document.getElementById('pdH');
+  if(!wEl || !hEl) return false;
+  const wVal = wEl.value.trim(), hVal = hEl.value.trim();
+  return Boolean((wVal || hVal) && !(wVal && hVal));
+}
+function pdLiveUpdate(){
+  const p = window.__PD; if(!p) return;
+  const qty = Number(document.getElementById('pdQty')?.value||1);
+  const w = document.getElementById('pdW')?.value; const h = document.getElementById('pdH')?.value;
+  const box = document.getElementById('pdLiveTotal'); if(!box) return;
+  if(p.pricing_method==='sqm' && (!w||!h)) { box.textContent='أدخل القياسات أولاً'; return; }
+  if(p.pricing_method==='linear_meter' && !w) { box.textContent='أدخل القياس أولاً'; return; }
+  const calc = calcLine(p, {quantity:qty, widthCm:w, heightCm:h});
+  const roundingApplied = p.pricing_method==='sqm'? (calc.pricingW!==Number(w||0) || calc.pricingH!==Number(h||0))
+    : p.pricing_method==='linear_meter'? (calc.pricingW!==Number(w||0)) : false;
+  let extra = '';
+  if(roundingApplied){
+    if(p.pricing_method==='sqm') extra = `<div style="font-size:11px;color:var(--muted);font-weight:600;margin-top:4px">القياس الفعلي: ${esc(w)}×${esc(h)} سم · القياس المحتسب للتسعير: ${calc.pricingW}×${calc.pricingH} سم</div>`;
+    else extra = `<div style="font-size:11px;color:var(--muted);font-weight:600;margin-top:4px">الطول الفعلي: ${esc(w)} سم · الطول المحتسب للتسعير: ${calc.pricingW} سم</div>`;
+  }
+  box.innerHTML = 'الإجمالي: ' + money(calc.lineTotal) + extra;
+}
+async function pageQuote(){
+  await getSettings(); const cats = await getCategories();
+  return `${header('#/quote')}
+  <section class="section wrap" style="max-width:600px">
+    <div class="section-head"><div><h2>اطلب عرض سعر</h2><p>عبّي البيانات وراح نتواصل وياك بأقرب وقت</p></div></div>
+    <div class="field"><label>الاسم *</label><input id="qName"></div>
+    <div class="row2">
+      <div class="field"><label>رقم الهاتف *</label><input id="qPhone" type="tel" inputmode="numeric" maxlength="11" placeholder="07xxxxxxxxx"></div>
+      <div class="field"><label>واتساب (اختياري)</label><input id="qWa" type="tel"></div>
+    </div>
+    <div class="field"><label>نوع الشغل *</label><select id="qType">
+      <option value="">اختر...</option><option value="باب">باب</option><option value="شباك">شباك</option>
+      <option value="كاونتر">كاونتر</option><option value="محجر درج">محجر درج</option><option value="أخرى">أخرى</option>
+    </select></div>
+    <div class="row2">
+      <div class="field"><label>العرض (سم)</label><input id="qW" type="number"></div>
+      <div class="field"><label>الارتفاع (سم)</label><input id="qH" type="number"></div>
+    </div>
+    <div class="field"><label>المحافظة</label><input id="qGov" value="${esc(state.settings.governorate||'')}"></div>
+    <div class="field"><label>المنطقة / أقرب نقطة دالة</label><input id="qArea"></div>
+    <div class="field"><label>تفاصيل إضافية</label><textarea id="qNotes" placeholder="أي تفاصيل تساعدنا نحدد السعر..."></textarea></div>
+    <div class="field"><label>صورة (اختياري)</label><input id="qImg" type="file" accept="image/*"></div>
+    <button class="btn primary block" onclick="submitQuote()" id="qSubmitBtn">إرسال الطلب</button>
+  </section>${footer()} ${waFab()}`;
+}
+window.submitQuote = async function(){
+  const name=document.getElementById('qName').value.trim();
+  const phone=document.getElementById('qPhone').value.trim();
+  const work_type=document.getElementById('qType').value;
+  if(!name||!phone||!work_type){ toast('عبّي الحقول المطلوبة (*)', true); return; }
+  if(!isValidIraqiPhone(phone)){ toast('رقم الهاتف غير صحيح — يجب أن يبدأ بـ07 ويتكون من 11 رقم', true); return; }
+  const btn=document.getElementById('qSubmitBtn'); btn.disabled=true; btn.innerHTML='<span class="spin"></span>';
+  try{
+    let image_url=null;
+    const file=document.getElementById('qImg').files[0];
+    if(file){
+      const path = `${Date.now()}_${uid()}.${file.name.split('.').pop()}`;
+      const {error:upErr}=await sb.storage.from('quote-images').upload(path,file);
+      if(!upErr){ image_url = sb.storage.from('quote-images').getPublicUrl(path).data.publicUrl; }
+    }
+    const width=document.getElementById('qW').value||null, height=document.getElementById('qH').value||null;
+    const gov=document.getElementById('qGov').value.trim()||null, area=document.getElementById('qArea').value.trim()||null;
+    const notes=document.getElementById('qNotes').value.trim()||null;
+    const row={ name, phone, whatsapp: document.getElementById('qWa').value.trim()||null, work_type,
+      width_cm: width, height_cm: height, governorate: gov, area: area, notes: notes, image_url };
+    const {error}=await sb.from('quote_requests').insert(row);
+    if(error) throw error;
+    const waMsg = [
+      'السلام عليكم،', 'يوجد طلب عرض سعر جديد من الموقع:', '',
+      `الاسم: ${name}`, `الهاتف: ${phone}`, `نوع الشغل: ${work_type}`,
+      (width||height)? `المقاس: ${width||'-'} × ${height||'-'} سم` : null,
+      gov? `المحافظة: ${gov}` : null, area? `المنطقة: ${area}` : null, notes? `ملاحظات: ${notes}` : null
+    ].filter(Boolean).join('\n');
+    const waLink = waLinkWorkshop(waMsg);
+    if(waLink) window.open(waLink, '_blank');
+    document.querySelector('#app .section.wrap').innerHTML = `<div class="empty-state"><b>تم إرسال طلبك ✅</b>راح نتواصل وياك قريبًا لتحديد السعر.
+      ${waLink? `<div style="margin-top:14px"><a class="btn block" style="border-color:rgba(37,211,102,.4);color:#1ba851" target="_blank" href="${waLink}">💬 لو ما انفتح واتساب تلقائياً، اضغط هنا</a></div>`:''}
+      <div style="margin-top:10px"><a class="btn primary" href="#/">الرجوع للرئيسية</a></div></div>`;
+  }catch(e){ console.error(e); toast('تعذّر إرسال الطلب، تأكد من الاتصال وحاول مرة ثانية', true); btn.disabled=false; btn.textContent='إرسال الطلب'; }
+};
+async function pageTrack(){
+  await getSettings();
+  return `${header('#/track')}
+  <section class="section wrap" style="max-width:480px">
+    <div class="section-head"><div><h2>تتبع طلبك</h2><p>أدخل رقم الطلب ورقم الهاتف المستخدم بالطلب</p></div></div>
+    <div class="field"><label>رقم الطلب</label><input id="tOrder" placeholder="ORD-2026-0001"></div>
+    <div class="field"><label>رقم الهاتف</label><input id="tPhone" type="tel"></div>
+    <button class="btn primary block" onclick="doTrack()" id="tBtn">بحث</button>
+    <div id="tResult" style="margin-top:16px"></div>
+  </section>${footer()} ${waFab()}`;
+}
+window.doTrack = async function(){
+  const order_number=document.getElementById('tOrder').value.trim();
+  const phone=document.getElementById('tPhone').value.trim();
+  const box=document.getElementById('tResult'); const btn=document.getElementById('tBtn');
+  if(!order_number||!phone){ toast('عبّي الحقلين', true); return; }
+  btn.disabled=true; btn.innerHTML='<span class="spin"></span>';
+  try{
+    const {data,error}=await sb.rpc('track_order',{p_order_number:order_number,p_phone:phone});
+    if(error) throw error;
+    if(!data){ box.innerHTML='<div class="empty-state">ما لكينا طلب بهذا الرقم والهاتف</div>'; }
+    else{
+      const items=(data.items||[]).map(it=>`<div class="summary-line"><span>${esc(it.name)} × ${it.quantity}</span><b>${money(it.total_price)}</b></div>`).join('');
+      box.innerHTML = `<div class="summary-box">
+        <div class="summary-line"><span>رقم الطلب</span><b class="mono">${esc(data.order_number)}</b></div>
+        <div class="summary-line"><span>الحالة</span><span class="status-pill ${data.status}">${statusAr(data.status)}</span></div>
+        <div class="summary-line"><span>حالة الدفع</span><span class="status-pill ${data.payment_status}">${payAr(data.payment_status)}</span></div>
+        <div style="margin:10px 0;border-top:1px solid var(--line);padding-top:8px">${items}</div>
+        <div class="summary-line"><span>الإجمالي</span><b>${money(data.total)}</b></div>
+      </div>`;
+    }
+  }catch(e){ box.innerHTML='<div class="empty-state">صار خطأ، حاول مرة ثانية</div>'; }
+  btn.disabled=false; btn.textContent='بحث';
+};
+function statusAr(s){ return {new:'جديد',in_progress:'قيد التنفيذ',completed:'مكتمل',cancelled:'ملغي'}[s]||s; }
+function payAr(s){ return {pending:'بانتظار الدفع',paid:'مدفوع',failed:'فشل',cod:'دفع عند الاستلام',refunded:'مسترجع'}[s]||s; }
+
+// -------------------- payment providers (modular) --------------------
+// كل مزود دفع إلكتروني حقيقي (مستقبلاً) يُضاف هنا كمفتاح جديد بنفس الشكل:
+// zaincash: { label:'زين كاش', async createPayment(order, amount){ /* نداء API الحقيقي هنا */ return {status:'pending', reference:'...'}; } }
+// هذا يخلي الموقع غير مرتبط بمزود دفع محدد، ويسهل إضافة مزود لاحقاً بدون إعادة بناء المتجر.
+const PaymentProviders = {};
+function getActiveElectronicProvider(){
+  const s = state.settings||{};
+  if(!s.electronic_payment_enabled) return null;
+  const key = s.payment_provider||'';
+  if(PaymentProviders[key]) return PaymentProviders[key];
+  // لا يوجد مزود مبرمج فعلياً بعد؛ نعرض خياراً عاماً بالاسم الذي يحدده المدير ونعلّم الطلب "بانتظار الدفع" لحين ربط مزود حقيقي
+  if(s.payment_provider_name) return { label: s.payment_provider_name, async createPayment(){ return {status:'pending', reference:null}; } };
+  return null;
+}
+
+// -------------------- cart & checkout modals --------------------
+window.openCart = function(){
+  const modals=document.getElementById('modals');
+  const items = state.cart.map(i=>`
+    <div class="cart-item">
+      <img src="${i.image?esc(i.image):''}">
+      <div class="info"><b>${esc(i.name)}</b><small>${esc(i.code)} ${i.widthCm?`· ${i.widthCm}×${i.heightCm||''}سم`:''}</small>
+      <div class="qty-x">
+        <button onclick="cartChangeQty('${i.id}',-1)">−</button>
+        <span class="mono">${i.quantity}</span>
+        <button onclick="cartChangeQty('${i.id}',1)">+</button>
+      </div>
+      <small>${money(i.lineTotal)}</small></div>
+      <button class="btn sm danger" onclick="removeCartItem('${i.id}')">حذف</button>
+    </div>`).join('') || '<div class="cart-empty">السلة فارغة</div>';
+  modals.innerHTML = `<div class="overlay" onclick="if(event.target===this)this.remove()">
+    <div class="sheet">
+      <div class="sheet-head"><h3>سلة المشتريات</h3><div class="sheet-close" onclick="this.closest('.overlay').remove()">×</div></div>
+      ${items}
+      ${state.cart.length? `<div class="summary-box"><div class="summary-line"><span>الإجمالي</span><b>${money(cartTotal())}</b></div></div>
+      <button class="btn primary block" onclick="openCheckout()">إتمام الطلب</button>`:''}
+    </div></div>`;
+};
+window.openCheckout = async function(){
+  await getSettings();
+  const saved = loadSavedCustomer() || {};
+  const modals=document.getElementById('modals');
+  modals.innerHTML = `<div class="overlay">
+    <div class="sheet">
+      <div class="sheet-head"><h3>إتمام الطلب</h3><div class="sheet-close" onclick="openCart()">×</div></div>
+      <div class="field"><label>الاسم *</label><input id="coName" value="${esc(saved.name||'')}"></div>
+      <div class="row2">
+        <div class="field"><label>رقم الهاتف *</label><input id="coPhone" type="tel" inputmode="numeric" maxlength="11" placeholder="07xxxxxxxxx" value="${esc(saved.phone||'')}"></div>
+        <div class="field"><label>واتساب</label><input id="coWa" type="tel" value="${esc(saved.whatsapp||'')}"></div>
+      </div>
+      <div class="field"><label>المحافظة</label><input id="coGov" value="${esc(saved.governorate||state.settings.governorate||'')}"></div>
+      <div class="field"><label>المنطقة</label><input id="coArea" value="${esc(saved.area||'')}"></div>
+      <div class="field"><label>تفاصيل العنوان</label><textarea id="coAddr">${esc(saved.address||'')}</textarea></div>
+      <div class="field"><label>ملاحظات</label><textarea id="coNotes"></textarea></div>
+      ${(()=>{
+        const provider = getActiveElectronicProvider();
+        const codOn = state.settings.cod_enabled!==false;
+        const methods = [];
+        if(codOn) methods.push({value:'cod', label:'الدفع عند الاستلام'});
+        if(provider) methods.push({value:'electronic', label:provider.label});
+        if(!methods.length) methods.push({value:'cod', label:'الدفع عند الاستلام'});
+        if(methods.length===1) return `<div class="summary-box"><div class="summary-line"><span>الدفع</span><b>${esc(methods[0].label)}</b></div></div><input type="hidden" id="coPayMethodFixed" value="${methods[0].value}">`;
+        return `<div class="field"><label>طريقة الدفع</label>${methods.map((m,i)=>`<label style="display:flex;align-items:center;gap:8px;padding:8px 0;font-size:13px"><input type="radio" name="coPayMethod" value="${m.value}" ${i===0?'checked':''} style="width:auto">${esc(m.label)}</label>`).join('')}</div>`;
+      })()}
+      <div class="summary-box"><div class="summary-line"><span>الإجمالي</span><b>${money(cartTotal())}</b></div></div>
+      <button class="btn primary block" id="coBtn" onclick="submitOrder()">تأكيد الطلب</button>
+    </div></div>`;
+};
+window.submitOrder = async function(){
+  const name=document.getElementById('coName').value.trim();
+  const phone=document.getElementById('coPhone').value.trim();
+  if(!name||!phone){ toast('عبّي الاسم والهاتف', true); return; }
+  if(!isValidIraqiPhone(phone)){ toast('رقم الهاتف غير صحيح — يجب أن يبدأ بـ07 ويتكون من 11 رقم', true); return; }
+  const btn=document.getElementById('coBtn'); btn.disabled=true; btn.innerHTML='<span class="spin"></span>';
+  try{
+    const subtotal=cartTotal();
+    const payMethod = document.getElementById('coPayMethodFixed')?.value
+      || document.querySelector('input[name="coPayMethod"]:checked')?.value || 'cod';
+    const {data:order,error}=await sb.from('orders').insert({
+      customer_name:name, customer_phone:phone, customer_whatsapp:document.getElementById('coWa').value.trim()||null,
+      governorate:document.getElementById('coGov').value.trim()||null, area:document.getElementById('coArea').value.trim()||null,
+      address_details:document.getElementById('coAddr').value.trim()||null, notes:document.getElementById('coNotes').value.trim()||null,
+      subtotal, total:subtotal, payment_method:payMethod, payment_status: payMethod==='cod'? 'cod':'pending'
+    }).select().single();
+    if(error) throw error;
+    if(payMethod==='electronic'){
+      const provider = getActiveElectronicProvider();
+      if(provider){
+        try{
+          const res = await provider.createPayment(order, subtotal);
+          await sb.from('orders').update({ payment_status: res.status||'pending', transaction_reference: res.reference||null }).eq('id', order.id);
+        }catch(e){ /* المزود لم يُربط فعلياً بعد؛ يبقى الطلب بحالة "بانتظار الدفع" ليتابعه الموظف يدوياً */ }
+      }
+    }
+    const items = state.cart.map(i=>({
+      order_id:order.id, product_id:i.productId, product_name_snapshot:i.name, product_code_snapshot:i.code,
+      unit_price_snapshot:i.unitPrice, pricing_method_snapshot:i.pricingMethod, quantity:i.quantity,
+      width_cm:i.widthCm||null, height_cm:i.heightCm||null, calculated_area_or_length:i.areaOrLength,
+      note:i.note||null, total_price:i.lineTotal
+    }));
+    const {error:itErr}=await sb.from('order_items').insert(items);
+    if(itErr) throw itErr;
+    saveCustomerInfo({
+      name, phone, whatsapp: document.getElementById('coWa').value.trim()||'',
+      governorate: document.getElementById('coGov').value.trim()||'',
+      area: document.getElementById('coArea').value.trim()||'',
+      address: document.getElementById('coAddr').value.trim()||''
+    });
+    window.__LAST_ORDER = {
+      order,
+      total: subtotal,
+      items: state.cart.map(i=>({ name:i.name, code:i.code, qty:i.quantity, lineTotal:i.lineTotal,
+        dims: i.widthCm? `${i.widthCm}×${i.heightCm||''}` : null }))
+    };
+    state.cart=[]; saveCart();
+    document.getElementById('modals').innerHTML = `<div class="overlay"><div class="sheet" style="text-align:center">
+      <div style="font-size:40px">✅</div><h3>تم استلام طلبك</h3>
+      <p style="color:var(--muted)">رقم الطلب</p>
+      <div class="mono" style="font-size:20px;font-weight:900;margin-bottom:14px">${esc(order.order_number)}</div>
+      <button class="btn block" style="margin-bottom:8px" onclick="downloadOrderSummary()">⬇ تحميل ملخص الطلب</button>
+      <button class="btn primary block" onclick="document.getElementById('modals').innerHTML='';location.hash='#/'">تمام</button>
+    </div></div>`;
+  }catch(e){ console.error(e); toast('تعذّر تأكيد الطلب، تأكد من الاتصال وحاول مرة ثانية', true); btn.disabled=false; btn.textContent='تأكيد الطلب'; }
+};
+window.downloadOrderSummary = async function(){
+  const data = window.__LAST_ORDER; if(!data) return;
+  const s = state.settings||{};
+  const trs = data.items.map((it,i)=>`<tr>
+      <td style="padding:8px;border:1px solid #e2e8f0">${i+1}</td>
+      <td style="padding:8px;border:1px solid #e2e8f0">${esc(it.name)}${it.dims?` (${esc(it.dims)} سم)`:''}</td>
+      <td style="padding:8px;border:1px solid #e2e8f0">${esc(it.qty)}</td>
+      <td style="padding:8px;border:1px solid #e2e8f0">${money(it.lineTotal)}</td>
+    </tr>`).join('');
+  const printHtml = `<div id="orderPrintCard" style="position:fixed;left:-9999px;top:0;width:420px;background:#fff;padding:20px;font-family:Tajawal,sans-serif;direction:rtl;color:#0F172A">
+    <div style="font-weight:900;font-size:18px;margin-bottom:4px">${esc(s.workshop_name||'أبو أحمد للألمنيوم')}</div>
+    <div style="font-weight:700;font-size:13px;color:#0EA5E9;margin-bottom:6px">ملخص الطلب رقم ${esc(data.order.order_number)}</div>
+    <div style="font-size:12px;color:#64748B;margin-bottom:14px">${esc(data.order.customer_name)} · ${esc(data.order.customer_phone)}</div>
+    <table style="width:100%;border-collapse:collapse;font-size:13px">
+      <thead><tr style="background:#F1F5F9">
+        <th style="padding:8px;border:1px solid #e2e8f0">#</th>
+        <th style="padding:8px;border:1px solid #e2e8f0">المنتج</th>
+        <th style="padding:8px;border:1px solid #e2e8f0">الكمية</th>
+        <th style="padding:8px;border:1px solid #e2e8f0">السعر</th>
+      </tr></thead>
+      <tbody>${trs}</tbody>
+    </table>
+    <div style="margin-top:12px;font-weight:900;font-size:15px;text-align:left">الإجمالي: ${money(data.total)}</div>
+  </div>`;
+  document.body.insertAdjacentHTML('beforeend', printHtml);
+  const node = document.getElementById('orderPrintCard');
+  try{
+    const canvas = await html2canvas(node, {scale:2, backgroundColor:'#ffffff'});
+    node.remove();
+    canvas.toBlob((blob)=>{
+      if(!blob){ toast('صار خطأ بإنشاء الصورة', true); return; }
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a'); a.href = url; a.download = 'ملخص-الطلب-'+data.order.order_number+'.png'; a.click();
+      URL.revokeObjectURL(url);
+      toast('تم تنزيل ملخص الطلب');
+    }, 'image/png');
+  }catch(e){ node.remove(); console.error(e); toast('صار خطأ بالتصدير', true); }
+};
+function bindPublicEvents(){
+  renderCartBadge();
+  syncThemeBtn();
+  ['pdW','pdH','pdQty'].forEach(id=>{ const el=document.getElementById(id); if(el) el.addEventListener('input', pdLiveUpdate); });
+}
+
+// ==================== ADMIN ====================
+const ADM_TABS = [
+  {key:'overview',label:'نظرة عامة'},{key:'categories',label:'الأقسام'},{key:'products',label:'المنتجات'},
+  {key:'orders',label:'الطلبات'},{key:'quotes',label:'طلبات الأسعار'},
+  {key:'customers',label:'الزبائن'},{key:'gallery',label:'معرض الأعمال'},{key:'glass-calc',label:'حاسبة الزجاج'},{key:'settings',label:'الإعدادات'}
+];
+async function getSession(){ const {data}=await sb.auth.getSession(); state.session=data.session; return state.session; }
+// -------------------- تنبيه الطلبات الجديدة (صوتي + بصري) بلوحة التحكم --------------------
+window.__newOrderCount = 0;
+let __orderChannel = null;
+function setupOrderAlerts(){
+  if(__orderChannel) return;
+  __orderChannel = sb.channel('admin-orders-alert')
+    .on('postgres_changes', {event:'INSERT', schema:'public', table:'orders'}, (payload)=>{
+      window.__newOrderCount++;
+      playOrderAlertSound();
+      updateOrdersBadge();
+      toast('🔔 طلب جديد وصل: ' + (payload.new && payload.new.order_number || ''));
+    })
+    .subscribe();
+}
+function teardownOrderAlerts(){
+  if(__orderChannel){ sb.removeChannel(__orderChannel); __orderChannel = null; }
+}
+function playOrderAlertSound(){
+  try{
+    const ctx = new (window.AudioContext||window.webkitAudioContext)();
+    const o = ctx.createOscillator(); const g = ctx.createGain();
+    o.connect(g); g.connect(ctx.destination);
+    o.type = 'sine'; o.frequency.value = 880; g.gain.value = 0.18;
+    o.start();
+    setTimeout(()=>{ o.frequency.value = 1180; }, 130);
+    setTimeout(()=>{ o.stop(); ctx.close(); }, 340);
+  }catch(e){ /* المتصفح ما يدعم الصوت التلقائي */ }
+}
+function updateOrdersBadge(){
+  const el = document.getElementById('newOrderBadge');
+  if(!el) return;
+  el.textContent = window.__newOrderCount>9? '+9' : String(window.__newOrderCount);
+  el.style.display = window.__newOrderCount? 'inline-flex' : 'none';
+}
+function tabBadge(t){
+  if(t.key!=='orders') return '';
+  return `<span id="newOrderBadge" style="display:${window.__newOrderCount?'inline-flex':'none'};background:var(--accent);color:#fff;border-radius:999px;font-size:10px;font-weight:900;padding:1px 7px;margin-right:6px;min-width:16px;justify-content:center">${window.__newOrderCount>9?'+9':window.__newOrderCount}</span>`;
+}
+async function renderAdminRoute(parts, app){
+  await getSession();
+  if(parts[1]==='login'){ app.innerHTML = adminLoginPage(); return; }
+  if(!state.session){ location.hash='#/'+ADMIN_ROUTE+'/login'; return; }
+  setupOrderAlerts();
+  const tab = parts[1] || 'overview';
+  if(tab==='orders'){ window.__newOrderCount = 0; }
+  app.innerHTML = adminShell(tab, '<div style="padding:40px;text-align:center;color:var(--muted)">جارِ التحميل…</div>');
+  syncThemeBtn();
+  const target = document.getElementById('admContent');
+  try{
+    if(tab==='overview') target.innerHTML = await admOverview();
+    else if(tab==='categories') target.innerHTML = await admCategories();
+    else if(tab==='products') target.innerHTML = await admProducts();
+    else if(tab==='orders') target.innerHTML = await admOrders();
+    else if(tab==='quotes') target.innerHTML = await admQuotes();
+    else if(tab==='customers') target.innerHTML = await admCustomers();
+    else if(tab==='gallery') target.innerHTML = await admGallery();
+    else if(tab==='glass-calc') target.innerHTML = admGlassCalc();
+    else if(tab==='settings') target.innerHTML = await admSettings();
+    else if(tab==='change-password') target.innerHTML = admChangePassword();
+  }catch(e){ console.error(e); target.innerHTML = '<div class="empty-state"><b>صار خطأ</b>'+esc(e.message)+'</div>'; }
+}
+function adminLoginPage(){
+  return `<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px">
+    <div class="sheet" style="max-width:360px">
+      <h3 style="margin-top:0">دخول لوحة التحكم</h3>
+      <div class="field"><label>البريد الإلكتروني</label><input id="loginEmail" type="email"></div>
+      <div class="field"><label>كلمة المرور</label><input id="loginPass" type="password"></div>
+      <button class="btn primary block" id="loginBtn" onclick="adminLogin()">دخول</button>
+      <div style="text-align:center;margin-top:12px"><a href="#/" style="color:var(--muted);font-size:12px">الرجوع للموقع</a></div>
+    </div></div>`;
+}
+window.adminLogin = async function(){
+  const email=document.getElementById('loginEmail').value.trim();
+  const password=document.getElementById('loginPass').value;
+  const btn=document.getElementById('loginBtn'); btn.disabled=true; btn.innerHTML='<span class="spin"></span>';
+  const {error}=await sb.auth.signInWithPassword({email,password});
+  if(error){ toast('فشل الدخول: تأكد من البريد وكلمة المرور', true); btn.disabled=false; btn.textContent='دخول'; return; }
+  location.hash='#/'+ADMIN_ROUTE+'/overview'; render();
+};
+window.adminLogout = async function(){ teardownOrderAlerts(); await sb.auth.signOut(); location.hash='#/'+ADMIN_ROUTE+'/login'; render(); };
+function adminShell(tab, content){
+  return `<div class="adm-shell">
+    <aside class="adm-side">
+      <div class="adm-title">لوحة التحكم</div>
+      ${ADM_TABS.map(t=>`<a href="#/${ADMIN_ROUTE}/${t.key}" class="${tab===t.key?'active':''}">${t.label}${tabBadge(t)}</a>`).join('')}
+      <a href="#/${ADMIN_ROUTE}/change-password" class="${tab==='change-password'?'active':''}">تغيير كلمة المرور</a>
+      <a onclick="adminLogout()" style="color:var(--red);cursor:pointer">تسجيل خروج</a>
+      <a onclick="toggleTheme()" id="adminThemeToggle" style="cursor:pointer">🌙 الوضع الليلي</a>
+      <a onclick="showAdminShortcutHelp()" style="cursor:pointer">📲 اختصار الدخول من الأيقونة</a>
+      <a href="#/" class="adm-side-sep">↩ الموقع العام</a>
+    </aside>
+    <main class="adm-main" id="admContent">${content}</main>
+  </div>`;
+}
+function fld(f, val){
+  val = val==null? '': val;
+  if(f.type==='select') return `<div class="field"><label>${f.label}</label><select id="f_${f.key}">${f.options.map(o=>`<option value="${esc(o.value)}" ${String(val)===String(o.value)?'selected':''}>${esc(o.label)}</option>`).join('')}</select></div>`;
+  if(f.type==='textarea') return `<div class="field"><label>${f.label}</label><textarea id="f_${f.key}">${esc(val)}</textarea></div>`;
+  if(f.type==='checkbox') return `<div class="field"><label><input type="checkbox" id="f_${f.key}" ${val?'checked':''} style="width:auto;margin-left:8px">${f.label}</label></div>`;
+  return `<div class="field"><label>${f.label}</label><input id="f_${f.key}" type="${f.type||'text'}" value="${esc(val)}"></div>`;
+}
+function toWesternDigits(s){
+  return String(s).replace(/[٠-٩]/g, d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/[۰-۹]/g, d=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(d));
+}
+function readFld(f){
+  const el = document.getElementById('f_'+f.key);
+  if(f.type==='checkbox') return el.checked;
+  if(f.type==='number'){ const raw = toWesternDigits(el.value||'').trim(); return raw===''? null : Number(raw); }
+  return el.value.trim()===''? null: el.value.trim();
+}
+function openModal(html){ document.getElementById('modals').innerHTML = `<div class="overlay" onclick="if(event.target===this)this.remove()"><div class="sheet wide">${html}</div></div>`; }
+window.closeModal = function(){ document.getElementById('modals').innerHTML=''; }
+
+// ---- overview ----
+async function admOverview(){
+  const [{count:catCount},{count:prodCount},{count:orderCount},{count:newOrders},{count:quoteCount},{count:custCount}] = await Promise.all([
+    sb.from('categories').select('*',{count:'exact',head:true}),
+    sb.from('products').select('*',{count:'exact',head:true}),
+    sb.from('orders').select('*',{count:'exact',head:true}),
+    sb.from('orders').select('*',{count:'exact',head:true}).eq('status','new'),
+    sb.from('quote_requests').select('*',{count:'exact',head:true}).eq('status','new'),
+    sb.from('customers').select('*',{count:'exact',head:true}),
+  ]);
+  const cards = [
+    ['الأقسام',catCount],['المنتجات',prodCount],['كل الطلبات',orderCount],
+    ['طلبات جديدة',newOrders],['طلبات أسعار جديدة',quoteCount],['الزبائن',custCount]
+  ];
+  return `<div class="adm-topbar"><h2>نظرة عامة</h2></div>
+  <div class="grid cols-3">${cards.map(c=>`<div class="stat-card"><small>${c[0]}</small><b>${c[1]??0}</b></div>`).join('')}</div>`;
+}
+
+// ---- categories ----
+async function admCategories(){
+  const {data} = await sb.from('categories').select('*').order('sort_order');
+  window.__CATS_ADM = data||[];
+  return `<div class="adm-topbar"><h2>الأقسام</h2><button class="btn primary" onclick="catForm()">+ قسم جديد</button></div>
+  <div class="card-list">${(data||[]).map(c=>`<div class="card-item">
+    <div class="meta"><b>${esc(c.name)}</b><small>${esc(c.slug)} ${c.is_active?'':'· غير مفعّل'}</small></div>
+    <div style="display:flex;gap:6px"><button class="btn sm" onclick="catForm('${c.id}')">تعديل</button><button class="btn sm danger" onclick="catDelete('${c.id}')">حذف</button></div>
+  </div>`).join('') || '<div class="empty-state">لا توجد أقسام</div>'}</div>`;
+}
+window.catForm = function(id){
+  const cat = id? window.__CATS_ADM.find(c=>c.id===id): {};
+  openModal(`<div class="sheet-head"><h3>${id?'تعديل قسم':'قسم جديد'}</h3><div class="sheet-close" onclick="closeModal()">×</div></div>
+    ${fld({key:'name',label:'الاسم'},cat.name)}
+    ${fld({key:'slug',label:'الرابط (slug بالإنكليزي)'},cat.slug)}
+    ${fld({key:'description',label:'الوصف',type:'textarea'},cat.description)}
+    ${fld({key:'sort_order',label:'ترتيب العرض',type:'number'},cat.sort_order||0)}
+    ${fld({key:'is_active',label:'مفعّل',type:'checkbox'},cat.is_active!==false)}
+    <div class="field"><label>صورة</label><input type="file" id="catImgFile" accept="image/*">${cat.image_url?`<img src="${esc(cat.image_url)}" style="width:70px;margin-top:8px;border-radius:8px">`:''}</div>
+    <button class="btn primary block" onclick="catSave('${id||''}')">حفظ</button>`);
+};
+window.catSave = async function(id){
+  const row = { name: readFld({key:'name'}), slug: readFld({key:'slug'}), description: readFld({key:'description'}),
+    sort_order: readFld({key:'sort_order',type:'number'})||0, is_active: readFld({key:'is_active',type:'checkbox'}) };
+  const file = document.getElementById('catImgFile').files[0];
+  if(file){
+    const path = `${Date.now()}_${uid()}.${file.name.split('.').pop()}`;
+    const {error:upErr} = await sb.storage.from('categories').upload(path,file);
+    if(!upErr) row.image_url = sb.storage.from('categories').getPublicUrl(path).data.publicUrl;
+  }
+  const {error} = id? await sb.from('categories').update(row).eq('id',id) : await sb.from('categories').insert(row);
+  if(error){ toast(error.message, true); return; }
+  toast('تم الحفظ'); closeModal(); state.categories=[]; render();
+};
+window.catDelete = async function(id){
+  if(!confirm('تأكيد الحذف؟')) return;
+  const {error} = await sb.from('categories').delete().eq('id',id);
+  if(error) toast(error.message, true); else { toast('تم الحذف'); state.categories=[]; render(); }
+};
+
+// ---- معرض الأعمال (صور مشاريع منفّذة فعلياً، بدون تقييمات أو تعليقات) ----
+async function admGallery(){
+  let data = [];
+  try{ const res = await sb.from('gallery_items').select('*').order('sort_order'); data = res.data||[]; }
+  catch(e){}
+  window.__GAL_ADM = data;
+  return `<div class="adm-topbar"><h2>معرض الأعمال</h2><button class="btn primary" onclick="galForm()">+ صورة جديدة</button></div>
+  <div class="field hint" style="margin-bottom:14px">صور نماذج من مشاريع نفّذتوها فعلياً — تظهر بالصفحة الرئيسية للزبائن كدليل على جودة الشغل، بدون تقييمات أو تعليقات.</div>
+  <div class="img-grid">${data.map(g=>`<div class="im">
+    <img src="${esc(g.image_url)}">
+    <button onclick="galDelete('${g.id}')" title="حذف">×</button>
+  </div>`).join('') || ''}</div>
+  ${!data.length? '<div class="empty-state">لا توجد صور بعد</div>' : ''}
+  <div class="card-list" style="margin-top:14px">${data.map(g=>`<div class="card-item">
+    <div class="meta"><b>${esc(g.caption||'(بدون وصف)')}</b><small>ترتيب: ${g.sort_order||0} ${g.is_active?'':'· غير مفعّل'}</small></div>
+    <div style="display:flex;gap:6px"><button class="btn sm" onclick="galForm('${g.id}')">تعديل</button><button class="btn sm danger" onclick="galDelete('${g.id}')">حذف</button></div>
+  </div>`).join('')}</div>`;
+}
+window.galForm = function(id){
+  const g = id? window.__GAL_ADM.find(x=>x.id===id): {};
+  openModal(`<div class="sheet-head"><h3>${id?'تعديل صورة':'صورة جديدة'}</h3><div class="sheet-close" onclick="closeModal()">×</div></div>
+    <div class="field"><label>الصورة${id?'':' *'}</label><input type="file" id="galImgFile" accept="image/*">${g.image_url?`<img src="${esc(g.image_url)}" style="width:100px;margin-top:8px;border-radius:8px">`:''}</div>
+    ${fld({key:'caption',label:'وصف مختصر (اختياري)'},g.caption)}
+    ${fld({key:'sort_order',label:'ترتيب العرض',type:'number'},g.sort_order||0)}
+    ${fld({key:'is_active',label:'مفعّل',type:'checkbox'},g.is_active!==false)}
+    <button class="btn primary block" onclick="galSave('${id||''}')">حفظ</button>`);
+};
+window.galSave = async function(id){
+  const row = { caption: readFld({key:'caption'}), sort_order: readFld({key:'sort_order',type:'number'})||0,
+    is_active: readFld({key:'is_active',type:'checkbox'}) };
+  const file = document.getElementById('galImgFile').files[0];
+  if(file){
+    const path = `gallery/${Date.now()}_${uid()}.${file.name.split('.').pop()}`;
+    const {error:upErr} = await sb.storage.from('site-assets').upload(path,file);
+    if(!upErr) row.image_url = sb.storage.from('site-assets').getPublicUrl(path).data.publicUrl;
+  }
+  if(!id && !row.image_url){ toast('اختر صورة أولاً', true); return; }
+  const {error} = id? await sb.from('gallery_items').update(row).eq('id',id) : await sb.from('gallery_items').insert(row);
+  if(error){ toast(error.message, true); return; }
+  toast('تم الحفظ'); closeModal(); render();
+};
+window.galDelete = async function(id){
+  if(!confirm('تأكيد الحذف؟')) return;
+  const {error} = await sb.from('gallery_items').delete().eq('id',id);
+  if(error) toast(error.message, true); else { toast('تم الحذف'); render(); }
+};
+
+// ---- products ----
+async function admProducts(){
+  const {data:cats} = await sb.from('categories').select('id,name').order('sort_order');
+  const {data} = await sb.from('products').select('*, categories(name), product_images(*)').order('sort_order');
+  window.__PRODS_ADM = data||[]; window.__CATS_ADM = cats||[];
+  return `<div class="adm-topbar"><h2>المنتجات</h2><button class="btn primary" onclick="prodForm()">+ منتج جديد</button></div>
+  <div class="tbl-hint">⇠ مرر يمينًا لعرض باقي الأعمدة</div><div class="tbl-scroll"><table class="admtbl"><thead><tr><th>الاسم</th><th>القسم</th><th>السعر</th><th>الحالة</th><th></th></tr></thead><tbody>
+  ${(data||[]).map(p=>`<tr><td>${esc(p.name)}</td><td>${esc(p.categories?.name||'-')}</td>
+    <td>${p.unit_price?money(p.unit_price):'-'}</td><td>${p.is_active?'مفعّل':'موقوف'}</td>
+    <td style="display:flex;gap:6px"><button class="btn sm" onclick="prodForm('${p.id}')">تعديل</button><button class="btn sm danger" onclick="prodDelete('${p.id}')">حذف</button></td></tr>`).join('') || `<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:20px">لا توجد منتجات</td></tr>`}
+  </tbody></table></div>`;
+}
+window.prodForm = function(id){
+  const p = id? window.__PRODS_ADM.find(x=>x.id===id): {};
+  const cats = window.__CATS_ADM||[];
+  openModal(`<div class="sheet-head"><h3>${id?'تعديل منتج':'منتج جديد'}</h3><div class="sheet-close" onclick="closeModal()">×</div></div>
+    ${fld({key:'name',label:'الاسم'},p.name)}
+    ${fld({key:'category_id',label:'القسم',type:'select',options:[{value:'',label:'بدون'},...cats.map(c=>({value:c.id,label:c.name}))]},p.category_id)}
+    ${fld({key:'description',label:'الوصف',type:'textarea'},p.description)}
+    <div class="row2">${fld({key:'material',label:'المادة'},p.material)}${fld({key:'color',label:'اللون'},p.color)}</div>
+    <div class="row2">${fld({key:'glass_type',label:'نوع الزجاج'},p.glass_type)}${fld({key:'design',label:'التصميم'},p.design)}</div>
+    ${fld({key:'pricing_method',label:'طريقة التسعير',type:'select',options:[
+      {value:'piece',label:'بالقطعة'},{value:'sqm',label:'بالمتر المربع'},{value:'linear_meter',label:'بالمتر الطولي'},{value:'quote_only',label:'عرض سعر فقط'}]},p.pricing_method||'quote_only')}
+    <div class="row2">${fld({key:'unit_price',label:'سعر الوحدة',type:'number'},p.unit_price)}
+      ${fld({key:'rounding_rule',label:'قاعدة التقريب',type:'select',options:[{value:'none',label:'بدون'},{value:'round_up_10cm',label:'تقريب لأعلى (قاعدة الـ5سم)'}]},p.rounding_rule||'none')}</div>
+    ${fld({key:'no_rounding',label:'استثناء دائم من التقريب (للكاونترات) — يتجاهل قاعدة التقريب أعلاه دائماً',type:'checkbox'},!!p.no_rounding)}
+    <div class="field hint" style="margin-top:-8px">القياس الفعلي يُحفظ دائماً كما هو ولا يتغير؛ التقريب (إن وُجد) يُستخدم فقط لحساب السعر.</div>
+    <div class="row2">${fld({key:'sort_order',label:'ترتيب العرض',type:'number'},p.sort_order||0)}
+      <div></div></div>
+    ${fld({key:'is_purchasable',label:'قابل للشراء المباشر',type:'checkbox'},p.is_purchasable!==false)}
+    ${fld({key:'is_featured',label:'منتج مميز',type:'checkbox'},!!p.is_featured)}
+    ${fld({key:'is_active',label:'مفعّل',type:'checkbox'},p.is_active!==false)}
+    <div class="field"><label>إضافة صور</label><input type="file" id="prodImgFiles" accept="image/*" multiple>
+      <div class="img-grid">${(p.product_images||[]).map(im=>`<div class="im"><img src="${esc(im.url)}"><button onclick="prodImgDelete('${im.id}','${id}')">×</button></div>`).join('')}</div>
+    </div>
+    <button class="btn primary block" onclick="prodSave('${id||''}')">حفظ</button>`);
+};
+window.prodImgDelete = async function(imgId, prodId){
+  await sb.from('product_images').delete().eq('id',imgId);
+  toast('تم حذف الصورة'); const p = await sb.from('products').select('*, product_images(*)').eq('id',prodId).single();
+  window.__PRODS_ADM = window.__PRODS_ADM.map(x=>x.id===prodId? p.data: x);
+  prodForm(prodId);
+};
+function autoSlugCode(name){
+  const rand = Date.now().toString(36) + Math.random().toString(36).slice(2,6);
+  let base = (name||'').toString().trim().toLowerCase()
+    .replace(/[^a-z0-9\s-]/g,'').replace(/\s+/g,'-').replace(/-+/g,'-').replace(/^-|-$/g,'');
+  const slug = (base? base+'-':'') + rand;
+  const code = 'P-' + rand.toUpperCase();
+  return {slug, code};
+}
+window.prodSave = async function(id){
+  const name = readFld({key:'name'});
+  const row = {
+    name, category_id: readFld({key:'category_id'})||null, description: readFld({key:'description'}),
+    material: readFld({key:'material'}), color: readFld({key:'color'}), glass_type: readFld({key:'glass_type'}),
+    design: readFld({key:'design'}), pricing_method: readFld({key:'pricing_method'}),
+    unit_price: readFld({key:'unit_price',type:'number'}), rounding_rule: readFld({key:'rounding_rule'}),
+    no_rounding: readFld({key:'no_rounding',type:'checkbox'}),
+    sort_order: readFld({key:'sort_order',type:'number'})||0,
+    is_purchasable: readFld({key:'is_purchasable',type:'checkbox'}), is_featured: readFld({key:'is_featured',type:'checkbox'}),
+    is_active: readFld({key:'is_active',type:'checkbox'})
+  };
+  if(!row.name){ toast('الاسم مطلوب', true); return; }
+  if(!id){ const gen = autoSlugCode(name); row.code = gen.code; row.slug = gen.slug; }
+  let prodId = id;
+  const {data, error} = id? await sb.from('products').update(row).eq('id',id).select().single() : await sb.from('products').insert(row).select().single();
+  if(error){ toast(error.message, true); return; }
+  prodId = data.id;
+  const files = document.getElementById('prodImgFiles').files;
+  for(const file of files){
+    const path = `${Date.now()}_${uid()}.${file.name.split('.').pop()}`;
+    const {error:upErr} = await sb.storage.from('product-images').upload(path,file);
+    if(!upErr){
+      const url = sb.storage.from('product-images').getPublicUrl(path).data.publicUrl;
+      await sb.from('product_images').insert({product_id:prodId, url});
+    }
+  }
+  toast('تم الحفظ'); closeModal(); render();
+};
+window.prodDelete = async function(id){
+  if(!confirm('تأكيد الحذف؟')) return;
+  const {error} = await sb.from('products').delete().eq('id',id);
+  if(error) toast(error.message, true); else { toast('تم الحذف'); render(); }
+};
+
+// ---- orders ----
+async function admOrders(){
+  const {data} = await sb.from('orders').select('*, order_items(*)').order('created_at',{ascending:false}).limit(100);
+  window.__ORDERS_ADM = data||[];
+  return `<div class="adm-topbar"><h2>الطلبات</h2><button class="btn" onclick="exportOrdersCSV()">⬇ تصدير Excel/CSV</button></div>
+  <div class="tbl-hint">⇠ مرر يمينًا لعرض باقي الأعمدة</div><div class="tbl-scroll"><table class="admtbl"><thead><tr><th>الرقم</th><th>الزبون</th><th>الهاتف</th><th>الإجمالي</th><th>الحالة</th><th>الدفع</th><th></th></tr></thead><tbody>
+  ${(data||[]).map(o=>`<tr><td class="mono">${esc(o.order_number)}</td><td>${esc(o.customer_name)}</td><td class="mono">${esc(o.customer_phone)}</td>
+    <td>${money(o.total)}</td>
+    <td><select onchange="orderStatusChange('${o.id}',this.value)">${['new','in_progress','completed','cancelled'].map(s=>`<option value="${s}" ${o.status===s?'selected':''}>${statusAr(s)}</option>`).join('')}</select></td>
+    <td><select onchange="orderPayChange('${o.id}',this.value)">${['pending','cod','paid','failed','refunded'].map(s=>`<option value="${s}" ${o.payment_status===s?'selected':''}>${payAr(s)}</option>`).join('')}</select></td>
+    <td><button class="btn sm" onclick="orderDetail('${o.id}')">تفاصيل</button></td></tr>`).join('') || `<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:20px">لا توجد طلبات</td></tr>`}
+  </tbody></table></div>`;
+}
+window.orderStatusChange = async function(id, status){
+  const {error} = await sb.from('orders').update({status}).eq('id',id);
+  if(error) toast(error.message, true); else toast('تم التحديث');
+};
+window.orderPayChange = async function(id, payment_status){
+  const {error} = await sb.from('orders').update({payment_status}).eq('id',id);
+  if(error) toast(error.message, true); else toast('تم التحديث');
+};
+window.orderDetail = function(id){
+  const o = window.__ORDERS_ADM.find(x=>x.id===id);
+  const items = (o.order_items||[]).map(it=>`<div class="summary-line"><span>${esc(it.product_name_snapshot)} (${esc(it.product_code_snapshot)}) × ${it.quantity}</span><b>${money(it.total_price)}</b></div>`).join('');
+  openModal(`<div class="sheet-head"><h3>تفاصيل الطلب ${esc(o.order_number)}</h3><div class="sheet-close" onclick="closeModal()">×</div></div>
+    <div class="summary-box">
+      <div class="summary-line"><span>الزبون</span><b>${esc(o.customer_name)}</b></div>
+      <div class="summary-line"><span>الهاتف</span><b class="mono">${esc(o.customer_phone)}</b></div>
+      ${o.customer_whatsapp?`<div class="summary-line"><span>واتساب</span><b class="mono">${esc(o.customer_whatsapp)}</b></div>`:''}
+      ${o.governorate?`<div class="summary-line"><span>المحافظة</span><b>${esc(o.governorate)}</b></div>`:''}
+      ${o.area?`<div class="summary-line"><span>المنطقة</span><b>${esc(o.area)}</b></div>`:''}
+      ${o.address_details?`<div class="summary-line"><span>العنوان</span><b>${esc(o.address_details)}</b></div>`:''}
+      ${o.notes?`<div class="summary-line"><span>ملاحظات</span><b>${esc(o.notes)}</b></div>`:''}
+    </div>
+    <div style="margin:10px 0">${items}</div>
+    <div class="summary-box"><div class="summary-line"><span>الإجمالي</span><b>${money(o.total)}</b></div></div>`);
+};
+
+// ---- quotes ----
+async function admQuotes(){
+  const {data} = await sb.from('quote_requests').select('*').order('created_at',{ascending:false}).limit(100);
+  window.__QUOTES_ADM = data||[];
+  return `<div class="adm-topbar"><h2>طلبات عرض السعر</h2></div>
+  <div class="tbl-hint">⇠ مرر يمينًا لعرض باقي الأعمدة</div><div class="tbl-scroll"><table class="admtbl"><thead><tr><th>الاسم</th><th>الهاتف</th><th>النوع</th><th>الحالة</th><th></th></tr></thead><tbody>
+  ${(data||[]).map(q=>`<tr><td>${esc(q.name)}</td><td class="mono">${esc(q.phone)}</td><td>${esc(q.work_type)}</td>
+    <td><select onchange="quoteStatusChange('${q.id}',this.value)">${['new','contacted','quoted','closed'].map(s=>`<option value="${s}" ${q.status===s?'selected':''}>${statusAr(s)}</option>`).join('')}</select></td>
+    <td style="display:flex;gap:6px"><button class="btn sm" onclick="quoteDetail('${q.id}')">تفاصيل</button><button class="btn sm danger" onclick="quoteDelete('${q.id}')">حذف</button></td></tr>`).join('') || `<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:20px">لا توجد طلبات</td></tr>`}
+  </tbody></table></div>`;
+}
+window.quoteStatusChange = async function(id, status){
+  const {error} = await sb.from('quote_requests').update({status}).eq('id',id);
+  if(error) toast(error.message, true); else toast('تم التحديث');
+};
+window.quoteDelete = async function(id){
+  if(!confirm('تأكيد حذف طلب السعر؟')) return;
+  const {error} = await sb.from('quote_requests').delete().eq('id',id);
+  if(error) toast(error.message, true); else { toast('تم الحذف'); render(); }
+};
+window.quoteDetail = function(id){
+  const q = window.__QUOTES_ADM.find(x=>x.id===id);
+  openModal(`<div class="sheet-head"><h3>طلب سعر - ${esc(q.name)}</h3><div class="sheet-close" onclick="closeModal()">×</div></div>
+    <div class="summary-box">
+      <div class="summary-line"><span>الهاتف</span><b class="mono">${esc(q.phone)}</b></div>
+      ${q.whatsapp?`<div class="summary-line"><span>واتساب</span><b class="mono">${esc(q.whatsapp)}</b></div>`:''}
+      <div class="summary-line"><span>نوع الشغل</span><b>${esc(q.work_type)}</b></div>
+      ${q.width_cm?`<div class="summary-line"><span>القياسات</span><b>${q.width_cm} × ${q.height_cm||''} سم</b></div>`:''}
+      ${q.governorate?`<div class="summary-line"><span>المحافظة</span><b>${esc(q.governorate)}</b></div>`:''}
+      ${q.area?`<div class="summary-line"><span>المنطقة</span><b>${esc(q.area)}</b></div>`:''}
+      ${q.notes?`<div class="summary-line"><span>ملاحظات</span><b>${esc(q.notes)}</b></div>`:''}
+    </div>
+    ${q.image_url?`<img src="${esc(q.image_url)}" style="border-radius:12px;margin-top:10px">`:''}`);
+};
+
+// ---- customers ----
+async function admCustomers(){
+  const {data} = await sb.from('customer_account_summary').select('*').order('name');
+  window.__CUST_ADM = data||[];
+  return `<div class="adm-topbar"><h2>حسابات الزبائن</h2><div style="display:flex;gap:8px"><button class="btn" onclick="exportCustomersCSV()">⬇ تصدير Excel/CSV</button><button class="btn primary" onclick="custForm()">+ زبون جديد</button></div></div>
+  <div class="tbl-hint">⇠ مرر يمينًا لعرض باقي الأعمدة</div><div class="tbl-scroll"><table class="admtbl"><thead><tr><th>الاسم</th><th>الهاتف</th><th>الإجمالي</th><th>المدفوع</th><th>المتبقي</th><th>الحالة</th><th></th></tr></thead><tbody>
+  ${(data||[]).map(c=>`<tr><td>${esc(c.name)}</td><td class="mono">${esc(c.phone)}</td><td>${money(c.agreed_total)}</td>
+    <td>${money(c.paid_total)}</td><td>${money(c.remaining)}</td><td><span class="status-pill ${c.status==='unpaid'?'new':c.status==='completed'?'completed':'in_progress'}">${c.status==='unpaid'?'غير مدفوع':c.status==='completed'?'مكتمل':'متبقي'}</span></td>
+    <td><button class="btn sm" onclick="custDetail('${c.customer_id}')">فتح الحساب</button></td></tr>`).join('') || `<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:20px">لا يوجد زبائن</td></tr>`}
+  </tbody></table></div>`;
+}
+window.custForm = function(){
+  openModal(`<div class="sheet-head"><h3>زبون جديد</h3><div class="sheet-close" onclick="closeModal()">×</div></div>
+    ${fld({key:'name',label:'الاسم'})}${fld({key:'phone',label:'الهاتف'})}${fld({key:'notes',label:'ملاحظات',type:'textarea'})}
+    <button class="btn primary block" onclick="custSave()">حفظ</button>`);
+};
+window.custSave = async function(){
+  const row = {name:readFld({key:'name'}), phone:readFld({key:'phone'}), notes:readFld({key:'notes'})};
+  if(!row.name||!row.phone){ toast('الاسم والهاتف مطلوبين', true); return; }
+  const {error} = await sb.from('customers').insert(row);
+  if(error){ toast(error.message, true); return; }
+  toast('تم الحفظ'); closeModal(); render();
+};
+function buildStatementMessage(cust, items, pays, summary){
+  const lines = [`السلام عليكم ${cust.name}`, '', 'هذا كشف حسابكم:', ''];
+  (items||[]).forEach(it=>{ lines.push(`${it.product_name_snapshot||it.work_type} — ${it.quantity} ${unitAr(it.unit)} — ${money(it.total_price)}`); });
+  lines.push('');
+  lines.push(`المبلغ الكلي: ${money(summary?.subtotal ?? summary?.agreed_total)}`);
+  if(summary?.agreed_total!=null) lines.push(`المبلغ المتفق عليه: ${money(summary.agreed_total)}`);
+  lines.push(`المبلغ الواصل: ${money(summary?.paid_total)}`);
+  lines.push(`المبلغ المتبقي: ${money(summary?.remaining)}`);
+  if((pays||[]).length){ lines.push(''); lines.push('الدفعات:'); pays.forEach(p=> lines.push(`${money(p.amount)} — ${p.payment_date}`)); }
+  lines.push(''); lines.push('مع الشكر والتقدير.');
+  return lines.join('\n');
+}
+function buildPaymentMessage(cust, payment, summary){
+  return [
+    `السلام عليكم ${cust.name}`, '',
+    'تم تسجيل دفعة بقيمة:', money(payment.amount), '',
+    'المبلغ الكلي:', money(summary?.agreed_total ?? summary?.subtotal), '',
+    'إجمالي المبلغ الواصل:', money(summary?.paid_total), '',
+    'المبلغ المتبقي:', money(summary?.remaining), '',
+    'شكرًا لكم.'
+  ].join('\n');
+}
+window.custDetail = async function(id){
+  const [{data:cust},{data:items},{data:pays},{data:adjs},{data:prods},{data:summary}] = await Promise.all([
+    sb.from('customers').select('*').eq('id',id).single(),
+    sb.from('customer_work_items').select('*').eq('customer_id',id).order('created_at',{ascending:false}),
+    sb.from('customer_payments').select('*').eq('customer_id',id).order('payment_date',{ascending:false}),
+    sb.from('customer_adjustments').select('*').eq('customer_id',id).order('created_at',{ascending:false}),
+    sb.from('products').select('id,name,code,unit_price,pricing_method'),
+    sb.from('customer_account_summary').select('*').eq('customer_id',id).maybeSingle()
+  ]);
+  window.__CUST_CTX = {id, prods: prods||[], cust, items: items||[], pays: pays||[], summary: summary||{}};
+  const statementLink = waLinkToPhone(cust.phone, buildStatementMessage(cust, items||[], pays||[], summary||{}));
+  const lastPaymentLink = (pays&&pays[0])? waLinkToPhone(cust.phone, buildPaymentMessage(cust, pays[0], summary||{})) : null;
+  const itemsHtml = (items||[]).map(it=>`<div class="card-item"><div class="meta"><b>${esc(it.product_name_snapshot||it.work_type)}</b><small>${it.quantity} ${esc(it.unit)} × ${money(it.unit_price)} = ${money(it.total_price)}</small></div></div>`).join('') || '<div class="empty-state" style="padding:14px">لا توجد أعمال</div>';
+  const paysHtml = (pays||[]).map(p=>`<div class="card-item"><div class="meta"><b>${money(p.amount)}</b><small>${esc(p.payment_date)} ${p.note?'· '+esc(p.note):''}</small></div></div>`).join('') || '<div class="empty-state" style="padding:14px">لا توجد دفعات</div>';
+  const adjsHtml = (adjs||[]).map(a=>`<div class="card-item"><div class="meta"><b>${a.amount>=0?'+':''}${money(a.amount)}</b><small>${esc(a.reason||'')}</small></div></div>`).join('') || '';
+  openModal(`<div class="sheet-head"><h3>حساب ${esc(cust.name)}</h3><div class="sheet-close" onclick="closeModal()">×</div></div>
+    <p class="mono" style="color:var(--muted)">${esc(cust.phone)}</p>
+    <div class="summary-box" style="margin:0 0 14px">
+      <div class="summary-line"><span>الإجمالي</span><b>${money(summary?.agreed_total ?? summary?.subtotal)}</b></div>
+      <div class="summary-line"><span>الواصل</span><b>${money(summary?.paid_total)}</b></div>
+      <div class="summary-line"><span>المتبقي</span><b>${money(summary?.remaining)}</b></div>
+    </div>
+    ${statementLink? `<a class="btn block" style="border-color:rgba(37,211,102,.4);color:#1ba851;margin-bottom:14px" target="_blank" href="${statementLink}">📤 إرسال كشف الحساب عبر واتساب</a>` : `<div class="field hint" style="margin-bottom:14px">أضف رقم هاتف صحيح للزبون لتفعيل إرسال كشف الحساب عبر واتساب</div>`}
+    <div class="toolbar"><b>الأعمال</b><button class="btn sm primary" onclick="custAddWorkForm()">+ إضافة عمل</button></div>
+    <div class="card-list">${itemsHtml}</div>
+    <div class="toolbar" style="margin-top:16px"><b>الدفعات</b><div style="display:flex;gap:6px">${lastPaymentLink?`<a class="btn sm" style="border-color:rgba(37,211,102,.4);color:#1ba851" target="_blank" href="${lastPaymentLink}">💬 إشعار آخر دفعة</a>`:''}<button class="btn sm primary" onclick="custAddPayForm()">+ دفعة</button></div></div>
+    <div class="card-list">${paysHtml}</div>
+    <div class="toolbar" style="margin-top:16px"><b>تعديلات (خصم/إضافة)</b><button class="btn sm primary" onclick="custAddAdjForm()">+ تعديل</button></div>
+    <div class="card-list">${adjsHtml}</div>
+    <button class="btn block" style="margin-top:22px;border-color:rgba(220,38,38,.4);color:var(--red)" onclick="custDeleteConfirm('${id}','${esc(cust.name)}')">🗑 حذف هذا الزبون نهائيًا</button>`);
+};
+window.custDeleteConfirm = function(id, name){
+  openModal(`<div class="sheet-head"><h3>تأكيد حذف الزبون</h3><div class="sheet-close" onclick="custDetail('${id}')">×</div></div>
+    <p>هل أنت متأكد من حذف <b>${esc(name)}</b>؟ سيتم حذف جميع أعماله ودفعاته وتعديلاته المرتبطة به نهائيًا، ولا يمكن التراجع عن هذا الإجراء.</p>
+    <div class="row2" style="margin-top:16px">
+      <button class="btn block" onclick="custDetail('${id}')">إلغاء</button>
+      <button class="btn block" style="background:var(--red);border-color:var(--red);color:#fff" onclick="custDeleteRun('${id}')">نعم، احذف</button>
+    </div>`);
+};
+window.custDeleteRun = async function(id){
+  const results = await Promise.all([
+    sb.from('customer_work_items').delete().eq('customer_id', id),
+    sb.from('customer_payments').delete().eq('customer_id', id),
+    sb.from('customer_adjustments').delete().eq('customer_id', id)
+  ]);
+  const relErr = results.find(r=>r.error);
+  if(relErr){ toast(relErr.error.message, true); return; }
+  const {error} = await sb.from('customers').delete().eq('id', id);
+  if(error){ toast(error.message, true); return; }
+  toast('تم حذف الزبون'); closeModal(); render();
+};
+window.custAddWorkForm = function(){
+  const prods = window.__CUST_CTX.prods;
+  openModal(`<div class="sheet-head"><h3>إضافة عمل</h3><div class="sheet-close" onclick="custDetail('${window.__CUST_CTX.id}')">×</div></div>
+    ${fld({key:'work_type',label:'النوع',type:'select',options:[{value:'door',label:'باب'},{value:'window',label:'شباك'},{value:'countertop',label:'كاونتر'},{value:'stair_railing',label:'محجر درج'},{value:'other',label:'أخرى'}]})}
+    ${fld({key:'product_id',label:'منتج مرتبط (اختياري)',type:'select',options:[{value:'',label:'بدون'},...prods.map(p=>({value:p.id,label:p.name}))]})}
+    ${fld({key:'product_name_snapshot',label:'اسم العمل/الوصف'})}
+    <div class="row2">${fld({key:'quantity',label:'الكمية',type:'number'},1)}${fld({key:'unit',label:'الوحدة',type:'select',options:[{value:'piece',label:'قطعة'},{value:'sqm',label:'م²'},{value:'meter',label:'م.ط'}]})}</div>
+    <div class="row2">${fld({key:'width_cm',label:'العرض (سم)',type:'number'})}${fld({key:'height_cm',label:'الارتفاع (سم)',type:'number'})}</div>
+    <div class="row2">${fld({key:'unit_price',label:'سعر الوحدة',type:'number'})}${fld({key:'total_price',label:'الإجمالي',type:'number'})}</div>
+    ${fld({key:'note',label:'ملاحظة',type:'textarea'})}
+    <button class="btn primary block" onclick="custAddWorkSave()">حفظ</button>`);
+};
+window.custAddWorkSave = async function(){
+  const row = {
+    customer_id: window.__CUST_CTX.id, work_type: readFld({key:'work_type'}),
+    product_id: readFld({key:'product_id'})||null, product_name_snapshot: readFld({key:'product_name_snapshot'}),
+    quantity: readFld({key:'quantity',type:'number'})||1, unit: readFld({key:'unit'}),
+    width_cm: readFld({key:'width_cm',type:'number'}), height_cm: readFld({key:'height_cm',type:'number'}),
+    area_or_length: readFld({key:'quantity',type:'number'})||1,
+    unit_price: readFld({key:'unit_price',type:'number'})||0, total_price: readFld({key:'total_price',type:'number'})||0,
+    note: readFld({key:'note'})
+  };
+  const {error} = await sb.from('customer_work_items').insert(row);
+  if(error){ toast(error.message, true); return; }
+  toast('تم الحفظ'); custDetail(window.__CUST_CTX.id); render();
+};
+window.custAddPayForm = function(){
+  openModal(`<div class="sheet-head"><h3>إضافة دفعة</h3><div class="sheet-close" onclick="custDetail('${window.__CUST_CTX.id}')">×</div></div>
+    ${fld({key:'amount',label:'المبلغ',type:'number'})}
+    ${fld({key:'payment_date',label:'التاريخ',type:'date'})}
+    ${fld({key:'note',label:'ملاحظة',type:'textarea'})}
+    <button class="btn primary block" onclick="custAddPaySave()">حفظ</button>`);
+};
+window.custAddPaySave = async function(){
+  const row = { customer_id: window.__CUST_CTX.id, amount: readFld({key:'amount',type:'number'}),
+    payment_date: readFld({key:'payment_date'})||new Date().toISOString().slice(0,10), note: readFld({key:'note'}) };
+  if(!row.amount || row.amount<=0){ toast('أدخل مبلغ صحيح', true); return; }
+  const {error} = await sb.from('customer_payments').insert(row);
+  if(error){ toast(error.message, true); return; }
+  toast('تم الحفظ'); custDetail(window.__CUST_CTX.id); render();
+};
+window.custAddAdjForm = function(){
+  openModal(`<div class="sheet-head"><h3>تعديل (خصم/إضافة)</h3><div class="sheet-close" onclick="custDetail('${window.__CUST_CTX.id}')">×</div></div>
+    ${fld({key:'amount',label:'المبلغ (سالب = خصم)',type:'number'})}
+    ${fld({key:'reason',label:'السبب'})}
+    <button class="btn primary block" onclick="custAddAdjSave()">حفظ</button>`);
+};
+window.custAddAdjSave = async function(){
+  const row = { customer_id: window.__CUST_CTX.id, amount: readFld({key:'amount',type:'number'}), reason: readFld({key:'reason'}) };
+  const {error} = await sb.from('customer_adjustments').insert(row);
+  if(error){ toast(error.message, true); return; }
+  toast('تم الحفظ'); custDetail(window.__CUST_CTX.id); render();
+};
+
+// ---- glass calculator ----
+const GLASS_CALC_KEY = "workshop_glass_calc_v1";
+function ensureGlassState(){
+  if(!window.glassRows){
+    try{
+      const saved = JSON.parse(localStorage.getItem(GLASS_CALC_KEY));
+      if(saved && Array.isArray(saved.rows) && saved.rows.length){
+        window.glassRows = saved.rows; window.glassType = saved.type||''; window.glassPhone = saved.phone||'';
+      }
+    }catch(e){}
+  }
+  if(!window.glassRows) window.glassRows = [{length:'',width:'',qty:1}];
+  if(window.glassType==null) window.glassType = '';
+  if(window.glassPhone==null) window.glassPhone = '';
+}
+function glassSaveState(){
+  try{ localStorage.setItem(GLASS_CALC_KEY, JSON.stringify({rows:window.glassRows, type:window.glassType, phone:window.glassPhone})); }catch(e){}
+}
+function glassRowArea(r){ return (Number(r.length)||0)/30 * (Number(r.width)||0)/30 * (Number(r.qty)||0); }
+function cmToFeetLabel(cm){
+  cm = Number(cm)||0; if(cm<=0) return '';
+  const ft = Math.floor(cm/30); const rem = Math.round(cm - ft*30);
+  if(ft<=0) return `${rem}سم`;
+  return rem>0? `${ft}فوت ${rem}سم` : `${ft}فوت`;
+}
+function glassUpdateTotal(){
+  const total = window.glassRows.reduce((s,r)=>s+glassRowArea(r),0);
+  const el = document.getElementById('glassTotalVal');
+  if(el) el.textContent = total.toFixed(2);
+}
+function glassTableHtml(){
+  const rows = window.glassRows;
+  const rowsHtml = rows.map((r,i)=>`
+    <tr>
+      <td><input type="number" min="0" step="0.5" value="${esc(r.length)}" oninput="glassUpdateRow(${i},'length',this.value)">
+        <div class="hint" id="glassLenFt_${i}" style="margin-top:3px">${cmToFeetLabel(r.length)}</div></td>
+      <td><input type="number" min="0" step="0.5" value="${esc(r.width)}" oninput="glassUpdateRow(${i},'width',this.value)">
+        <div class="hint" id="glassWidFt_${i}" style="margin-top:3px">${cmToFeetLabel(r.width)}</div></td>
+      <td><input type="number" min="1" step="1" value="${esc(r.qty)}" oninput="glassUpdateRow(${i},'qty',this.value)"></td>
+      <td class="mono" id="glassArea_${i}">${glassRowArea(r).toFixed(2)}</td>
+      <td><button class="btn sm danger" onclick="glassRemoveRow(${i})">حذف</button></td>
+    </tr>`).join('');
+  const total = rows.reduce((s,r)=>s+glassRowArea(r),0);
+  return `
+  <div style="background:var(--panel);padding:14px;border-radius:12px;border:1px solid var(--line)">
+    <div style="font-weight:900;font-size:15px;margin-bottom:10px">نوع الزجاج: <span class="mono" id="glassTypeDisplay">${esc(window.glassType||'—')}</span></div>
+    <table class="glass-table">
+      <thead><tr><th>الطول (سم)</th><th>العرض (سم)</th><th>العدد</th><th>المساحة (فوت²)</th><th></th></tr></thead>
+      <tbody>${rowsHtml}</tbody>
+    </table>
+    <div style="margin-top:10px;font-weight:900;text-align:left">الإجمالي: <span id="glassTotalVal">${total.toFixed(2)}</span> فوت²</div>
+  </div>
+  <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap">
+    <button class="btn" onclick="glassAddRow()">+ إضافة صف</button>
+    <button class="btn primary" onclick="glassExportShare()">📤 تصدير ومشاركة عبر واتساب</button>
+    <button class="btn" onclick="glassCopyText()">📋 نسخ نص الطلب</button>
+    <button class="btn danger" onclick="glassClearAll()">مسح الكل</button>
+  </div>`;
+}
+function admGlassCalc(){
+  ensureGlassState();
+  return `<div class="adm-topbar"><h2>حاسبة الزجاج</h2></div>
+  <div style="max-width:640px">
+    <div class="field"><label>نوع الزجاج</label>
+      <input id="glassTypeInput" value="${esc(window.glassType)}" placeholder="مثال: زجاج سيكوريت 8 ملم شفاف"
+        oninput="window.glassType=this.value; const d=document.getElementById('glassTypeDisplay'); if(d) d.textContent=this.value||'—'; glassSaveState();">
+    </div>
+    <div class="field"><label>رقم واتساب محل الزجاج (اختياري)</label>
+      <input id="glassPhone" value="${esc(window.glassPhone)}" placeholder="مثال: 07701234567" oninput="window.glassPhone=this.value; glassSaveState();">
+      <div class="hint">إذا تركته فاضي، رح يفتح واتساب على رقم الورشة المسجّل بالإعدادات.</div>
+    </div>
+    <div id="glassCalcBox">${glassTableHtml()}</div>
+  </div>`;
+}
+window.glassUpdateRow = function(i, field, value){
+  window.glassRows[i][field] = value;
+  const cell = document.getElementById('glassArea_'+i);
+  if(cell) cell.textContent = glassRowArea(window.glassRows[i]).toFixed(2);
+  if(field==='length'){ const el=document.getElementById('glassLenFt_'+i); if(el) el.textContent = cmToFeetLabel(value); }
+  if(field==='width'){ const el=document.getElementById('glassWidFt_'+i); if(el) el.textContent = cmToFeetLabel(value); }
+  glassUpdateTotal();
+  glassSaveState();
+};
+window.glassAddRow = function(){
+  window.glassRows.push({length:'',width:'',qty:1});
+  document.getElementById('glassCalcBox').innerHTML = glassTableHtml();
+  glassSaveState();
+};
+window.glassRemoveRow = function(i){
+  window.glassRows.splice(i,1);
+  if(!window.glassRows.length) window.glassRows = [{length:'',width:'',qty:1}];
+  document.getElementById('glassCalcBox').innerHTML = glassTableHtml();
+  glassSaveState();
+};
+window.glassClearAll = function(){
+  window.glassRows = [{length:'',width:'',qty:1}];
+  document.getElementById('glassCalcBox').innerHTML = glassTableHtml();
+  glassSaveState();
+};
+function glassBuildText(rows, total){
+  return `السلام عليكم\nطلب قياسات زجاج\nنوع الزجاج: ${window.glassType||''}\n` +
+    rows.map((r,i)=>`${i+1}) ${r.length}×${r.width} سم × ${r.qty} = ${glassRowArea(r).toFixed(2)} فوت²`).join('\n') +
+    `\nالإجمالي: ${total.toFixed(2)} فوت²`;
+}
+window.glassCopyText = async function(){
+  const rows = window.glassRows.filter(r => Number(r.length)>0 && Number(r.width)>0 && Number(r.qty)>0);
+  if(!rows.length){ toast('أدخل قياسات صحيحة أولاً', true); return; }
+  const total = rows.reduce((s,r)=>s+glassRowArea(r),0);
+  const text = glassBuildText(rows, total);
+  try{ await navigator.clipboard.writeText(text); toast('تم نسخ النص'); }
+  catch(e){ toast('تعذّر النسخ التلقائي — انسخه يدوياً', true); }
+};
+window.glassExportShare = async function(){
+  const rows = window.glassRows.filter(r => Number(r.length)>0 && Number(r.width)>0 && Number(r.qty)>0);
+  if(!rows.length){ toast('أدخل قياسات صحيحة أولاً', true); return; }
+  if(!(window.glassPhone||'').trim()) await getSettings();
+  let total = 0;
+  const trs = rows.map((r,i)=>{
+    const area = glassRowArea(r); total += area;
+    return `<tr><td style="padding:8px;border:1px solid #e2e8f0">${i+1}</td><td style="padding:8px;border:1px solid #e2e8f0">${esc(r.length)}</td><td style="padding:8px;border:1px solid #e2e8f0">${esc(r.width)}</td><td style="padding:8px;border:1px solid #e2e8f0">${esc(r.qty)}</td><td style="padding:8px;border:1px solid #e2e8f0">${area.toFixed(2)}</td></tr>`;
+  }).join('');
+  const printHtml = `<div id="glassPrintCard" style="position:fixed;left:-9999px;top:0;width:420px;background:#fff;padding:20px;font-family:Tajawal,sans-serif;direction:rtl;color:#0F172A">
+    <div style="font-weight:900;font-size:18px;margin-bottom:4px">طلب قياسات زجاج</div>
+    <div style="font-weight:700;font-size:14px;color:#0EA5E9;margin-bottom:14px">نوع الزجاج: ${esc(window.glassType||'—')}</div>
+    <table style="width:100%;border-collapse:collapse;font-size:13px">
+      <thead><tr style="background:#F1F5F9">
+        <th style="padding:8px;border:1px solid #e2e8f0">#</th>
+        <th style="padding:8px;border:1px solid #e2e8f0">الطول(سم)</th>
+        <th style="padding:8px;border:1px solid #e2e8f0">العرض(سم)</th>
+        <th style="padding:8px;border:1px solid #e2e8f0">العدد</th>
+        <th style="padding:8px;border:1px solid #e2e8f0">المساحة(فوت²)</th>
+      </tr></thead>
+      <tbody>${trs}</tbody>
+    </table>
+    <div style="margin-top:12px;font-weight:900;font-size:15px;text-align:left">الإجمالي: ${total.toFixed(2)} فوت²</div>
+  </div>`;
+  document.body.insertAdjacentHTML('beforeend', printHtml);
+  const node = document.getElementById('glassPrintCard');
+  const waText = glassBuildText(rows, total);
+  try{
+    const canvas = await html2canvas(node, {scale:2, backgroundColor:'#ffffff'});
+    node.remove();
+    canvas.toBlob(async (blob)=>{
+      if(!blob){ toast('صار خطأ بإنشاء الصورة', true); return; }
+      const file = new File([blob], 'قياسات-زجاج.png', {type:'image/png'});
+      if(navigator.canShare && navigator.canShare({files:[file]})){
+        try{ await navigator.share({files:[file], title:'قياسات زجاج', text: waText}); return; }
+        catch(e){ /* المستخدم ألغى المشاركة أو فشلت — نكمل بالطريقة البديلة */ }
+      }
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a'); a.href = url; a.download = 'قياسات-زجاج.png'; a.click();
+      URL.revokeObjectURL(url);
+      const phone = (window.glassPhone||'').trim();
+      const link = phone ? waLinkToPhone(phone, waText) : waLinkWorkshop(waText);
+      if(link) window.open(link, '_blank');
+      toast('تم تنزيل الصورة — أرفقها يدوياً بمحادثة واتساب اللي فتحناها');
+    }, 'image/png');
+  }catch(e){ node.remove(); console.error(e); toast('صار خطأ بالتصدير', true); }
+};
+
+// ---- settings ----
+async function admSettings(){
+  const {data} = await sb.from('site_settings').select('*').eq('id',1).maybeSingle();
+  const s = data||{};
+  window.__SETTINGS_ADM = s;
+  return `<div class="adm-topbar"><h2>إعدادات الموقع</h2></div>
+  <div style="max-width:520px">
+    ${fld({key:'workshop_name',label:'اسم الورشة'},s.workshop_name)}
+    ${fld({key:'description',label:'وصف مختصر',type:'textarea'},s.description)}
+    <div class="row2">${fld({key:'founded_year',label:'سنة التأسيس (لعرض سنوات الخبرة بالرئيسية)',type:'number'},s.founded_year)}${fld({key:'projects_completed',label:'عدد المشاريع المنفذة (اختياري)',type:'number'},s.projects_completed)}</div>
+    <div class="row2">${fld({key:'phone',label:'الهاتف'},s.phone)}${fld({key:'whatsapp_number',label:'رقم واتساب'},s.whatsapp_number)}</div>
+    ${fld({key:'country_code',label:'رمز الدولة'},s.country_code||'+964')}
+    <div class="row2">${fld({key:'governorate',label:'المحافظة'},s.governorate)}${fld({key:'address',label:'العنوان'},s.address)}</div>
+    <div class="row2">${fld({key:'work_hours',label:'ساعات الدوام'},s.work_hours)}${fld({key:'email',label:'البريد الإلكتروني'},s.email)}</div>
+    ${fld({key:'google_maps_url',label:'رابط خرائط قوقل'},s.google_maps_url)}
+    <div class="row2">${fld({key:'facebook_url',label:'رابط فيسبوك (اختياري)'},s.facebook_url)}${fld({key:'instagram_url',label:'رابط انستغرام (اختياري)'},s.instagram_url)}</div>
+    ${fld({key:'cod_enabled',label:'الدفع عند الاستلام مفعّل',type:'checkbox'},s.cod_enabled!==false)}
+    <div class="toolbar" style="margin-top:16px"><b>الدفع الإلكتروني</b></div>
+    ${fld({key:'electronic_payment_enabled',label:'تفعيل خيار الدفع الإلكتروني بالسلة',type:'checkbox'},!!s.electronic_payment_enabled)}
+    ${fld({key:'payment_provider_name',label:'اسم مزود الدفع (يظهر للزبون، مثال: زين كاش)'},s.payment_provider_name)}
+    <div class="field hint" style="margin-top:-8px">ملاحظة: هذا يجهّز الموقع لاستقبال مزود دفع حقيقي لاحقاً بدون تعديل الصفحات. لحين ربط مزود فعلي عبر المطوّر، الطلبات الإلكترونية تُسجَّل بحالة "بانتظار الدفع" ويتابعها الموظف يدوياً.</div>
+    <div class="field"><label>شعار الورشة</label><input type="file" id="logoFile" accept="image/*">${s.logo_url?`<img src="${esc(s.logo_url)}" style="width:60px;margin-top:8px;border-radius:8px">`:''}</div>
+    <div class="field"><label>صورة غلاف الموقع (تظهر بأعلى الصفحة الرئيسية)</label><input type="file" id="coverFile" accept="image/*">${s.cover_url?`<img src="${esc(s.cover_url)}" style="width:100%;max-width:260px;margin-top:8px;border-radius:8px">`:''}</div>
+    <button class="btn primary block" onclick="settingsSave()">حفظ الإعدادات</button>
+  </div>`;
+}
+window.settingsSave = async function(){
+  const row = {
+    workshop_name: readFld({key:'workshop_name'}), description: readFld({key:'description'}),
+    founded_year: readFld({key:'founded_year',type:'number'}), projects_completed: readFld({key:'projects_completed',type:'number'}),
+    phone: readFld({key:'phone'}), whatsapp_number: readFld({key:'whatsapp_number'}),
+    country_code: readFld({key:'country_code'}), governorate: readFld({key:'governorate'}),
+    address: readFld({key:'address'}), work_hours: readFld({key:'work_hours'}), email: readFld({key:'email'}),
+    google_maps_url: readFld({key:'google_maps_url'}), cod_enabled: readFld({key:'cod_enabled',type:'checkbox'}),
+    facebook_url: readFld({key:'facebook_url'}), instagram_url: readFld({key:'instagram_url'}),
+    electronic_payment_enabled: readFld({key:'electronic_payment_enabled',type:'checkbox'}),
+    payment_provider_name: readFld({key:'payment_provider_name'})
+  };
+  const file = document.getElementById('logoFile').files[0];
+  if(file){
+    const path = `${Date.now()}_${uid()}.${file.name.split('.').pop()}`;
+    const {error:upErr} = await sb.storage.from('site-assets').upload(path,file);
+    if(!upErr) row.logo_url = sb.storage.from('site-assets').getPublicUrl(path).data.publicUrl;
+  }
+  const coverFile = document.getElementById('coverFile').files[0];
+  if(coverFile){
+    const path = `${Date.now()}_${uid()}.${coverFile.name.split('.').pop()}`;
+    const {error:upErr} = await sb.storage.from('site-assets').upload(path,coverFile);
+    if(!upErr) row.cover_url = sb.storage.from('site-assets').getPublicUrl(path).data.publicUrl;
+  }
+  const {error} = await sb.from('site_settings').update(row).eq('id',1);
+  if(error){ toast(error.message, true); return; }
+  toast('تم حفظ الإعدادات'); state.settings=null;
+};
+
+// ---- change password ----
+function admChangePassword(){
+  return `<div class="adm-topbar"><h2>تغيير كلمة المرور</h2></div>
+  <div style="max-width:420px">
+    <div class="field hint" style="margin-bottom:14px">اكتب كلمة مرور جديدة لحسابك (٦ أحرف على الأقل).</div>
+    ${fld({key:'new_password',label:'كلمة المرور الجديدة',type:'password'})}
+    ${fld({key:'confirm_password',label:'تأكيد كلمة المرور',type:'password'})}
+    <button class="btn primary block" id="changePassBtn" onclick="changePasswordSave()">تحديث كلمة المرور</button>
+  </div>`;
+}
+window.changePasswordSave = async function(){
+  const p1 = readFld({key:'new_password'});
+  const p2 = readFld({key:'confirm_password'});
+  if(!p1 || p1.length<6){ toast('كلمة المرور لازم تكون ٦ أحرف على الأقل', true); return; }
+  if(p1!==p2){ toast('كلمتا المرور غير متطابقتين', true); return; }
+  const btn=document.getElementById('changePassBtn'); btn.disabled=true; btn.innerHTML='<span class="spin"></span>';
+  const {error} = await sb.auth.updateUser({password:p1});
+  btn.disabled=false; btn.textContent='تحديث كلمة المرور';
+  if(error){ toast('صار خطأ: '+error.message, true); return; }
+  toast('تم تحديث كلمة المرور بنجاح');
+  document.getElementById('f_new_password').value='';
+  document.getElementById('f_confirm_password').value='';
+};
+
+// -------------------- الوضع الليلي/النهاري --------------------
+function syncThemeBtn(){
+  const dark = document.documentElement.getAttribute('data-theme')==='dark';
+  const btn = document.getElementById('themeToggleBtn');
+  if(btn) btn.textContent = dark ? '☀️' : '🌙';
+  const admLink = document.getElementById('adminThemeToggle');
+  if(admLink) admLink.textContent = dark ? '☀️ الوضع النهاري' : '🌙 الوضع الليلي';
+}
+window.toggleTheme = function(){
+  const isDark = document.documentElement.getAttribute('data-theme')==='dark';
+  if(isDark){ document.documentElement.removeAttribute('data-theme'); localStorage.setItem('theme','light'); }
+  else{ document.documentElement.setAttribute('data-theme','dark'); localStorage.setItem('theme','dark'); }
+  syncThemeBtn();
+};
+
+// -------------------- boot --------------------
+sb.auth.onAuthStateChange((_e, session)=>{
+  state.session=session;
+  if(_e==='PASSWORD_RECOVERY'){ location.hash='#/'+ADMIN_ROUTE+'/change-password'; render(); }
+});
+render();
+syncThemeBtn();
+
+// -------------------- PWA install (أيقونة واحدة فقط + اختصار "لوحة التحكم" بالضغط المطوّل) --------------------
+let __deferredInstallPrompt = null;
+const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+function showInstallBtn(){ if(!isStandalone) document.getElementById('installBtn').hidden = false; }
+function hideInstallBtn(){ document.getElementById('installBtn').hidden = true; }
+window.addEventListener('beforeinstallprompt', (e)=>{
+  e.preventDefault();
+  __deferredInstallPrompt = e;
+  showInstallBtn();
+});
+window.addEventListener('appinstalled', ()=>{
+  __deferredInstallPrompt = null;
+  hideInstallBtn();
+  toast('تم تثبيت التطبيق بنجاح');
+});
+if(isIOS && !isStandalone){ showInstallBtn(); }
+window.showAdminShortcutHelp = function(){
+  if(isIOS){
+    openModal(`<div class="sheet-head"><h3>اختصار سريع بالآيفون</h3><div class="sheet-close" onclick="closeModal()">×</div></div>
+      <p>آيفون ما يدعم قائمة الاختصارات بالضغط المطوّل، لكن تقدر تسوي اختصار مباشر لهذي الصفحة على شاشتك الرئيسية:</p>
+      <p>1. اضغط زر المشاركة <b>⬆️</b> في أسفل المتصفح (Safari) وأنت بهذي الصفحة بالذات.</p>
+      <p>2. اختر <b>"إضافة إلى الشاشة الرئيسية"</b> (Add to Home Screen).</p>
+      <p>3. اضغط <b>"إضافة"</b> — بتصير عندك أيقونة توديك مباشرة لهذي الصفحة بأي وقت.</p>`);
+    return;
+  }
+  toast('اضغط مطوّلاً على أيقونة التطبيق بالشاشة الرئيسية، واختر «الإعدادات» من القائمة اللي تطلع');
+};
+window.handleInstallClick = async function(){
+  if(__deferredInstallPrompt){
+    __deferredInstallPrompt.prompt();
+    const {outcome} = await __deferredInstallPrompt.userChoice;
+    __deferredInstallPrompt = null;
+    if(outcome==='accepted') hideInstallBtn();
+    return;
+  }
+  if(isIOS){
+    openModal(`<div class="sheet-head"><h3>تثبيت التطبيق</h3><div class="sheet-close" onclick="closeModal()">×</div></div>
+      <p>لتثبيت التطبيق على شاشتك الرئيسية:</p>
+      <p>1. اضغط زر المشاركة <b>⬆️</b> في أسفل المتصفح (Safari).</p>
+      <p>2. اختر <b>"إضافة إلى الشاشة الرئيسية"</b> (Add to Home Screen).</p>
+      <p>3. اضغط <b>"إضافة"</b> — بذلك يظهر التطبيق كأيقونة على شاشتك.</p>`);
+    return;
+  }
+  toast('التطبيق مثبت بالفعل أو غير مدعوم في هذا المتصفح حاليًا', true);
+};
+</script>
+</body>
+</html>
