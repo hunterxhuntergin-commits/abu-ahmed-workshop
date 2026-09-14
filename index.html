@@ -2,6 +2,16 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
+<script>
+// تطبيق الوضع الليلي فوراً قبل الرسم لتفادي وميض اللون الخاطئ
+(function(){
+  try{
+    var t = localStorage.getItem('theme');
+    if(!t) t = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
+    if(t==='dark') document.documentElement.setAttribute('data-theme','dark');
+  }catch(e){}
+})();
+</script>
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>أبو أحمد للألمنيوم</title>
 <meta name="description" content="أبو أحمد للألمنيوم — أبواب وشبابيك وكاونترات ومحجر درج بجودة تصنيع عالية.">
@@ -18,11 +28,14 @@
 :root{
   --bg:#F8FAFC; --panel:#ffffff; --panel2:#F1F5F9; --line:rgba(15,23,42,.10);
   --text:#0F172A; --muted:#64748B; --accent:#38BDF8; --accent2:#0EA5E9;
-  --green:#16A34A; --red:#DC2626; --radius:14px;
+  --green:#16A34A; --red:#DC2626; --radius:14px; --header-bg:rgba(248,250,252,.88);
+}
+html[data-theme="dark"]{
+  --bg:#0B1220; --panel:#111827; --panel2:#1A2436; --line:rgba(255,255,255,.09);
+  --text:#F1F5F9; --muted:#94A3B8; --header-bg:rgba(11,18,32,.85);
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 a,button,.nav a,.chip,.cat-tile,.prod-card,.icon-btn,.btn,.adm-side a,.tab,header.site{-webkit-user-select:none;user-select:none}
-html[data-admin-light="1"]{--bg:#f3f5f6;--panel:#fff;--panel2:#f7f8f9;--line:#e4e8ea;--text:#171b1e;--muted:#66727a}
 html,body{overflow-x:hidden;max-width:100vw}
 body{margin:0;background:var(--bg);color:var(--text);font-family:'Tajawal',sans-serif;line-height:1.6}
 .mono{font-family:'IBM Plex Mono',monospace}
@@ -31,7 +44,7 @@ button,input,select,textarea{font-family:inherit;color:inherit}
 img{max-width:100%;display:block}
 .wrap{max-width:1100px;margin:0 auto;padding:0 20px}
 /* header */
-header.site{position:sticky;top:0;z-index:40;background:rgba(248,250,252,.88);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+header.site{position:sticky;top:0;z-index:40;background:var(--header-bg);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
 .hbar{display:flex;align-items:center;justify-content:space-between;flex-wrap:nowrap;gap:8px;padding:14px 16px;max-width:1100px;margin:0 auto}
 .brand{font-weight:900;font-size:19px;display:flex;align-items:center;gap:8px;min-width:0;flex-shrink:1}
 .brand img{flex:0 0 auto}
@@ -145,6 +158,9 @@ table.admtbl td{padding:9px 8px;border-bottom:1px solid var(--line);vertical-ali
 .status-pill.in_progress,.status-pill.contacted{color:#0369A1;border-color:rgba(56,189,248,.35)}
 .status-pill.completed,.status-pill.quoted{color:#15803D;border-color:rgba(21,128,61,.3)}
 .status-pill.cancelled,.status-pill.closed{color:#64748B}
+html[data-theme="dark"] .status-pill.new{color:#FBBF24}
+html[data-theme="dark"] .status-pill.in_progress,html[data-theme="dark"] .status-pill.contacted{color:#38BDF8}
+html[data-theme="dark"] .status-pill.completed,html[data-theme="dark"] .status-pill.quoted{color:#4ADE80}
 /* admin shell */
 .adm-shell{display:grid;grid-template-columns:190px minmax(0,1fr);min-height:100vh;align-content:start}
 @media(max-width:760px){.adm-shell{grid-template-columns:minmax(0,1fr)}}
@@ -388,6 +404,7 @@ function header(activePath){
     <div class="hbar">
       <a class="brand" href="#/" title="${esc(state.settings?.workshop_name||'أبو أحمد للألمنيوم')}">${state.settings?.logo_url?`<img src="${esc(state.settings.logo_url)}" style="width:32px;height:32px;border-radius:8px;object-fit:cover">`:'<span class="mark">أح</span>'}<span class="brand-name">${esc(state.settings?.workshop_name||'أبو أحمد للألمنيوم')}</span></a>
       <nav class="nav">${items.map(i=>`<a href="${i.href}" class="${activePath===i.href?'active':''}">${i.label}</a>`).join('')}</nav>
+      <button class="icon-btn" id="themeToggleBtn" onclick="toggleTheme()" title="تبديل الوضع الليلي/النهاري">🌙</button>
       <button class="icon-btn" onclick="openCart()">🛒<span class="cart-badge cart-count" style="display:none">0</span></button>
     </div>
     <div class="wrap" style="padding-bottom:12px">
@@ -998,6 +1015,7 @@ window.downloadOrderSummary = async function(){
 };
 function bindPublicEvents(){
   renderCartBadge();
+  syncThemeBtn();
   ['pdW','pdH','pdQty'].forEach(id=>{ const el=document.getElementById(id); if(el) el.addEventListener('input', pdLiveUpdate); });
 }
 
@@ -1047,7 +1065,6 @@ function tabBadge(t){
   return `<span id="newOrderBadge" style="display:${window.__newOrderCount?'inline-flex':'none'};background:var(--accent);color:#fff;border-radius:999px;font-size:10px;font-weight:900;padding:1px 7px;margin-right:6px;min-width:16px;justify-content:center">${window.__newOrderCount>9?'+9':window.__newOrderCount}</span>`;
 }
 async function renderAdminRoute(parts, app){
-  document.documentElement.setAttribute('data-admin-light','1');
   await getSession();
   if(parts[1]==='login'){ app.innerHTML = adminLoginPage(); return; }
   if(!state.session){ location.hash='#/'+ADMIN_ROUTE+'/login'; return; }
@@ -1055,6 +1072,7 @@ async function renderAdminRoute(parts, app){
   const tab = parts[1] || 'overview';
   if(tab==='orders'){ window.__newOrderCount = 0; }
   app.innerHTML = adminShell(tab, '<div style="padding:40px;text-align:center;color:var(--muted)">جارِ التحميل…</div>');
+  syncThemeBtn();
   const target = document.getElementById('admContent');
   try{
     if(tab==='overview') target.innerHTML = await admOverview();
@@ -1095,6 +1113,7 @@ function adminShell(tab, content){
       ${ADM_TABS.map(t=>`<a href="#/${ADMIN_ROUTE}/${t.key}" class="${tab===t.key?'active':''}">${t.label}${tabBadge(t)}</a>`).join('')}
       <a href="#/${ADMIN_ROUTE}/change-password" class="${tab==='change-password'?'active':''}">تغيير كلمة المرور</a>
       <a onclick="adminLogout()" style="color:var(--red);cursor:pointer">تسجيل خروج</a>
+      <a onclick="toggleTheme()" id="adminThemeToggle" style="cursor:pointer">🌙 الوضع الليلي</a>
       <a onclick="showAdminShortcutHelp()" style="cursor:pointer">📲 اختصار الدخول من الأيقونة</a>
       <a href="#/" class="adm-side-sep">↩ الموقع العام</a>
     </aside>
@@ -1773,12 +1792,28 @@ window.changePasswordSave = async function(){
   document.getElementById('f_confirm_password').value='';
 };
 
+// -------------------- الوضع الليلي/النهاري --------------------
+function syncThemeBtn(){
+  const dark = document.documentElement.getAttribute('data-theme')==='dark';
+  const btn = document.getElementById('themeToggleBtn');
+  if(btn) btn.textContent = dark ? '☀️' : '🌙';
+  const admLink = document.getElementById('adminThemeToggle');
+  if(admLink) admLink.textContent = dark ? '☀️ الوضع النهاري' : '🌙 الوضع الليلي';
+}
+window.toggleTheme = function(){
+  const isDark = document.documentElement.getAttribute('data-theme')==='dark';
+  if(isDark){ document.documentElement.removeAttribute('data-theme'); localStorage.setItem('theme','light'); }
+  else{ document.documentElement.setAttribute('data-theme','dark'); localStorage.setItem('theme','dark'); }
+  syncThemeBtn();
+};
+
 // -------------------- boot --------------------
 sb.auth.onAuthStateChange((_e, session)=>{
   state.session=session;
   if(_e==='PASSWORD_RECOVERY'){ location.hash='#/'+ADMIN_ROUTE+'/change-password'; render(); }
 });
 render();
+syncThemeBtn();
 
 // -------------------- PWA install (أيقونة واحدة فقط + اختصار "لوحة التحكم" بالضغط المطوّل) --------------------
 let __deferredInstallPrompt = null;
