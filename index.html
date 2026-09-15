@@ -1701,7 +1701,7 @@ window.glassClearAll = function(){
 };
 function glassBuildText(rows, total){
   return `السلام عليكم\nطلب قياسات زجاج\nنوع الزجاج: ${window.glassType||''}\n` +
-    rows.map((r,i)=>`${i+1}) ${r.length}×${r.width} سم × ${r.qty} = ${glassRowArea(r).toFixed(2)} فوت²`).join('\n') +
+    rows.map((r)=>`${r.length}×${r.width} سم × ${r.qty}`).join('\n') +
     `\nالإجمالي: ${total.toFixed(2)} فوت²`;
 }
 window.glassCopyText = async function(){
@@ -1717,20 +1717,18 @@ window.glassExportShare = async function(){
   if(!rows.length){ toast('أدخل قياسات صحيحة أولاً', true); return; }
   if(!(window.glassPhone||'').trim()) await getSettings();
   let total = 0;
-  const trs = rows.map((r,i)=>{
+  const trs = rows.map((r)=>{
     const area = glassRowArea(r); total += area;
-    return `<tr><td style="padding:8px;border:1px solid #e2e8f0">${i+1}</td><td style="padding:8px;border:1px solid #e2e8f0">${esc(r.length)}</td><td style="padding:8px;border:1px solid #e2e8f0">${esc(r.width)}</td><td style="padding:8px;border:1px solid #e2e8f0">${esc(r.qty)}</td><td style="padding:8px;border:1px solid #e2e8f0">${area.toFixed(2)}</td></tr>`;
+    return `<tr><td style="padding:8px;border:1px solid #e2e8f0">${esc(r.length)}</td><td style="padding:8px;border:1px solid #e2e8f0">${esc(r.width)}</td><td style="padding:8px;border:1px solid #e2e8f0">${esc(r.qty)}</td></tr>`;
   }).join('');
   const printHtml = `<div id="glassPrintCard" style="position:fixed;left:-9999px;top:0;width:420px;background:#fff;padding:20px;font-family:Tajawal,sans-serif;direction:rtl;color:#0F172A">
     <div style="font-weight:900;font-size:18px;margin-bottom:4px">طلب قياسات زجاج</div>
     <div style="font-weight:700;font-size:14px;color:#0EA5E9;margin-bottom:14px">نوع الزجاج: ${esc(window.glassType||'—')}</div>
     <table style="width:100%;border-collapse:collapse;font-size:13px">
       <thead><tr style="background:#F1F5F9">
-        <th style="padding:8px;border:1px solid #e2e8f0">#</th>
         <th style="padding:8px;border:1px solid #e2e8f0">الطول(سم)</th>
         <th style="padding:8px;border:1px solid #e2e8f0">العرض(سم)</th>
         <th style="padding:8px;border:1px solid #e2e8f0">العدد</th>
-        <th style="padding:8px;border:1px solid #e2e8f0">المساحة(فوت²)</th>
       </tr></thead>
       <tbody>${trs}</tbody>
     </table>

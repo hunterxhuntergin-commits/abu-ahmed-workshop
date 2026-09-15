@@ -1,7 +1,7 @@
 /* Service Worker — أبو أحمد للألمنيوم
    يخلي الموقع (والإدارة) يفتح بدون نت، ويعرض آخر بيانات محفوظة.
    لما تسوي أي تحديث كبير بالموقع، غيّر رقم CACHE_VERSION تحت عشان يتحدث الكاش عند الزوار. */
-const CACHE_VERSION = 'v1';
+const CACHE_VERSION = 'v2';
 const SHELL_CACHE = 'shell-' + CACHE_VERSION;
 const DATA_CACHE = 'data-' + CACHE_VERSION;
 
