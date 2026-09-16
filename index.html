@@ -376,8 +376,6 @@ async function render(){
     if(parts[0]==='category') return app.innerHTML = await pageCategory(parts[1]);
     if(parts[0]==='product') return app.innerHTML = await pageProduct(parts[1]);
     if(parts[0]==='search') return app.innerHTML = await pageSearch(parts[1]||'');
-    if(parts[0]==='quote') return app.innerHTML = await pageQuote();
-    if(parts[0]==='track') return app.innerHTML = await pageTrack();
     app.innerHTML = await pageHome();
   }catch(e){ console.error(e); app.innerHTML = '<div class="wrap section"><div class="empty-state"><b>صار خطأ</b>تعذّر تحميل الصفحة، تأكد من الاتصال بالإنترنت وحاول مرة ثانية.</div></div>'; }
   bindPublicEvents();
@@ -399,8 +397,6 @@ function header(activePath){
   const items = [
     {href:'#/', label:'الرئيسية'},
     {href:'#/products', label:'كل المنتجات'},
-    {href:'#/quote', label:'اطلب عرض سعر'},
-    {href:'#/track', label:'تتبع طلبك'},
   ];
   return `
   <header class="site">
@@ -499,7 +495,7 @@ function priceLabel(p){
   if(p.pricing_method==='sqm') return money(p.unit_price)+` <small>/م²</small>`;
   if(p.pricing_method==='linear_meter') return money(p.unit_price)+` <small>/م.ط</small>`;
   if(p.unit_price) return money(p.unit_price);
-  return `<small>حسب الطلب - اطلب عرض سعر</small>`;
+  return `<small>حسب الطلب - تواصل للاستفسار</small>`;
 }
 
 // -------------------- pages --------------------
@@ -518,7 +514,8 @@ async function pageHome(){
       ${s.projects_completed? `<div class="st" ${state.settings.cover_url?'style="color:#fff"':''}><b>+${esc(s.projects_completed)}</b><small ${state.settings.cover_url?'style="color:#e2e8f0"':''}>مشروع منفّذ</small></div>`:''}
     </div>`:''}
     <div class="hero-actions">
-      <a class="btn primary" href="#/quote">اطلب عرض سعر</a>
+      ${(()=>{ const link = waLinkWorkshop('السلام عليكم،\nأرغب بالاستفسار عن الأسعار.');
+        return link? `<a class="btn primary" target="_blank" href="${link}">💬 تواصل واتساب</a>` : `<a class="btn primary" href="#/products">تصفح المنتجات</a>`; })()}
     </div>
   </div></section>
   <section class="section wrap">
@@ -700,7 +697,7 @@ async function pageProduct(slug){
           <div class="field"><label>ملاحظة (اختياري)</label><textarea id="pdNote" placeholder="أي تفاصيل إضافية..."></textarea></div>
           <div id="pdLiveTotal" class="summary-box" style="text-align:center;font-weight:900;font-size:16px">أدخل البيانات لحساب السعر</div>
           <button class="btn primary block" onclick="pdAddToCart()">أضف للسلة</button>
-        </div>`:`<a class="btn primary block" href="#/quote">اطلب عرض سعر لهذا المنتج</a>`}
+        </div>`:''}
         ${(()=>{ const link = waLinkWorkshop(`السلام عليكم،\nأرغب بالاستفسار عن المنتج:\n${p.name}\nالكود: ${p.code}`);
           return link? `<a class="btn block" style="margin-top:8px;border-color:rgba(37,211,102,.4);color:#1ba851" target="_blank" href="${link}">💬 استفسار عن هذا المنتج عبر واتساب</a>` : ''; })()}
         <button class="btn block" style="margin-top:8px" onclick="shareProduct()">🔗 مشاركة المنتج</button>
@@ -757,118 +754,6 @@ function pdLiveUpdate(){
   }
   box.innerHTML = 'الإجمالي: ' + money(calc.lineTotal) + extra;
 }
-async function pageQuote(){
-  await getSettings(); const cats = await getCategories();
-  return `${header('#/quote')}
-  <section class="section wrap" style="max-width:600px">
-    <div class="section-head"><div><h2>اطلب عرض سعر</h2><p>عبّي البيانات وراح نتواصل وياك بأقرب وقت</p></div></div>
-    <div class="field"><label>الاسم *</label><input id="qName"></div>
-    <div class="row2">
-      <div class="field"><label>رقم الهاتف *</label><input id="qPhone" type="tel" inputmode="numeric" maxlength="11" placeholder="07xxxxxxxxx"></div>
-      <div class="field"><label>واتساب (اختياري)</label><input id="qWa" type="tel"></div>
-    </div>
-    <div class="field"><label>نوع الشغل *</label><select id="qType">
-      <option value="">اختر...</option><option value="باب">باب</option><option value="شباك">شباك</option>
-      <option value="كاونتر">كاونتر</option><option value="محجر درج">محجر درج</option><option value="أخرى">أخرى</option>
-    </select></div>
-    <div class="row2">
-      <div class="field"><label>العرض (سم)</label><input id="qW" type="number"></div>
-      <div class="field"><label>الارتفاع (سم)</label><input id="qH" type="number"></div>
-    </div>
-    <div class="field"><label>المحافظة</label><input id="qGov" value="${esc(state.settings.governorate||'')}"></div>
-    <div class="field"><label>المنطقة / أقرب نقطة دالة</label><input id="qArea"></div>
-    <div class="field"><label>تفاصيل إضافية</label><textarea id="qNotes" placeholder="أي تفاصيل تساعدنا نحدد السعر..."></textarea></div>
-    <div class="field"><label>صورة (اختياري)</label><input id="qImg" type="file" accept="image/*"></div>
-    <button class="btn primary block" onclick="submitQuote()" id="qSubmitBtn">إرسال الطلب</button>
-  </section>${footer()} ${waFab()}`;
-}
-window.submitQuote = async function(){
-  const name=document.getElementById('qName').value.trim();
-  const phone=document.getElementById('qPhone').value.trim();
-  const work_type=document.getElementById('qType').value;
-  if(!name||!phone||!work_type){ toast('عبّي الحقول المطلوبة (*)', true); return; }
-  if(!isValidIraqiPhone(phone)){ toast('رقم الهاتف غير صحيح — يجب أن يبدأ بـ07 ويتكون من 11 رقم', true); return; }
-  const btn=document.getElementById('qSubmitBtn'); btn.disabled=true; btn.innerHTML='<span class="spin"></span>';
-  const width=document.getElementById('qW').value||null, height=document.getElementById('qH').value||null;
-  const gov=document.getElementById('qGov').value.trim()||null, area=document.getElementById('qArea').value.trim()||null;
-  const notes=document.getElementById('qNotes').value.trim()||null;
-  const hasImage = !!document.getElementById('qImg').files[0];
-  const row={ name, phone, whatsapp: document.getElementById('qWa').value.trim()||null, work_type,
-    width_cm: width, height_cm: height, governorate: gov, area: area, notes: notes, image_url: null };
-  const offlineSuccessHtml = `<div class="empty-state"><b>تم حفظ طلبك ✅</b>سيرسل تلقائيًا عند توفر النت.
-    ${hasImage? '<div style="margin-top:8px;color:var(--muted);font-size:12.5px">ملاحظة: الصورة المرفقة ما راح تنرسل بهذي الحالة — تقدر ترسلها بعدين عبر واتساب.</div>':''}
-    <div style="margin-top:10px"><a class="btn primary" href="#/">الرجوع للرئيسية</a></div></div>`;
-  if(!navigator.onLine){
-    enqueueOffline({type:'quote', payload: row});
-    document.querySelector('#app .section.wrap').innerHTML = offlineSuccessHtml;
-    return;
-  }
-  try{
-    let image_url=null;
-    const file=document.getElementById('qImg').files[0];
-    if(file){
-      const path = `${Date.now()}_${uid()}.${file.name.split('.').pop()}`;
-      const {error:upErr}=await sb.storage.from('quote-images').upload(path,file);
-      if(!upErr){ image_url = sb.storage.from('quote-images').getPublicUrl(path).data.publicUrl; }
-    }
-    row.image_url = image_url;
-    const {error}=await sb.from('quote_requests').insert(row);
-    if(error) throw error;
-    const waMsg = [
-      'السلام عليكم،', 'يوجد طلب عرض سعر جديد من الموقع:', '',
-      `الاسم: ${name}`, `الهاتف: ${phone}`, `نوع الشغل: ${work_type}`,
-      (width||height)? `المقاس: ${width||'-'} × ${height||'-'} سم` : null,
-      gov? `المحافظة: ${gov}` : null, area? `المنطقة: ${area}` : null, notes? `ملاحظات: ${notes}` : null
-    ].filter(Boolean).join('\n');
-    const waLink = waLinkWorkshop(waMsg);
-    if(waLink) window.open(waLink, '_blank');
-    document.querySelector('#app .section.wrap').innerHTML = `<div class="empty-state"><b>تم إرسال طلبك ✅</b>راح نتواصل وياك قريبًا لتحديد السعر.
-      ${waLink? `<div style="margin-top:14px"><a class="btn block" style="border-color:rgba(37,211,102,.4);color:#1ba851" target="_blank" href="${waLink}">💬 لو ما انفتح واتساب تلقائياً، اضغط هنا</a></div>`:''}
-      <div style="margin-top:10px"><a class="btn primary" href="#/">الرجوع للرئيسية</a></div></div>`;
-  }catch(e){
-    console.error(e);
-    if(!navigator.onLine){
-      enqueueOffline({type:'quote', payload: row});
-      document.querySelector('#app .section.wrap').innerHTML = offlineSuccessHtml;
-    }else{
-      toast('تعذّر إرسال الطلب، تأكد من الاتصال وحاول مرة ثانية', true); btn.disabled=false; btn.textContent='إرسال الطلب';
-    }
-  }
-};
-async function pageTrack(){
-  await getSettings();
-  return `${header('#/track')}
-  <section class="section wrap" style="max-width:480px">
-    <div class="section-head"><div><h2>تتبع طلبك</h2><p>أدخل رقم الطلب ورقم الهاتف المستخدم بالطلب</p></div></div>
-    <div class="field"><label>رقم الطلب</label><input id="tOrder" placeholder="ORD-2026-0001"></div>
-    <div class="field"><label>رقم الهاتف</label><input id="tPhone" type="tel"></div>
-    <button class="btn primary block" onclick="doTrack()" id="tBtn">بحث</button>
-    <div id="tResult" style="margin-top:16px"></div>
-  </section>${footer()} ${waFab()}`;
-}
-window.doTrack = async function(){
-  const order_number=document.getElementById('tOrder').value.trim();
-  const phone=document.getElementById('tPhone').value.trim();
-  const box=document.getElementById('tResult'); const btn=document.getElementById('tBtn');
-  if(!order_number||!phone){ toast('عبّي الحقلين', true); return; }
-  btn.disabled=true; btn.innerHTML='<span class="spin"></span>';
-  try{
-    const {data,error}=await sb.rpc('track_order',{p_order_number:order_number,p_phone:phone});
-    if(error) throw error;
-    if(!data){ box.innerHTML='<div class="empty-state">ما لكينا طلب بهذا الرقم والهاتف</div>'; }
-    else{
-      const items=(data.items||[]).map(it=>`<div class="summary-line"><span>${esc(it.name)} × ${it.quantity}</span><b>${money(it.total_price)}</b></div>`).join('');
-      box.innerHTML = `<div class="summary-box">
-        <div class="summary-line"><span>رقم الطلب</span><b class="mono">${esc(data.order_number)}</b></div>
-        <div class="summary-line"><span>الحالة</span><span class="status-pill ${data.status}">${statusAr(data.status)}</span></div>
-        <div class="summary-line"><span>حالة الدفع</span><span class="status-pill ${data.payment_status}">${payAr(data.payment_status)}</span></div>
-        <div style="margin:10px 0;border-top:1px solid var(--line);padding-top:8px">${items}</div>
-        <div class="summary-line"><span>الإجمالي</span><b>${money(data.total)}</b></div>
-      </div>`;
-    }
-  }catch(e){ box.innerHTML='<div class="empty-state">صار خطأ، حاول مرة ثانية</div>'; }
-  btn.disabled=false; btn.textContent='بحث';
-};
 function statusAr(s){ return {new:'جديد',in_progress:'قيد التنفيذ',completed:'مكتمل',cancelled:'ملغي'}[s]||s; }
 function payAr(s){ return {pending:'بانتظار الدفع',paid:'مدفوع',failed:'فشل',cod:'دفع عند الاستلام',refunded:'مسترجع'}[s]||s; }
 
@@ -1067,7 +952,7 @@ function bindPublicEvents(){
 // ==================== ADMIN ====================
 const ADM_TABS = [
   {key:'overview',label:'نظرة عامة'},{key:'categories',label:'الأقسام'},{key:'products',label:'المنتجات'},
-  {key:'orders',label:'الطلبات'},{key:'quotes',label:'طلبات الأسعار'},
+  {key:'orders',label:'الطلبات'},
   {key:'customers',label:'الزبائن'},{key:'gallery',label:'معرض الأعمال'},{key:'glass-calc',label:'حاسبة الزجاج'},
   {key:'materials-list',label:'قائمة المواد'},{key:'settings',label:'الإعدادات'}
 ];
@@ -1125,7 +1010,6 @@ async function renderAdminRoute(parts, app){
     else if(tab==='categories') target.innerHTML = await admCategories();
     else if(tab==='products') target.innerHTML = await admProducts();
     else if(tab==='orders') target.innerHTML = await admOrders();
-    else if(tab==='quotes') target.innerHTML = await admQuotes();
     else if(tab==='customers') target.innerHTML = await admCustomers();
     else if(tab==='gallery') target.innerHTML = await admGallery();
     else if(tab==='glass-calc') target.innerHTML = admGlassCalc();
@@ -1188,17 +1072,16 @@ window.closeModal = function(){ document.getElementById('modals').innerHTML=''; 
 
 // ---- overview ----
 async function admOverview(){
-  const [{count:catCount},{count:prodCount},{count:orderCount},{count:newOrders},{count:quoteCount},{count:custCount}] = await Promise.all([
+  const [{count:catCount},{count:prodCount},{count:orderCount},{count:newOrders},{count:custCount}] = await Promise.all([
     sb.from('categories').select('*',{count:'exact',head:true}),
     sb.from('products').select('*',{count:'exact',head:true}),
     sb.from('orders').select('*',{count:'exact',head:true}),
     sb.from('orders').select('*',{count:'exact',head:true}).eq('status','new'),
-    sb.from('quote_requests').select('*',{count:'exact',head:true}).eq('status','new'),
     sb.from('customers').select('*',{count:'exact',head:true}),
   ]);
   const cards = [
     ['الأقسام',catCount],['المنتجات',prodCount],['كل الطلبات',orderCount],
-    ['طلبات جديدة',newOrders],['طلبات أسعار جديدة',quoteCount],['الزبائن',custCount]
+    ['طلبات جديدة',newOrders],['الزبائن',custCount]
   ];
   return `<div class="adm-topbar"><h2>نظرة عامة</h2></div>
   <div class="grid cols-3">${cards.map(c=>`<div class="stat-card"><small>${c[0]}</small><b>${c[1]??0}</b></div>`).join('')}</div>`;
@@ -1415,41 +1298,6 @@ window.orderDetail = function(id){
     <div class="summary-box"><div class="summary-line"><span>الإجمالي</span><b>${money(o.total)}</b></div></div>`);
 };
 
-// ---- quotes ----
-async function admQuotes(){
-  const {data} = await sb.from('quote_requests').select('*').order('created_at',{ascending:false}).limit(100);
-  window.__QUOTES_ADM = data||[];
-  return `<div class="adm-topbar"><h2>طلبات عرض السعر</h2></div>
-  <div class="tbl-hint">⇠ مرر يمينًا لعرض باقي الأعمدة</div><div class="tbl-scroll"><table class="admtbl"><thead><tr><th>الاسم</th><th>الهاتف</th><th>النوع</th><th>الحالة</th><th></th></tr></thead><tbody>
-  ${(data||[]).map(q=>`<tr><td>${esc(q.name)}</td><td class="mono">${esc(q.phone)}</td><td>${esc(q.work_type)}</td>
-    <td><select onchange="quoteStatusChange('${q.id}',this.value)">${['new','contacted','quoted','closed'].map(s=>`<option value="${s}" ${q.status===s?'selected':''}>${statusAr(s)}</option>`).join('')}</select></td>
-    <td style="display:flex;gap:6px"><button class="btn sm" onclick="quoteDetail('${q.id}')">تفاصيل</button><button class="btn sm danger" onclick="quoteDelete('${q.id}')">حذف</button></td></tr>`).join('') || `<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:20px">لا توجد طلبات</td></tr>`}
-  </tbody></table></div>`;
-}
-window.quoteStatusChange = async function(id, status){
-  const {error} = await sb.from('quote_requests').update({status}).eq('id',id);
-  if(error) toast(error.message, true); else toast('تم التحديث');
-};
-window.quoteDelete = async function(id){
-  if(!confirm('تأكيد حذف طلب السعر؟')) return;
-  const {error} = await sb.from('quote_requests').delete().eq('id',id);
-  if(error) toast(error.message, true); else { toast('تم الحذف'); render(); }
-};
-window.quoteDetail = function(id){
-  const q = window.__QUOTES_ADM.find(x=>x.id===id);
-  openModal(`<div class="sheet-head"><h3>طلب سعر - ${esc(q.name)}</h3><div class="sheet-close" onclick="closeModal()">×</div></div>
-    <div class="summary-box">
-      <div class="summary-line"><span>الهاتف</span><b class="mono">${esc(q.phone)}</b></div>
-      ${q.whatsapp?`<div class="summary-line"><span>واتساب</span><b class="mono">${esc(q.whatsapp)}</b></div>`:''}
-      <div class="summary-line"><span>نوع الشغل</span><b>${esc(q.work_type)}</b></div>
-      ${q.width_cm?`<div class="summary-line"><span>القياسات</span><b>${q.width_cm} × ${q.height_cm||''} سم</b></div>`:''}
-      ${q.governorate?`<div class="summary-line"><span>المحافظة</span><b>${esc(q.governorate)}</b></div>`:''}
-      ${q.area?`<div class="summary-line"><span>المنطقة</span><b>${esc(q.area)}</b></div>`:''}
-      ${q.notes?`<div class="summary-line"><span>ملاحظات</span><b>${esc(q.notes)}</b></div>`:''}
-    </div>
-    ${q.image_url?`<img src="${esc(q.image_url)}" style="border-radius:12px;margin-top:10px">`:''}`);
-};
-
 // ---- customers ----
 async function admCustomers(){
   const {data} = await sb.from('customer_account_summary').select('*').order('name');
@@ -1458,7 +1306,7 @@ async function admCustomers(){
   <div class="tbl-hint">⇠ مرر يمينًا لعرض باقي الأعمدة</div><div class="tbl-scroll"><table class="admtbl"><thead><tr><th>الاسم</th><th>الهاتف</th><th>الإجمالي</th><th>المدفوع</th><th>المتبقي</th><th>الحالة</th><th></th></tr></thead><tbody>
   ${(data||[]).map(c=>`<tr><td>${esc(c.name)}</td><td class="mono">${esc(c.phone)}</td><td>${money(c.agreed_total)}</td>
     <td>${money(c.paid_total)}</td><td>${money(c.remaining)}</td><td><span class="status-pill ${c.status==='unpaid'?'new':c.status==='completed'?'completed':'in_progress'}">${c.status==='unpaid'?'غير مدفوع':c.status==='completed'?'مكتمل':'متبقي'}</span></td>
-    <td><button class="btn sm" onclick="custDetail('${c.customer_id}')">فتح الحساب</button></td></tr>`).join('') || `<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:20px">لا يوجد زبائن</td></tr>`}
+    <td style="display:flex;gap:6px"><button class="btn sm" onclick="custDetail('${c.customer_id}')">فتح الحساب</button><button class="btn sm" onclick="custEditForm('${c.customer_id}')">✏️ تعديل</button></td></tr>`).join('') || `<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:20px">لا يوجد زبائن</td></tr>`}
   </tbody></table></div>`;
 }
 window.custForm = function(){
@@ -1473,12 +1321,23 @@ window.custSave = async function(){
   if(error){ toast(error.message, true); return; }
   toast('تم الحفظ'); closeModal(); render();
 };
+window.custEditForm = async function(id){
+  const {data:cust, error} = await sb.from('customers').select('*').eq('id',id).single();
+  if(error||!cust){ toast('تعذّر جلب بيانات الزبون', true); return; }
+  openModal(`<div class="sheet-head"><h3>تعديل بيانات الزبون</h3><div class="sheet-close" onclick="closeModal()">×</div></div>
+    ${fld({key:'name',label:'الاسم'},cust.name)}${fld({key:'phone',label:'الهاتف'},cust.phone)}${fld({key:'notes',label:'ملاحظات',type:'textarea'},cust.notes)}
+    <button class="btn primary block" onclick="custUpdate('${id}')">حفظ التعديلات</button>`);
+};
+window.custUpdate = async function(id){
+  const row = {name:readFld({key:'name'}), phone:readFld({key:'phone'}), notes:readFld({key:'notes'})};
+  if(!row.name||!row.phone){ toast('الاسم والهاتف مطلوبين', true); return; }
+  const {error} = await sb.from('customers').update(row).eq('id', id);
+  if(error){ toast(error.message, true); return; }
+  toast('تم تحديث بيانات الزبون'); closeModal(); render();
+};
 function buildStatementMessage(cust, items, pays, summary){
   const lines = [`السلام عليكم ${cust.name}`, '', 'هذا كشف حسابكم:', ''];
-  (items||[]).forEach(it=>{ lines.push(`${it.product_name_snapshot||it.work_type} — ${it.quantity} ${unitAr(it.unit)} — ${money(it.total_price)}`); });
-  lines.push('');
-  lines.push(`المبلغ الكلي: ${money(summary?.subtotal ?? summary?.agreed_total)}`);
-  if(summary?.agreed_total!=null) lines.push(`المبلغ المتفق عليه: ${money(summary.agreed_total)}`);
+  lines.push(`المبلغ الكلي: ${money(summary?.agreed_total ?? summary?.subtotal)}`);
   lines.push(`المبلغ الواصل: ${money(summary?.paid_total)}`);
   lines.push(`المبلغ المتبقي: ${money(summary?.remaining)}`);
   if((pays||[]).length){ lines.push(''); lines.push('الدفعات:'); pays.forEach(p=> lines.push(`${money(p.amount)} — ${p.payment_date}`)); }
@@ -1511,7 +1370,7 @@ window.custDetail = async function(id){
   const paysHtml = (pays||[]).map(p=>`<div class="card-item"><div class="meta"><b>${money(p.amount)}</b><small>${esc(p.payment_date)} ${p.note?'· '+esc(p.note):''}</small></div></div>`).join('') || '<div class="empty-state" style="padding:14px">لا توجد دفعات</div>';
   const adjsHtml = (adjs||[]).map(a=>`<div class="card-item"><div class="meta"><b>${a.amount>=0?'+':''}${money(a.amount)}</b><small>${esc(a.reason||'')}</small></div></div>`).join('') || '';
   openModal(`<div class="sheet-head"><h3>حساب ${esc(cust.name)}</h3><div class="sheet-close" onclick="closeModal()">×</div></div>
-    <p class="mono" style="color:var(--muted)">${esc(cust.phone)}</p>
+    <p class="mono" style="color:var(--muted)">${esc(cust.phone)} <button class="btn sm" style="margin-right:8px" onclick="custEditForm('${id}')">✏️ تعديل بيانات الزبون</button></p>
     <div class="summary-box" style="margin:0 0 14px">
       <div class="summary-line"><span>الإجمالي</span><b>${money(summary?.agreed_total ?? summary?.subtotal)}</b></div>
       <div class="summary-line"><span>الواصل</span><b>${money(summary?.paid_total)}</b></div>
@@ -1976,10 +1835,7 @@ async function flushOfflineQueue(){
   const remaining = [];
   for(const item of q){
     try{
-      if(item.type==='quote'){
-        const {error} = await sb.from('quote_requests').insert(item.payload);
-        if(error) throw error;
-      }else if(item.type==='order'){
+      if(item.type==='order'){
         const {data:order, error} = await sb.from('orders').insert(item.payload.orderRow).select().single();
         if(error) throw error;
         const items = item.payload.items.map(i=>({...i, order_id:order.id}));
