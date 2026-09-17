@@ -408,7 +408,7 @@ function header(activePath){
     </div>
     <div class="wrap" style="padding-bottom:12px">
       <form onsubmit="event.preventDefault(); doSiteSearch();" style="display:flex">
-        <input id="siteSearchInput" type="search" placeholder="🔍 دوّر عن منتج أو كود..." style="width:100%;border:1px solid var(--line);background:var(--panel2);border-radius:999px;padding:10px 16px;font-size:13px">
+        <input id="siteSearchInput" type="search" placeholder="🔍 دوّر عن منتج..." style="width:100%;border:1px solid var(--line);background:var(--panel2);border-radius:999px;padding:10px 16px;font-size:13px">
       </form>
     </div>
   </header>`;
@@ -448,12 +448,25 @@ function waLinkWorkshop(message){
   return `https://wa.me/${num}?text=${encodeURIComponent(message)}`;
 }
 // رابط واتساب لرقم زبون محدد (لإرسال كشف حساب/إشعار دفعة) — يفتح المحادثة فقط، الموظف يضغط إرسال بنفسه
+// إذا لم يوجد رقم هاتف صالح، يفتح واتساب بدون رقم محدد ليختار المستخدم جهة الاتصال بنفسه
 function waLinkToPhone(phone, message){
-  if(!phone) return null;
-  const digits = String(phone).replace(/^0+/,'').replace(/\D/g,'');
-  return `https://wa.me/${digits}?text=${encodeURIComponent(message)}`;
+  const digits = phone? String(phone).replace(/^0+/,'').replace(/\D/g,'') : '';
+  const base = digits? `https://wa.me/${digits}` : `https://wa.me/`;
+  return `${base}?text=${encodeURIComponent(message)}`;
 }
 function unitAr(u){ return {piece:'قطعة', sqm:'م²', meter:'م.ط'}[u] || u||''; }
+function workTypeAr(v){ return {door:'باب', window:'شباك', countertop:'كاونتر', stair_railing:'محجر درج', other:'أخرى'}[v] || v || ''; }
+function computeCustomerSummary(items, pays, adjs){
+  const itemsTotal = (items||[]).reduce((s,i)=> s + (Number(i.total_price)||0), 0);
+  const adjTotal = (adjs||[]).reduce((s,a)=> s + (Number(a.amount)||0), 0);
+  const agreed_total = itemsTotal + adjTotal;
+  const paid_total = (pays||[]).reduce((s,p)=> s + (Number(p.amount)||0), 0);
+  const remaining = agreed_total - paid_total;
+  let status = 'unpaid';
+  if(paid_total>0 && remaining<=0) status = 'completed';
+  else if(paid_total>0) status = 'in_progress';
+  return {agreed_total, paid_total, remaining, status};
+}
 // -------------------- تصدير CSV (يفتح مباشرة بـ Excel) --------------------
 function toCSVRow(arr){
   return arr.map(v=>{
@@ -1300,8 +1313,21 @@ window.orderDetail = function(id){
 
 // ---- customers ----
 async function admCustomers(){
-  const {data} = await sb.from('customer_account_summary').select('*').order('name');
-  window.__CUST_ADM = data||[];
+  const [{data:custs},{data:allItems},{data:allPays},{data:allAdjs}] = await Promise.all([
+    sb.from('customers').select('*').order('name'),
+    sb.from('customer_work_items').select('customer_id,total_price'),
+    sb.from('customer_payments').select('customer_id,amount'),
+    sb.from('customer_adjustments').select('customer_id,amount')
+  ]);
+  const data = (custs||[]).map(c=>{
+    const summary = computeCustomerSummary(
+      (allItems||[]).filter(i=>i.customer_id===c.id),
+      (allPays||[]).filter(p=>p.customer_id===c.id),
+      (allAdjs||[]).filter(a=>a.customer_id===c.id)
+    );
+    return {customer_id:c.id, name:c.name, phone:c.phone, ...summary};
+  });
+  window.__CUST_ADM = data;
   return `<div class="adm-topbar"><h2>حسابات الزبائن</h2><div style="display:flex;gap:8px"><button class="btn" onclick="exportCustomersCSV()">⬇ تصدير Excel/CSV</button><button class="btn primary" onclick="custForm()">+ زبون جديد</button></div></div>
   <div class="tbl-hint">⇠ مرر يمينًا لعرض باقي الأعمدة</div><div class="tbl-scroll"><table class="admtbl"><thead><tr><th>الاسم</th><th>الهاتف</th><th>الإجمالي</th><th>المدفوع</th><th>المتبقي</th><th>الحالة</th><th></th></tr></thead><tbody>
   ${(data||[]).map(c=>`<tr><td>${esc(c.name)}</td><td class="mono">${esc(c.phone)}</td><td>${money(c.agreed_total)}</td>
@@ -1355,28 +1381,31 @@ function buildPaymentMessage(cust, payment, summary){
   ].join('\n');
 }
 window.custDetail = async function(id){
-  const [{data:cust},{data:items},{data:pays},{data:adjs},{data:prods},{data:summary}] = await Promise.all([
+  const [{data:cust},{data:items},{data:pays},{data:adjs},{data:prods}] = await Promise.all([
     sb.from('customers').select('*').eq('id',id).single(),
     sb.from('customer_work_items').select('*').eq('customer_id',id).order('created_at',{ascending:false}),
     sb.from('customer_payments').select('*').eq('customer_id',id).order('payment_date',{ascending:false}),
     sb.from('customer_adjustments').select('*').eq('customer_id',id).order('created_at',{ascending:false}),
-    sb.from('products').select('id,name,code,unit_price,pricing_method'),
-    sb.from('customer_account_summary').select('*').eq('customer_id',id).maybeSingle()
+    sb.from('products').select('id,name,code,unit_price,pricing_method')
   ]);
-  window.__CUST_CTX = {id, prods: prods||[], cust, items: items||[], pays: pays||[], summary: summary||{}};
-  const statementLink = waLinkToPhone(cust.phone, buildStatementMessage(cust, items||[], pays||[], summary||{}));
-  const lastPaymentLink = (pays&&pays[0])? waLinkToPhone(cust.phone, buildPaymentMessage(cust, pays[0], summary||{})) : null;
-  const itemsHtml = (items||[]).map(it=>`<div class="card-item"><div class="meta"><b>${esc(it.product_name_snapshot||it.work_type)}</b><small>${it.quantity} ${esc(it.unit)} × ${money(it.unit_price)} = ${money(it.total_price)}</small></div></div>`).join('') || '<div class="empty-state" style="padding:14px">لا توجد أعمال</div>';
-  const paysHtml = (pays||[]).map(p=>`<div class="card-item"><div class="meta"><b>${money(p.amount)}</b><small>${esc(p.payment_date)} ${p.note?'· '+esc(p.note):''}</small></div></div>`).join('') || '<div class="empty-state" style="padding:14px">لا توجد دفعات</div>';
+  // نحسب الإجمالي/الواصل/المتبقي مباشرة من الأعمال والدفعات والتعديلات بدل الاعتماد على أي عرض مُجمَّع قد يتأخر بالتحديث
+  const summary = computeCustomerSummary(items||[], pays||[], adjs||[]);
+  window.__CUST_CTX = {id, prods: prods||[], cust, items: items||[], pays: pays||[], adjs: adjs||[], summary};
+  const hasPhone = !!(cust.phone && String(cust.phone).replace(/\D/g,'').length>0);
+  const statementLink = waLinkToPhone(cust.phone, buildStatementMessage(cust, items||[], pays||[], summary));
+  const lastPaymentLink = (pays&&pays[0])? waLinkToPhone(cust.phone, buildPaymentMessage(cust, pays[0], summary)) : null;
+  const itemsHtml = (items||[]).map(it=>`<div class="card-item"><div class="meta"><b>${esc(it.product_name_snapshot||workTypeAr(it.work_type))}</b><small>${it.quantity} ${esc(unitAr(it.unit))} × ${money(it.unit_price)} = ${money(it.total_price)}</small></div><div style="display:flex;gap:6px"><button class="btn sm" onclick="custEditWorkForm('${it.id}')">تعديل</button><button class="btn sm danger" onclick="custDeleteWork('${it.id}')">حذف</button></div></div>`).join('') || '<div class="empty-state" style="padding:14px">لا توجد أعمال</div>';
+  const paysHtml = (pays||[]).map(p=>`<div class="card-item"><div class="meta"><b>${money(p.amount)}</b><small>${esc(p.payment_date)} ${p.note?'· '+esc(p.note):''}</small></div><div style="display:flex;gap:6px"><button class="btn sm" onclick="custEditPayForm('${p.id}')">تعديل</button><button class="btn sm danger" onclick="custDeletePay('${p.id}')">حذف</button></div></div>`).join('') || '<div class="empty-state" style="padding:14px">لا توجد دفعات</div>';
   const adjsHtml = (adjs||[]).map(a=>`<div class="card-item"><div class="meta"><b>${a.amount>=0?'+':''}${money(a.amount)}</b><small>${esc(a.reason||'')}</small></div></div>`).join('') || '';
   openModal(`<div class="sheet-head"><h3>حساب ${esc(cust.name)}</h3><div class="sheet-close" onclick="closeModal()">×</div></div>
     <p class="mono" style="color:var(--muted)">${esc(cust.phone)} <button class="btn sm" style="margin-right:8px" onclick="custEditForm('${id}')">✏️ تعديل بيانات الزبون</button></p>
     <div class="summary-box" style="margin:0 0 14px">
-      <div class="summary-line"><span>الإجمالي</span><b>${money(summary?.agreed_total ?? summary?.subtotal)}</b></div>
-      <div class="summary-line"><span>الواصل</span><b>${money(summary?.paid_total)}</b></div>
-      <div class="summary-line"><span>المتبقي</span><b>${money(summary?.remaining)}</b></div>
+      <div class="summary-line"><span>الإجمالي</span><b>${money(summary.agreed_total)}</b></div>
+      <div class="summary-line"><span>الواصل</span><b>${money(summary.paid_total)}</b></div>
+      <div class="summary-line"><span>المتبقي</span><b>${money(summary.remaining)}</b></div>
     </div>
-    ${statementLink? `<a class="btn block" style="border-color:rgba(37,211,102,.4);color:#1ba851;margin-bottom:14px" target="_blank" href="${statementLink}">📤 إرسال كشف الحساب عبر واتساب</a>` : `<div class="field hint" style="margin-bottom:14px">أضف رقم هاتف صحيح للزبون لتفعيل إرسال كشف الحساب عبر واتساب</div>`}
+    <a class="btn block" style="border-color:rgba(37,211,102,.4);color:#1ba851;margin-bottom:${hasPhone?'14':'4'}px" target="_blank" href="${statementLink}">📤 إرسال كشف الحساب عبر واتساب</a>
+    ${hasPhone? '' : '<div class="field hint" style="margin-bottom:14px">لا يوجد رقم هاتف محفوظ — سيفتح واتساب وتختار جهة الاتصال بنفسك</div>'}
     <div class="toolbar"><b>الأعمال</b><button class="btn sm primary" onclick="custAddWorkForm()">+ إضافة عمل</button></div>
     <div class="card-list">${itemsHtml}</div>
     <div class="toolbar" style="margin-top:16px"><b>الدفعات</b><div style="display:flex;gap:6px">${lastPaymentLink?`<a class="btn sm" style="border-color:rgba(37,211,102,.4);color:#1ba851" target="_blank" href="${lastPaymentLink}">💬 إشعار آخر دفعة</a>`:''}<button class="btn sm primary" onclick="custAddPayForm()">+ دفعة</button></div></div>
@@ -1431,6 +1460,40 @@ window.custAddWorkSave = async function(){
   if(error){ toast(error.message, true); return; }
   toast('تم الحفظ'); custDetail(window.__CUST_CTX.id); render();
 };
+window.custEditWorkForm = function(itemId){
+  const it = (window.__CUST_CTX.items||[]).find(x=>x.id===itemId);
+  if(!it){ toast('تعذّر العثور على العمل', true); return; }
+  const prods = window.__CUST_CTX.prods;
+  openModal(`<div class="sheet-head"><h3>تعديل العمل</h3><div class="sheet-close" onclick="custDetail('${window.__CUST_CTX.id}')">×</div></div>
+    ${fld({key:'work_type',label:'النوع',type:'select',options:[{value:'door',label:'باب'},{value:'window',label:'شباك'},{value:'countertop',label:'كاونتر'},{value:'stair_railing',label:'محجر درج'},{value:'other',label:'أخرى'}]},it.work_type)}
+    ${fld({key:'product_id',label:'منتج مرتبط (اختياري)',type:'select',options:[{value:'',label:'بدون'},...prods.map(p=>({value:p.id,label:p.name}))]},it.product_id||'')}
+    ${fld({key:'product_name_snapshot',label:'اسم العمل/الوصف'},it.product_name_snapshot||'')}
+    <div class="row2">${fld({key:'quantity',label:'الكمية',type:'number'},it.quantity)}${fld({key:'unit',label:'الوحدة',type:'select',options:[{value:'piece',label:'قطعة'},{value:'sqm',label:'م²'},{value:'meter',label:'م.ط'}]},it.unit)}</div>
+    <div class="row2">${fld({key:'width_cm',label:'العرض (سم)',type:'number'},it.width_cm)}${fld({key:'height_cm',label:'الارتفاع (سم)',type:'number'},it.height_cm)}</div>
+    <div class="row2">${fld({key:'unit_price',label:'سعر الوحدة',type:'number'},it.unit_price)}${fld({key:'total_price',label:'الإجمالي',type:'number'},it.total_price)}</div>
+    ${fld({key:'note',label:'ملاحظة',type:'textarea'},it.note||'')}
+    <button class="btn primary block" onclick="custUpdateWork('${itemId}')">حفظ التعديلات</button>`);
+};
+window.custUpdateWork = async function(itemId){
+  const row = {
+    work_type: readFld({key:'work_type'}),
+    product_id: readFld({key:'product_id'})||null, product_name_snapshot: readFld({key:'product_name_snapshot'}),
+    quantity: readFld({key:'quantity',type:'number'})||1, unit: readFld({key:'unit'}),
+    width_cm: readFld({key:'width_cm',type:'number'}), height_cm: readFld({key:'height_cm',type:'number'}),
+    area_or_length: readFld({key:'quantity',type:'number'})||1,
+    unit_price: readFld({key:'unit_price',type:'number'})||0, total_price: readFld({key:'total_price',type:'number'})||0,
+    note: readFld({key:'note'})
+  };
+  const {error} = await sb.from('customer_work_items').update(row).eq('id', itemId);
+  if(error){ toast(error.message, true); return; }
+  toast('تم تحديث العمل'); custDetail(window.__CUST_CTX.id); render();
+};
+window.custDeleteWork = async function(itemId){
+  if(!confirm('هل تريد حذف هذا العمل نهائيًا؟')) return;
+  const {error} = await sb.from('customer_work_items').delete().eq('id', itemId);
+  if(error){ toast(error.message, true); return; }
+  toast('تم حذف العمل'); custDetail(window.__CUST_CTX.id); render();
+};
 window.custAddPayForm = function(){
   openModal(`<div class="sheet-head"><h3>إضافة دفعة</h3><div class="sheet-close" onclick="custDetail('${window.__CUST_CTX.id}')">×</div></div>
     ${fld({key:'amount',label:'المبلغ',type:'number'})}
@@ -1445,6 +1508,29 @@ window.custAddPaySave = async function(){
   const {error} = await sb.from('customer_payments').insert(row);
   if(error){ toast(error.message, true); return; }
   toast('تم الحفظ'); custDetail(window.__CUST_CTX.id); render();
+};
+window.custEditPayForm = function(payId){
+  const p = (window.__CUST_CTX.pays||[]).find(x=>x.id===payId);
+  if(!p){ toast('تعذّر العثور على الدفعة', true); return; }
+  openModal(`<div class="sheet-head"><h3>تعديل الدفعة</h3><div class="sheet-close" onclick="custDetail('${window.__CUST_CTX.id}')">×</div></div>
+    ${fld({key:'amount',label:'المبلغ',type:'number'},p.amount)}
+    ${fld({key:'payment_date',label:'التاريخ',type:'date'},p.payment_date)}
+    ${fld({key:'note',label:'ملاحظة',type:'textarea'},p.note||'')}
+    <button class="btn primary block" onclick="custUpdatePay('${payId}')">حفظ التعديلات</button>`);
+};
+window.custUpdatePay = async function(payId){
+  const row = { amount: readFld({key:'amount',type:'number'}),
+    payment_date: readFld({key:'payment_date'})||new Date().toISOString().slice(0,10), note: readFld({key:'note'}) };
+  if(!row.amount || row.amount<=0){ toast('أدخل مبلغ صحيح', true); return; }
+  const {error} = await sb.from('customer_payments').update(row).eq('id', payId);
+  if(error){ toast(error.message, true); return; }
+  toast('تم تحديث الدفعة'); custDetail(window.__CUST_CTX.id); render();
+};
+window.custDeletePay = async function(payId){
+  if(!confirm('هل تريد حذف هذه الدفعة نهائيًا؟')) return;
+  const {error} = await sb.from('customer_payments').delete().eq('id', payId);
+  if(error){ toast(error.message, true); return; }
+  toast('تم حذف الدفعة'); custDetail(window.__CUST_CTX.id); render();
 };
 window.custAddAdjForm = function(){
   openModal(`<div class="sheet-head"><h3>تعديل (خصم/إضافة)</h3><div class="sheet-close" onclick="custDetail('${window.__CUST_CTX.id}')">×</div></div>
