@@ -939,8 +939,13 @@ window.submitOrder = async function(){
         dims: i.widthCm? `${i.widthCm}×${i.heightCm||''}` : null }))
     };
     const waLink = waLinkWorkshop(buildOrderWaMessage(order, cartSnapshot, subtotal, customerFields, orderNotes));
-    if(waWin && waLink){ try{ waWin.location.href = waLink; }catch(e){} }
     state.cart=[]; saveCart();
+    if(waLink){
+      let opened = false;
+      if(waWin){ try{ waWin.location.href = waLink; opened = true; }catch(e){} }
+      // إذا المتصفح حجب النافذة، نفتح واتساب بنفس الصفحة تلقائياً (الطلب انحفظ أصلاً)
+      if(!opened){ setTimeout(()=>{ location.href = waLink; }, 600); }
+    }
     document.getElementById('modals').innerHTML = `<div class="overlay"><div class="sheet" style="text-align:center">
       <div style="font-size:40px">✅</div><h3>تم استلام طلبك</h3>
       <p style="color:var(--muted)">رقم الطلب</p>
@@ -1320,7 +1325,7 @@ async function admOrders(){
     <td>${money(o.total)}</td>
     <td><select onchange="orderStatusChange('${o.id}',this.value)">${['new','in_progress','completed','cancelled'].map(s=>`<option value="${s}" ${o.status===s?'selected':''}>${statusAr(s)}</option>`).join('')}</select></td>
     <td><select onchange="orderPayChange('${o.id}',this.value)">${['pending','cod','paid','failed','refunded'].map(s=>`<option value="${s}" ${o.payment_status===s?'selected':''}>${payAr(s)}</option>`).join('')}</select></td>
-    <td><button class="btn sm" onclick="orderDetail('${o.id}')">تفاصيل</button></td></tr>`).join('') || `<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:20px">لا توجد طلبات</td></tr>`}
+    <td style="white-space:nowrap"><button class="btn sm" onclick="orderDetail('${o.id}')">تفاصيل</button> <button class="btn sm" style="color:#dc2626" onclick="orderDelete('${o.id}')">🗑 حذف</button></td></tr>`).join('') || `<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:20px">لا توجد طلبات</td></tr>`}
   </tbody></table></div>`;
 }
 window.orderStatusChange = async function(id, status){
@@ -1345,7 +1350,18 @@ window.orderDetail = function(id){
       ${o.notes?`<div class="summary-line"><span>ملاحظات</span><b>${esc(o.notes)}</b></div>`:''}
     </div>
     <div style="margin:10px 0">${items}</div>
-    <div class="summary-box"><div class="summary-line"><span>الإجمالي</span><b>${money(o.total)}</b></div></div>`);
+    <div class="summary-box"><div class="summary-line"><span>الإجمالي</span><b>${money(o.total)}</b></div></div>
+    <button class="btn block" style="color:#dc2626;margin-top:10px" onclick="orderDelete('${o.id}')">🗑 حذف الطلب</button>`);
+};
+window.orderDelete = async function(id){
+  const o = (window.__ORDERS_ADM||[]).find(x=>x.id===id);
+  if(!confirm('تأكيد حذف الطلب' + (o&&o.order_number? ' '+o.order_number : '') + '؟ لا يمكن التراجع.')) return;
+  await sb.from('order_items').delete().eq('order_id', id);
+  const {error} = await sb.from('orders').delete().eq('id', id);
+  if(error){ toast(error.message, true); return; }
+  toast('تم حذف الطلب');
+  try{ closeModal(); }catch(e){}
+  render();
 };
 
 // ---- customers ----
