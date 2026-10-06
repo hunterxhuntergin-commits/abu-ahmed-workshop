@@ -808,21 +808,6 @@ function pdLiveUpdate(){
 function statusAr(s){ return {new:'جديد',in_progress:'قيد التنفيذ',completed:'مكتمل',cancelled:'ملغي'}[s]||s; }
 function payAr(s){ return {pending:'بانتظار الدفع',paid:'مدفوع',failed:'فشل',cod:'دفع عند الاستلام',refunded:'مسترجع'}[s]||s; }
 
-// -------------------- payment providers (modular) --------------------
-// كل مزود دفع إلكتروني حقيقي (مستقبلاً) يُضاف هنا كمفتاح جديد بنفس الشكل:
-// zaincash: { label:'زين كاش', async createPayment(order, amount){ /* نداء API الحقيقي هنا */ return {status:'pending', reference:'...'}; } }
-// هذا يخلي الموقع غير مرتبط بمزود دفع محدد، ويسهل إضافة مزود لاحقاً بدون إعادة بناء المتجر.
-const PaymentProviders = {};
-function getActiveElectronicProvider(){
-  const s = state.settings||{};
-  if(!s.electronic_payment_enabled) return null;
-  const key = s.payment_provider||'';
-  if(PaymentProviders[key]) return PaymentProviders[key];
-  // لا يوجد مزود مبرمج فعلياً بعد؛ نعرض خياراً عاماً بالاسم الذي يحدده المدير ونعلّم الطلب "بانتظار الدفع" لحين ربط مزود حقيقي
-  if(s.payment_provider_name) return { label: s.payment_provider_name, async createPayment(){ return {status:'pending', reference:null}; } };
-  return null;
-}
-
 // -------------------- cart & checkout modals --------------------
 window.openCart = function(){
   const modals=document.getElementById('modals');
@@ -862,20 +847,37 @@ window.openCheckout = async function(){
       <div class="field"><label>المنطقة</label><input id="coArea" value="${esc(saved.area||'')}"></div>
       <div class="field"><label>تفاصيل العنوان</label><textarea id="coAddr">${esc(saved.address||'')}</textarea></div>
       <div class="field"><label>ملاحظات</label><textarea id="coNotes"></textarea></div>
-      ${(()=>{
-        const provider = getActiveElectronicProvider();
-        const codOn = state.settings.cod_enabled!==false;
-        const methods = [];
-        if(codOn) methods.push({value:'cod', label:'الدفع عند الاستلام'});
-        if(provider) methods.push({value:'electronic', label:provider.label});
-        if(!methods.length) methods.push({value:'cod', label:'الدفع عند الاستلام'});
-        if(methods.length===1) return `<div class="summary-box"><div class="summary-line"><span>الدفع</span><b>${esc(methods[0].label)}</b></div></div><input type="hidden" id="coPayMethodFixed" value="${methods[0].value}">`;
-        return `<div class="field"><label>طريقة الدفع</label>${methods.map((m,i)=>`<label style="display:flex;align-items:center;gap:8px;padding:8px 0;font-size:13px"><input type="radio" name="coPayMethod" value="${m.value}" ${i===0?'checked':''} style="width:auto">${esc(m.label)}</label>`).join('')}</div>`;
-      })()}
+      <div class="summary-box"><div class="summary-line"><span>الدفع</span><b>عند الاستلام</b></div></div>
       <div class="summary-box"><div class="summary-line"><span>الإجمالي</span><b>${money(cartTotal())}</b></div></div>
       <button class="btn primary block" id="coBtn" onclick="submitOrder()">تأكيد الطلب</button>
     </div></div>`;
 };
+// رسالة واتساب جاهزة بتفاصيل الطلب تُرسل لرقم الورشة
+function buildOrderWaMessage(order, cartItems, total, f, notes){
+  const L = [];
+  L.push('🧾 *طلب جديد*' + (order && order.order_number ? ' رقم: ' + order.order_number : ''));
+  L.push('');
+  L.push('الاسم: ' + f.name);
+  L.push('الهاتف: ' + f.phone);
+  if(f.whatsapp) L.push('واتساب: ' + f.whatsapp);
+  const place = [f.governorate, f.area].filter(Boolean).join(' - ');
+  if(place) L.push('المنطقة: ' + place);
+  if(f.address) L.push('العنوان: ' + f.address);
+  L.push('');
+  L.push('*المنتجات:*');
+  cartItems.forEach((i,n)=>{
+    const dims = i.widthCm ? ' — ' + i.widthCm + (i.heightCm ? '×' + i.heightCm : '') + ' سم' : '';
+    L.push((n+1) + ') ' + i.name + (i.code ? ' (' + i.code + ')' : '') + dims + ' — الكمية: ' + i.quantity + ' — ' + money(i.lineTotal));
+  });
+  L.push('');
+  L.push('*الإجمالي: ' + money(total) + '*');
+  L.push('الدفع: عند الاستلام');
+  if(notes) { L.push(''); L.push('ملاحظات: ' + notes); }
+  return L.join('\n');
+}
+function waOrderButton(link){
+  return link ? `<a class="btn primary block" style="margin-bottom:8px" target="_blank" rel="noopener" href="${link}">📲 إرسال الطلب عبر واتساب</a>` : '';
+}
 window.submitOrder = async function(){
   const name=document.getElementById('coName').value.trim();
   const phone=document.getElementById('coPhone').value.trim();
@@ -883,8 +885,12 @@ window.submitOrder = async function(){
   if(!isValidIraqiPhone(phone)){ toast('رقم الهاتف غير صحيح — يجب أن يبدأ بـ07 ويتكون من 11 رقم', true); return; }
   const btn=document.getElementById('coBtn'); btn.disabled=true; btn.innerHTML='<span class="spin"></span>';
   const subtotal=cartTotal();
-  const payMethod = document.getElementById('coPayMethodFixed')?.value
-    || document.querySelector('input[name="coPayMethod"]:checked')?.value || 'cod';
+  const payMethod = 'cod';
+  const orderNotes = document.getElementById('coNotes').value.trim();
+  const cartSnapshot = state.cart.map(i=>({...i}));
+  // نفتح نافذة واتساب فوراً (مع ضغطة الزر) حتى ما يحجبها المتصفح، ونعبّيها بعد حفظ الطلب
+  const waOn = !!waLinkWorkshop('x');
+  let waWin = null; if(waOn){ try{ waWin = window.open('', '_blank'); }catch(e){} }
   const customerFields = {
     name, phone, whatsapp: document.getElementById('coWa').value.trim()||'',
     governorate: document.getElementById('coGov').value.trim()||'',
@@ -904,34 +910,24 @@ window.submitOrder = async function(){
     note:i.note||null, total_price:i.lineTotal
   }));
   function saveOfflineOrder(){
+    const offLink = waLinkWorkshop(buildOrderWaMessage(null, cartSnapshot, subtotal, customerFields, orderNotes));
+    if(waWin && offLink){ try{ waWin.location.href = offLink; }catch(e){} }
     enqueueOffline({type:'order', payload:{orderRow, items: itemsPayload}});
     saveCustomerInfo(customerFields);
     state.cart=[]; saveCart();
     document.getElementById('modals').innerHTML = `<div class="overlay"><div class="sheet" style="text-align:center">
       <div style="font-size:40px">📶</div><h3>تم حفظ طلبك</h3>
       <p style="color:var(--muted)">سيرسل تلقائيًا عند توفر النت.</p>
-      <button class="btn primary block" onclick="document.getElementById('modals').innerHTML='';location.hash='#/'">تمام</button>
+      ${waOrderButton(offLink)}
+      <button class="btn block" onclick="document.getElementById('modals').innerHTML='';location.hash='#/'">تمام</button>
     </div></div>`;
   }
   if(!navigator.onLine){
-    if(payMethod==='electronic'){
-      toast('الدفع الإلكتروني يحتاج اتصال بالإنترنت — اختر «الدفع عند الاستلام» أو حاول لما يرجع النت', true);
-      btn.disabled=false; btn.textContent='تأكيد الطلب'; return;
-    }
     saveOfflineOrder(); return;
   }
   try{
     const {data:order,error}=await sb.from('orders').insert(orderRow).select().single();
     if(error) throw error;
-    if(payMethod==='electronic'){
-      const provider = getActiveElectronicProvider();
-      if(provider){
-        try{
-          const res = await provider.createPayment(order, subtotal);
-          await sb.from('orders').update({ payment_status: res.status||'pending', transaction_reference: res.reference||null }).eq('id', order.id);
-        }catch(e){ /* المزود لم يُربط فعلياً بعد؛ يبقى الطلب بحالة "بانتظار الدفع" ليتابعه الموظف يدوياً */ }
-      }
-    }
     const items = itemsPayload.map(i=>({...i, order_id:order.id}));
     const {error:itErr}=await sb.from('order_items').insert(items);
     if(itErr) throw itErr;
@@ -942,18 +938,21 @@ window.submitOrder = async function(){
       items: state.cart.map(i=>({ name:i.name, code:i.code, qty:i.quantity, lineTotal:i.lineTotal,
         dims: i.widthCm? `${i.widthCm}×${i.heightCm||''}` : null }))
     };
+    const waLink = waLinkWorkshop(buildOrderWaMessage(order, cartSnapshot, subtotal, customerFields, orderNotes));
+    if(waWin && waLink){ try{ waWin.location.href = waLink; }catch(e){} }
     state.cart=[]; saveCart();
     document.getElementById('modals').innerHTML = `<div class="overlay"><div class="sheet" style="text-align:center">
       <div style="font-size:40px">✅</div><h3>تم استلام طلبك</h3>
       <p style="color:var(--muted)">رقم الطلب</p>
       <div class="mono" style="font-size:20px;font-weight:900;margin-bottom:14px">${esc(order.order_number)}</div>
+      ${waOrderButton(waLink)}
       <button class="btn block" style="margin-bottom:8px" onclick="downloadOrderSummary()">⬇ تحميل ملخص الطلب</button>
-      <button class="btn primary block" onclick="document.getElementById('modals').innerHTML='';location.hash='#/'">تمام</button>
+      <button class="btn block" onclick="document.getElementById('modals').innerHTML='';location.hash='#/'">تمام</button>
     </div></div>`;
   }catch(e){
     console.error(e);
-    if(!navigator.onLine && payMethod!=='electronic'){ saveOfflineOrder(); }
-    else{ toast('تعذّر تأكيد الطلب، تأكد من الاتصال وحاول مرة ثانية', true); btn.disabled=false; btn.textContent='تأكيد الطلب'; }
+    if(!navigator.onLine){ saveOfflineOrder(); }
+    else{ try{ if(waWin) waWin.close(); }catch(_){} toast('تعذّر تأكيد الطلب، تأكد من الاتصال وحاول مرة ثانية', true); btn.disabled=false; btn.textContent='تأكيد الطلب'; }
   }
 };
 window.downloadOrderSummary = async function(){
@@ -1848,10 +1847,7 @@ async function admSettings(){
     <div class="row2">${fld({key:'work_hours',label:'ساعات الدوام'},s.work_hours)}${fld({key:'email',label:'البريد الإلكتروني'},s.email)}</div>
     ${fld({key:'google_maps_url',label:'رابط خرائط قوقل'},s.google_maps_url)}
     <div class="row2">${fld({key:'facebook_url',label:'رابط فيسبوك (اختياري)'},s.facebook_url)}${fld({key:'instagram_url',label:'رابط انستغرام (اختياري)'},s.instagram_url)}</div>
-    ${fld({key:'cod_enabled',label:'الدفع عند الاستلام مفعّل',type:'checkbox'},s.cod_enabled!==false)}
     <div class="toolbar" style="margin-top:16px"><b>الدفع الإلكتروني</b></div>
-    ${fld({key:'electronic_payment_enabled',label:'تفعيل خيار الدفع الإلكتروني بالسلة',type:'checkbox'},!!s.electronic_payment_enabled)}
-    ${fld({key:'payment_provider_name',label:'اسم مزود الدفع (يظهر للزبون، مثال: زين كاش)'},s.payment_provider_name)}
     <div class="field hint" style="margin-top:-8px">ملاحظة: هذا يجهّز الموقع لاستقبال مزود دفع حقيقي لاحقاً بدون تعديل الصفحات. لحين ربط مزود فعلي عبر المطوّر، الطلبات الإلكترونية تُسجَّل بحالة "بانتظار الدفع" ويتابعها الموظف يدوياً.</div>
     <div class="field"><label>شعار الورشة</label><input type="file" id="logoFile" accept="image/*">${s.logo_url?`<img src="${esc(s.logo_url)}" style="width:60px;margin-top:8px;border-radius:8px">`:''}</div>
     <div class="field"><label>صورة غلاف الموقع (تظهر بأعلى الصفحة الرئيسية)</label><input type="file" id="coverFile" accept="image/*">${s.cover_url?`<img src="${esc(s.cover_url)}" style="width:100%;max-width:260px;margin-top:8px;border-radius:8px">`:''}</div>
@@ -1865,10 +1861,8 @@ window.settingsSave = async function(){
     phone: readFld({key:'phone'}), whatsapp_number: readFld({key:'whatsapp_number'}),
     country_code: readFld({key:'country_code'}), governorate: readFld({key:'governorate'}),
     address: readFld({key:'address'}), work_hours: readFld({key:'work_hours'}), email: readFld({key:'email'}),
-    google_maps_url: readFld({key:'google_maps_url'}), cod_enabled: readFld({key:'cod_enabled',type:'checkbox'}),
+    google_maps_url: readFld({key:'google_maps_url'}),
     facebook_url: readFld({key:'facebook_url'}), instagram_url: readFld({key:'instagram_url'}),
-    electronic_payment_enabled: readFld({key:'electronic_payment_enabled',type:'checkbox'}),
-    payment_provider_name: readFld({key:'payment_provider_name'})
   };
   const file = document.getElementById('logoFile').files[0];
   if(file){
