@@ -1,0 +1,15 @@
+name: Supabase keep-alive
+on:
+  schedule:
+    - cron: "0 6 */2 * *"
+  workflow_dispatch:
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Supabase
+        run: |
+          curl -fsS "https://rxbytiypnqmnastydwtl.supabase.co/rest/v1/site_settings?select=id&limit=1" \
+            -H "apikey: sb_publishable_EAV6Xz5dUouN8abhz3HbVQ_DnS3XcSi" \
+            -H "Authorization: Bearer sb_publishable_EAV6Xz5dUouN8abhz3HbVQ_DnS3XcSi"
