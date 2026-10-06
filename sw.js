@@ -1,9 +1,18 @@
 /* Service Worker — أبو أحمد للألمنيوم
    يخلي الموقع (والإدارة) يفتح بدون نت، ويعرض آخر بيانات محفوظة.
    لما تسوي أي تحديث كبير بالموقع، غيّر رقم CACHE_VERSION تحت عشان يتحدث الكاش عند الزوار. */
-const CACHE_VERSION = 'v4';
+const CACHE_VERSION = 'v5';
 const SHELL_CACHE = 'shell-' + CACHE_VERSION;
 const DATA_CACHE = 'data-' + CACHE_VERSION;
+const IMG_CACHE = 'img-' + CACHE_VERSION;
+
+// fetch مع مهلة: إذا النت بطيء أو السيرفر واقف نرجع للنسخة المحفوظة بدل الانتظار
+function fetchWithTimeout(req, ms){
+  return new Promise((resolve, reject) => {
+    const t = setTimeout(() => reject(new Error('timeout')), ms);
+    fetch(req).then((r) => { clearTimeout(t); resolve(r); }, (e) => { clearTimeout(t); reject(e); });
+  });
+}
 
 // روابط خارجية ضرورية لتشغيل الموقع (مكتبات + خطوط) — تنحفظ بأول زيارة فيها نت
 const PRECACHE_URLS = [
@@ -32,7 +41,7 @@ self.addEventListener('activate', (event) => {
       const keys = await caches.keys();
       await Promise.all(
         keys
-          .filter((k) => k !== SHELL_CACHE && k !== DATA_CACHE)
+          .filter((k) => k !== SHELL_CACHE && k !== DATA_CACHE && k !== IMG_CACHE)
           .map((k) => caches.delete(k))
       );
       await self.clients.claim();
@@ -47,13 +56,13 @@ self.addEventListener('fetch', (event) => {
   // 1) فتح الصفحة نفسها (navigation) — نت أولاً، وإذا ما فيه نت نرجّع آخر نسخة محفوظة
   if (req.mode === 'navigate') {
     event.respondWith(
-      fetch(req)
-        .then((res) => {
-          const clone = res.clone();
-          caches.open(SHELL_CACHE).then((c) => c.put('/', clone));
+      caches.match('/').then((cached) => {
+        const net = fetch(req).then((res) => {
+          if (res && res.ok) { const c = res.clone(); caches.open(SHELL_CACHE).then((ca) => ca.put('/', c)); }
           return res;
-        })
-        .catch(() => caches.match('/').then((r) => r || caches.match(req)))
+        });
+        return cached ? (net.catch(() => {}), cached) : net.catch(() => caches.match(req));
+      })
     );
     return;
   }
@@ -61,10 +70,23 @@ self.addEventListener('fetch', (event) => {
   // فقط نتدخل بطلبات GET (الطلبات اللي تغيّر بيانات "insert/update/delete" لازم نت فعلي)
   if (req.method !== 'GET') return;
 
+  // صور التخزين (Supabase Storage) — كاش أولاً، تنحفظ بعد أول تحميل
+  if (url.hostname.endsWith('.supabase.co') && url.pathname.includes('/storage/v1/object/public/')) {
+    event.respondWith(
+      caches.open(IMG_CACHE).then((cache) =>
+        cache.match(req).then((cached) => cached || fetch(req).then((res) => {
+          if (res && res.ok) cache.put(req, res.clone());
+          return res;
+        }))
+      )
+    );
+    return;
+  }
+
   // 2) بيانات سوبابيس (منتجات، طلبات، تصنيفات...) — نت أولاً، وإذا ما فيه نرجّع آخر نسخة بالكاش
   if (url.hostname.endsWith('.supabase.co')) {
     event.respondWith(
-      fetch(req)
+      fetchWithTimeout(req, 4000)
         .then((res) => {
           if (res && res.ok) {
             const clone = res.clone();

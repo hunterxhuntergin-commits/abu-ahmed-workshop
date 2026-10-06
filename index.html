@@ -223,7 +223,6 @@ footer.site{border-top:1px solid var(--line);padding:26px 0;margin-top:30px;colo
 <button id="installBtn" class="install-fab" hidden onclick="handleInstallClick()">⬇ تثبيت التطبيق</button>
 <div id="toastHost"></div>
 
-<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 <script type="module">
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 
@@ -263,6 +262,42 @@ function toast(msg, isErr){
   setTimeout(()=>el.remove(), 3200);
 }
 function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+// -------------------- أداء: تحميل html2canvas عند الحاجة فقط --------------------
+let __h2c;
+function loadH2C(){
+  if(window.html2canvas) return Promise.resolve(window.html2canvas);
+  if(!__h2c) __h2c = new Promise((res,rej)=>{
+    const sc=document.createElement('script');
+    sc.src='https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js';
+    sc.onload=()=>res(window.html2canvas); sc.onerror=()=>{__h2c=null;rej(new Error('html2canvas'));};
+    document.head.appendChild(sc);
+  });
+  return __h2c;
+}
+
+// -------------------- أداء: ضغط الصور قبل الرفع (الأصلية من الجوال 3-8 ميغا) --------------------
+async function compressImage(file, maxDim=1600){
+  try{
+    if(!file || !file.type.startsWith('image/')) return file;
+    const bmp = await createImageBitmap(file);
+    const k = Math.min(1, maxDim/Math.max(bmp.width,bmp.height));
+    if(k===1 && file.size < 300*1024) return file;
+    const c = document.createElement('canvas');
+    c.width = Math.round(bmp.width*k); c.height = Math.round(bmp.height*k);
+    c.getContext('2d').drawImage(bmp,0,0,c.width,c.height);
+    let blob = await new Promise(r=>c.toBlob(r,'image/webp',0.82));
+    if(!blob || blob.type!=='image/webp') blob = await new Promise(r=>c.toBlob(r,'image/jpeg',0.82));
+    return (blob && blob.size < file.size) ? blob : file;
+  }catch(e){ return file; }
+}
+async function uploadImg(bucket, path, file){
+  const blob = await compressImage(file);
+  const ext = (blob.type.split('/')[1]||'jpg').replace('jpeg','jpg');
+  path = path.replace(/\.[^./]+$/, '.'+ext);
+  const r = await sb.storage.from(bucket).upload(path, blob, {contentType: blob.type||'image/jpeg', cacheControl:'31536000'});
+  return {error:r.error, path};
+}
 function money(n){ n = Number(n||0); return n.toLocaleString('ar-IQ',{maximumFractionDigits:0}) + ' د.ع'; }
 // رقم عراقي صحيح: يبدأ بـ07 ويتكون من 11 رقم بالضبط
 function isValidIraqiPhone(p){ const digits = String(p||'').replace(/\D/g,''); return /^07\d{9}$/.test(digits); }
@@ -501,8 +536,8 @@ window.exportCustomersCSV = function(){
     c.status==='unpaid'?'غير مدفوع': c.status==='completed'?'مكتمل':'متبقي']));
   downloadCSV('الزبائن-'+new Date().toISOString().slice(0,10)+'.csv', rows);
 };
-function catImg(c){ return c.image_url? `<img src="${esc(c.image_url)}" loading="lazy">` : `<div class="ph"></div>`; }
-function prodImg(p){ const url = p.product_images&&p.product_images[0]&&p.product_images[0].url; return url? `<img src="${esc(url)}" loading="lazy">` : `<div class="ph"></div>`; }
+function catImg(c){ return c.image_url? `<img src="${esc(c.image_url)}" loading="lazy" decoding="async">` : `<div class="ph"></div>`; }
+function prodImg(p){ const url = p.product_images&&p.product_images[0]&&p.product_images[0].url; return url? `<img src="${esc(url)}" loading="lazy" decoding="async">` : `<div class="ph"></div>`; }
 function priceLabel(p){
   if(p.pricing_method==='piece') return money(p.unit_price)+` <small>/قطعة</small>`;
   if(p.pricing_method==='sqm') return money(p.unit_price)+` <small>/م²</small>`;
@@ -513,8 +548,11 @@ function priceLabel(p){
 
 // -------------------- pages --------------------
 async function pageHome(){
-  await getSettings(); const cats = await getCategories();
-  const {data: featured} = await sb.from('products').select('*, product_images(*)').eq('is_active',true).eq('is_featured',true).order('sort_order').limit(8);
+  const __gal = galleryPreviewSection(), __rec = recentProductsSection();
+  const [, cats, {data: featured}] = await Promise.all([
+    getSettings(), getCategories(),
+    sb.from('products').select('*, product_images(*)').eq('is_active',true).eq('is_featured',true).order('sort_order').limit(8)
+  ]);
   const s = state.settings||{};
   const yearsExp = s.founded_year? (new Date().getFullYear() - Number(s.founded_year)) : null;
   return `
@@ -537,12 +575,12 @@ async function pageHome(){
       ${cats.map(c=>`<a class="cat-tile" href="#/category/${esc(c.slug)}"><div class="thumb">${catImg(c)}</div><div class="body"><b>${esc(c.name)}</b>${c.description?`<small>${esc(c.description)}</small>`:''}</div></a>`).join('') || '<div class="empty-state">لا توجد أقسام بعد</div>'}
     </div>
   </section>
-  ${await galleryPreviewSection()}
+  ${await __gal}
   ${featured&&featured.length? `<section class="section wrap">
     <div class="section-head"><div><h2>منتجات مميزة</h2></div></div>
     <div class="grid cols-4">${featured.map(prodCard).join('')}</div>
   </section>`:''}
-  ${await recentProductsSection()}
+  ${await __rec}
   ${footer()} ${waFab()}
   `;
 }
@@ -552,7 +590,7 @@ async function galleryPreviewSection(){
     if(!data || !data.length) return '';
     return `<section class="section wrap">
       <div class="section-head"><div><h2>من أعمالنا</h2><p>نماذج من مشاريع نفّذناها فعلياً</p></div></div>
-      <div class="gallery-grid">${data.map(g=>`<div class="gallery-item"><img src="${esc(g.image_url)}" loading="lazy">${g.caption?`<div class="cap">${esc(g.caption)}</div>`:''}</div>`).join('')}</div>
+      <div class="gallery-grid">${data.map(g=>`<div class="gallery-item"><img src="${esc(g.image_url)}" loading="lazy" decoding="async">${g.caption?`<div class="cap">${esc(g.caption)}</div>`:''}</div>`).join('')}</div>
     </section>`;
   }catch(e){ return ''; }
 }
@@ -945,7 +983,7 @@ window.downloadOrderSummary = async function(){
   document.body.insertAdjacentHTML('beforeend', printHtml);
   const node = document.getElementById('orderPrintCard');
   try{
-    const canvas = await html2canvas(node, {scale:2, backgroundColor:'#ffffff'});
+    const canvas = await (await loadH2C())(node, {scale:2, backgroundColor:'#ffffff'});
     node.remove();
     canvas.toBlob((blob)=>{
       if(!blob){ toast('صار خطأ بإنشاء الصورة', true); return; }
@@ -1127,8 +1165,8 @@ window.catSave = async function(id){
   const file = document.getElementById('catImgFile').files[0];
   if(file){
     const path = `${Date.now()}_${uid()}.${file.name.split('.').pop()}`;
-    const {error:upErr} = await sb.storage.from('categories').upload(path,file);
-    if(!upErr) row.image_url = sb.storage.from('categories').getPublicUrl(path).data.publicUrl;
+    const {error:upErr, path:upPath} = await uploadImg('categories',path,file);
+    if(!upErr) row.image_url = sb.storage.from('categories').getPublicUrl(upPath).data.publicUrl;
   }
   const {error} = id? await sb.from('categories').update(row).eq('id',id) : await sb.from('categories').insert(row);
   if(error){ toast(error.message, true); return; }
@@ -1173,8 +1211,8 @@ window.galSave = async function(id){
   const file = document.getElementById('galImgFile').files[0];
   if(file){
     const path = `gallery/${Date.now()}_${uid()}.${file.name.split('.').pop()}`;
-    const {error:upErr} = await sb.storage.from('site-assets').upload(path,file);
-    if(!upErr) row.image_url = sb.storage.from('site-assets').getPublicUrl(path).data.publicUrl;
+    const {error:upErr, path:upPath} = await uploadImg('site-assets',path,file);
+    if(!upErr) row.image_url = sb.storage.from('site-assets').getPublicUrl(upPath).data.publicUrl;
   }
   if(!id && !row.image_url){ toast('اختر صورة أولاً', true); return; }
   const {error} = id? await sb.from('gallery_items').update(row).eq('id',id) : await sb.from('gallery_items').insert(row);
@@ -1259,9 +1297,9 @@ window.prodSave = async function(id){
   const files = document.getElementById('prodImgFiles').files;
   for(const file of files){
     const path = `${Date.now()}_${uid()}.${file.name.split('.').pop()}`;
-    const {error:upErr} = await sb.storage.from('product-images').upload(path,file);
+    const {error:upErr, path:upPath} = await uploadImg('product-images',path,file);
     if(!upErr){
-      const url = sb.storage.from('product-images').getPublicUrl(path).data.publicUrl;
+      const url = sb.storage.from('product-images').getPublicUrl(upPath).data.publicUrl;
       await sb.from('product_images').insert({product_id:prodId, url});
     }
   }
@@ -1680,7 +1718,7 @@ window.glassExportShare = async function(){
   const node = document.getElementById('glassPrintCard');
   const waText = glassBuildText(rows, total);
   try{
-    const canvas = await html2canvas(node, {scale:2, backgroundColor:'#ffffff'});
+    const canvas = await (await loadH2C())(node, {scale:2, backgroundColor:'#ffffff'});
     node.remove();
     canvas.toBlob(async (blob)=>{
       if(!blob){ toast('صار خطأ بإنشاء الصورة', true); return; }
@@ -1777,7 +1815,7 @@ window.materialsExport = async function(){
   document.body.insertAdjacentHTML('beforeend', printHtml);
   const node = document.getElementById('materialsPrintCard');
   try{
-    const canvas = await html2canvas(node, {scale:2, backgroundColor:'#ffffff'});
+    const canvas = await (await loadH2C())(node, {scale:2, backgroundColor:'#ffffff'});
     node.remove();
     canvas.toBlob(async (blob)=>{
       if(!blob){ toast('صار خطأ بإنشاء الصورة', true); return; }
@@ -1835,14 +1873,14 @@ window.settingsSave = async function(){
   const file = document.getElementById('logoFile').files[0];
   if(file){
     const path = `${Date.now()}_${uid()}.${file.name.split('.').pop()}`;
-    const {error:upErr} = await sb.storage.from('site-assets').upload(path,file);
-    if(!upErr) row.logo_url = sb.storage.from('site-assets').getPublicUrl(path).data.publicUrl;
+    const {error:upErr, path:upPath} = await uploadImg('site-assets',path,file);
+    if(!upErr) row.logo_url = sb.storage.from('site-assets').getPublicUrl(upPath).data.publicUrl;
   }
   const coverFile = document.getElementById('coverFile').files[0];
   if(coverFile){
     const path = `${Date.now()}_${uid()}.${coverFile.name.split('.').pop()}`;
-    const {error:upErr} = await sb.storage.from('site-assets').upload(path,coverFile);
-    if(!upErr) row.cover_url = sb.storage.from('site-assets').getPublicUrl(path).data.publicUrl;
+    const {error:upErr, path:upPath} = await uploadImg('site-assets',path,coverFile);
+    if(!upErr) row.cover_url = sb.storage.from('site-assets').getPublicUrl(upPath).data.publicUrl;
   }
   const {error} = await sb.from('site_settings').update(row).eq('id',1);
   if(error){ toast(error.message, true); return; }
@@ -1936,6 +1974,15 @@ async function flushOfflineQueue(){
 }
 window.addEventListener('online', ()=>{ updateOfflineBanner(); flushOfflineQueue(); });
 window.addEventListener('offline', updateOfflineBanner);
+
+// صورة ما اشتغلت؟ نعيد المحاولة مرة وحدة، وإذا فشلت نعرض مكان فاضي بدل أيقونة مكسورة
+document.addEventListener('error', (e)=>{
+  const im = e.target;
+  if(!im || im.tagName!=='IMG') return;
+  if(!im.dataset.retry){ im.dataset.retry='1'; const u=im.src; im.src=''; setTimeout(()=>{ im.src=u; }, 1500); return; }
+  im.style.visibility='hidden';
+  const p = im.parentElement; if(p && !p.querySelector('.ph')){ const d=document.createElement('div'); d.className='ph'; p.appendChild(d); }
+}, true);
 if('serviceWorker' in navigator){
   window.addEventListener('load', ()=>{ navigator.serviceWorker.register('/sw.js').catch(e=>console.warn('[SW] register failed', e)); });
 }
