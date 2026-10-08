@@ -1,7 +1,7 @@
 /* Service Worker — أبو أحمد للألمنيوم
    يخلي الموقع (والإدارة) يفتح بدون نت، ويعرض آخر بيانات محفوظة.
    لما تسوي أي تحديث كبير بالموقع، غيّر رقم CACHE_VERSION تحت عشان يتحدث الكاش عند الزوار. */
-const CACHE_VERSION = 'v9';
+const CACHE_VERSION = 'v10';
 const SHELL_CACHE = 'shell-' + CACHE_VERSION;
 const DATA_CACHE = 'data-' + CACHE_VERSION;
 const IMG_CACHE = 'img-' + CACHE_VERSION;
@@ -53,16 +53,15 @@ self.addEventListener('fetch', (event) => {
   const req = event.request;
   const url = new URL(req.url);
 
-  // 1) فتح الصفحة نفسها (navigation) — نت أولاً، وإذا ما فيه نت نرجّع آخر نسخة محفوظة
+  // 1) فتح الصفحة نفسها (navigation) — نت أولاً (مهلة 3 ثواني) حتى توصل التحديثات فوراً، وإذا ما فيه نت نرجّع آخر نسخة محفوظة
   if (req.mode === 'navigate') {
     event.respondWith(
-      caches.match('/').then((cached) => {
-        const net = fetch(req).then((res) => {
+      fetchWithTimeout(req, 3000)
+        .then((res) => {
           if (res && res.ok) { const c = res.clone(); caches.open(SHELL_CACHE).then((ca) => ca.put('/', c)); }
           return res;
-        });
-        return cached ? (net.catch(() => {}), cached) : net.catch(() => caches.match(req));
-      })
+        })
+        .catch(() => caches.match('/').then((cached) => cached || caches.match(req)))
     );
     return;
   }
