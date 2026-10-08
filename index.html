@@ -217,10 +217,17 @@ footer.site{border-top:1px solid var(--line);padding:26px 0;margin-top:30px;colo
 /* ===== آيفون (التطبيق المثبّت): نزول المحتوى تحت شريط الحالة/الجزيرة حتى تشتغل الأزرار العليا ===== */
 header.site{padding-top:env(safe-area-inset-top,0px)}
 .offline-banner{padding-top:calc(7px + env(safe-area-inset-top,0px))}
-@media(max-width:760px){.adm-side{padding-top:calc(10px + env(safe-area-inset-top,0px));-webkit-overflow-scrolling:touch;touch-action:pan-x}}
+@media(max-width:760px){.adm-side{padding-top:calc(10px + env(safe-area-inset-top,0px));-webkit-overflow-scrolling:touch}}
 @media(min-width:761px){.adm-shell{padding-top:env(safe-area-inset-top,0px)}}
 body{padding-bottom:env(safe-area-inset-bottom,0px)}
 .nav a,.adm-side a{cursor:pointer;-webkit-tap-highlight-color:rgba(14,165,233,.25)}
+
+/* ===== آيفون: يمنع تكبير الصفحة تلقائياً عند الضغط على أي خانة كتابة (خط أقل من 16 يسبب التكبير ويخرب الشريط العلوي) ===== */
+html{-webkit-text-size-adjust:100%}
+@supports (-webkit-touch-callout:none){
+  input,select,textarea,.field input,.field select,.field textarea,.glass-table input{font-size:16px!important}
+}
+a,button,.nav a,.adm-side a{touch-action:manipulation}
 </style>
 </head>
 <body>
