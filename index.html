@@ -302,6 +302,7 @@ async function compressImage(file, maxDim=1600){
     const c = document.createElement('canvas');
     c.width = Math.round(bmp.width*k); c.height = Math.round(bmp.height*k);
     c.getContext('2d').drawImage(bmp,0,0,c.width,c.height);
+    if(bmp.close) bmp.close();
     let blob = await new Promise(r=>c.toBlob(r,'image/webp',0.82));
     if(!blob || blob.type!=='image/webp') blob = await new Promise(r=>c.toBlob(r,'image/jpeg',0.82));
     return (blob && blob.size < file.size) ? blob : file;
@@ -1330,14 +1331,38 @@ window.prodSave = async function(id){
   const {data, error} = id? await sb.from('products').update(row).eq('id',id).select().single() : await sb.from('products').insert(row).select().single();
   if(error){ toast(error.message, true); return; }
   prodId = data.id;
-  const files = document.getElementById('prodImgFiles').files;
-  for(const file of files){
-    const path = `${Date.now()}_${uid()}.${file.name.split('.').pop()}`;
-    const {error:upErr, path:upPath} = await uploadImg('product-images',path,file);
-    if(!upErr){
-      const url = sb.storage.from('product-images').getPublicUrl(upPath).data.publicUrl;
-      await sb.from('product_images').insert({product_id:prodId, url});
+  const files = Array.from(document.getElementById('prodImgFiles').files||[]);
+  if(files.length){
+    const saveBtn = document.querySelector('#modals button[onclick^="prodSave"]');
+    const setProg = (n)=>{ if(saveBtn){ saveBtn.disabled = true; saveBtn.textContent = `جاري رفع الصور ${n} / ${files.length} ...`; } };
+    setProg(0);
+    const existing = (window.__PRODS_ADM||[]).find(x=>x.id===prodId);
+    let base = ((existing&&existing.product_images)||[]).reduce((m,im)=>Math.max(m, Number(im.sort_order)||0), -1) + 1;
+    const results = new Array(files.length).fill(null);
+    let done = 0, next = 0;
+    async function worker(){
+      while(next < files.length){
+        const idx = next++;
+        const file = files[idx];
+        try{
+          const path = `${Date.now()}_${uid()}.${(file.name.split('.').pop()||'jpg')}`;
+          const {error:upErr, path:upPath} = await uploadImg('product-images',path,file);
+          if(!upErr) results[idx] = sb.storage.from('product-images').getPublicUrl(upPath).data.publicUrl;
+        }catch(e){ /* نكمل بباقي الصور */ }
+        done++; setProg(done);
+      }
     }
+    await Promise.all([worker(),worker(),worker()]);
+    const rows = [];
+    results.forEach((url,idx)=>{ if(url) rows.push({product_id:prodId, url, sort_order: base + rows.length}); });
+    let insErr = null;
+    for(let i=0;i<rows.length;i+=50){
+      const {error:e} = await sb.from('product_images').insert(rows.slice(i,i+50));
+      if(e){ insErr = e; break; }
+    }
+    const failed = files.length - rows.length;
+    if(insErr){ toast('تعذّر حفظ الصور: '+insErr.message, true); if(saveBtn){ saveBtn.disabled=false; saveBtn.textContent='حفظ'; } return; }
+    if(failed>0){ toast(`تم رفع ${rows.length} من ${files.length} صورة — فشل ${failed}، أعد إضافتها`, true); closeModal(); render(); return; }
   }
   toast('تم الحفظ'); closeModal(); render();
 };
