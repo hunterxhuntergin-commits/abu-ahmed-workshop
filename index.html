@@ -116,6 +116,7 @@ header.site{position:sticky;top:0;z-index:40;background:var(--header-bg);border-
 @media(max-width:760px){.pd-wrap{grid-template-columns:1fr}}
 .pd-gallery{border-radius:18px;overflow:hidden;background:var(--panel);border:1px solid var(--line);aspect-ratio:1/1;position:relative}
 .pd-gallery:has(img){aspect-ratio:auto}
+.pd-gallery{touch-action:pan-y}
 .pd-gallery img{width:100%;height:auto;max-height:60vh;object-fit:contain;display:block;margin:0 auto}
 .pd-wrap>div{min-width:0}
 .pd-thumbs{display:flex;gap:8px;margin-top:8px;overflow-x:auto;padding-bottom:6px;-webkit-overflow-scrolling:touch}
@@ -794,9 +795,32 @@ window.pdSelectImg = function(i){
   const main = document.getElementById('pdMainImg');
   if(main){ main.innerHTML = ''; const im = document.createElement('img'); im.src = urls[i]; main.appendChild(im); }
   document.querySelectorAll('.pd-thumbs img').forEach((el,n)=> el.classList.toggle('sel', n===i));
+  const th = document.querySelector('.pd-thumbs') && document.querySelector('.pd-thumbs').children[i];
+  if(th && th.scrollIntoView) th.scrollIntoView({inline:'center', block:'nearest', behavior:'smooth'});
+  [i-1,i+1].forEach(n=>{ if(urls[n]){ const pre = new Image(); pre.src = urls[n]; } });
   const btn = document.getElementById('pdInquiryBtn');
   if(btn){ const link = waLinkWorkshop(pdInquiryText(window.__PD, urls[i], i)); if(link) btn.href = link; }
 };
+// تمرير الصورة الرئيسية بالإصبع: السحب لليمين = الصورة التالية، لليسار = السابقة (نفس اتجاه شريط الصور المصغّرة)
+if(!window.__pdSwipeInit){
+  window.__pdSwipeInit = true;
+  let sx=0, sy=0, tracking=false;
+  document.addEventListener('touchstart', (e)=>{
+    if(!e.target.closest || !e.target.closest('#pdMainImg') || e.touches.length!==1){ tracking=false; return; }
+    tracking = true; sx = e.touches[0].clientX; sy = e.touches[0].clientY;
+  }, {passive:true});
+  document.addEventListener('touchend', (e)=>{
+    if(!tracking) return; tracking = false;
+    const t = e.changedTouches[0]; if(!t) return;
+    const dx = t.clientX - sx, dy = t.clientY - sy;
+    if(Math.abs(dx) < 45 || Math.abs(dx) < Math.abs(dy)*1.3) return;
+    const urls = window.__PD_imgs||[]; if(urls.length < 2) return;
+    const cur = window.__PD_sel||0;
+    const nxt = dx > 0 ? cur+1 : cur-1;
+    if(nxt < 0 || nxt >= urls.length) return;
+    window.pdSelectImg(nxt);
+  }, {passive:true});
+}
 window.pdSendImage = function(){
   const p = window.__PD, urls = window.__PD_imgs||[], i = window.__PD_sel||0;
   if(!p || !urls[i]) return;
