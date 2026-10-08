@@ -771,6 +771,7 @@ async function pageProduct(slug){
         </div>`:''}
         ${(()=>{ const link = waLinkWorkshop(pdInquiryText(p, imgs.length>1? imgs[0].url : null, 0));
           return link? `<a id="pdInquiryBtn" class="btn block" style="margin-top:8px;border-color:rgba(37,211,102,.4);color:#1ba851" target="_blank" href="${link}">💬 استفسار عن هذا المنتج عبر واتساب</a>` : ''; })()}
+        ${imgs.length>1? `<button class="btn block" style="margin-top:8px;border-color:rgba(37,211,102,.4);color:#1ba851" onclick="pdSendImage()">📷 أرسل الصورة المختارة عبر واتساب</button>`:''}
         <button class="btn block" style="margin-top:8px" onclick="shareProduct()">🔗 مشاركة المنتج</button>
       </div>
     </div>
@@ -778,7 +779,7 @@ async function pageProduct(slug){
 }
 function pdInquiryText(p, imgUrl, idx){
   let t = `السلام عليكم،\nأرغب بالاستفسار عن المنتج:\n${p.name}\nالكود: ${p.code}`;
-  if(imgUrl) t += `\nالصورة المختارة (رقم ${idx+1}):\n${imgUrl}`;
+  if(imgUrl) t += `\nالصورة المختارة: رقم ${idx+1}\n\n${imgUrl}`;
   return t;
 }
 window.pdSelectImg = function(i){
@@ -789,6 +790,15 @@ window.pdSelectImg = function(i){
   document.querySelectorAll('.pd-thumbs img').forEach((el,n)=> el.classList.toggle('sel', n===i));
   const btn = document.getElementById('pdInquiryBtn');
   if(btn){ const link = waLinkWorkshop(pdInquiryText(window.__PD, urls[i], i)); if(link) btn.href = link; }
+};
+window.pdSendImage = function(){
+  const p = window.__PD, urls = window.__PD_imgs||[], i = window.__PD_sel||0;
+  if(!p || !urls[i]) return;
+  // الرابط لوحده بسطر مستقل وهو الرابط الوحيد بالرسالة، حتى يعرض واتساب معاينة للصورة
+  const msg = `السلام عليكم،\nأرغب بهذه الصورة من المنتج:\n${p.name}\nالكود: ${p.code}\nالصورة رقم ${i+1}\n\n${urls[i]}`;
+  const link = waLinkWorkshop(msg);
+  if(!link){ toast('رقم واتساب الورشة غير مضبوط', true); return; }
+  window.open(link, '_blank');
 };
 window.shareProduct = async function(){
   const p = window.__PD; if(!p) return;
