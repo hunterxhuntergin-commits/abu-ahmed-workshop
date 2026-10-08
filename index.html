@@ -192,6 +192,12 @@ html[data-theme="dark"] .status-pill.completed,html[data-theme="dark"] .status-p
 .img-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(70px,1fr));gap:8px;margin-top:10px}
 .img-grid .im{position:relative;border-radius:9px;overflow:hidden;aspect-ratio:1/1;background:var(--panel2)}
 .img-grid .im img{width:100%;height:100%;object-fit:cover}
+.img-grid[data-prod] .im img{-webkit-user-drag:none;pointer-events:none}
+.img-grid[data-prod] .im{user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+.img-grid .im.dragging{opacity:.25}
+.img-grid[data-prod] .im:first-child::after{content:'صورة العرض';position:absolute;bottom:0;right:0;left:0;background:var(--accent);color:#fff;font-size:10px;font-weight:800;text-align:center;padding:2px 0;pointer-events:none}
+.drag-ghost{position:fixed;z-index:9999;pointer-events:none;border-radius:10px;overflow:hidden;box-shadow:0 12px 28px rgba(0,0,0,.35);transform:scale(1.08);opacity:.95}
+.drag-ghost img{width:100%;height:100%;object-fit:cover;display:block}
 .img-grid .im button{position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:6px;border:0;background:rgba(0,0,0,.6);color:#fff;font-size:12px;cursor:pointer}
 .toast{position:fixed;bottom:18px;right:18px;z-index:80;background:var(--panel);border:1px solid var(--line);color:var(--text);padding:12px 16px;border-radius:12px;font-size:13px;font-weight:700;box-shadow:0 10px 30px rgba(15,23,42,.18)}
 .offline-banner{position:sticky;top:0;z-index:41;background:#B45309;color:#fff;text-align:center;font-size:12.5px;font-weight:800;padding:7px 10px;display:none}
@@ -371,7 +377,7 @@ function addToCart(product, opts){
   const calc = calcLine(product, opts);
   const item = {
     id: uid(), productId: product.id, name: product.name, code: product.code,
-    image: opts.chosenImage || (product.product_images&&product.product_images[0]&&product.product_images[0].url)||null,
+    image: opts.chosenImage || (sortedImgs(product)[0]&&sortedImgs(product)[0].url)||null,
     chosenImage: opts.chosenImage||null, chosenIdx: opts.chosenIdx||0,
     pricingMethod: product.pricing_method, unitPrice: Number(product.unit_price||0),
     roundingRule: product.rounding_rule, noRounding: !!product.no_rounding, quantity: Number(opts.quantity||1),
@@ -562,7 +568,8 @@ window.exportCustomersCSV = function(){
   downloadCSV('الزبائن-'+new Date().toISOString().slice(0,10)+'.csv', rows);
 };
 function catImg(c){ return c.image_url? `<img src="${esc(c.image_url)}" loading="lazy" decoding="async">` : `<div class="ph"></div>`; }
-function prodImg(p){ const url = p.product_images&&p.product_images[0]&&p.product_images[0].url; return url? `<img src="${esc(url)}" loading="lazy" decoding="async">` : `<div class="ph"></div>`; }
+function sortedImgs(p){ return ((p&&p.product_images)||[]).map((im,i)=>({im,i})).sort((a,b)=>((Number(a.im.sort_order)||0)-(Number(b.im.sort_order)||0))||(a.i-b.i)).map(x=>x.im); }
+function prodImg(p){ const first = sortedImgs(p)[0]; const url = first&&first.url; return url? `<img src="${esc(url)}" loading="lazy" decoding="async">` : `<div class="ph"></div>`; }
 function priceLabel(p){
   if(p.pricing_method==='piece') return money(p.unit_price)+` <small>/قطعة</small>`;
   if(p.pricing_method==='sqm') return money(p.unit_price)+` <small>/م²</small>`;
@@ -739,7 +746,7 @@ async function pageProduct(slug){
   if(!p) return `${header()}<div class="wrap section"><div class="empty-state"><b>المنتج غير موجود</b></div></div>${footer()}`;
   pushRecentProduct(p.id);
   window.__pdAdded = false;
-  const imgs = (p.product_images||[]).sort((a,b)=>a.sort_order-b.sort_order);
+  const imgs = sortedImgs(p);
   const needsDims = p.pricing_method==='sqm' || p.pricing_method==='linear_meter';
   const purchasable = p.is_purchasable && p.pricing_method!=='quote_only';
   window.__PD = p;
@@ -777,8 +784,7 @@ async function pageProduct(slug){
           <button class="btn primary block" onclick="pdAddToCart()">أضف للسلة</button>
         </div>`:''}
         ${(()=>{ const link = waLinkWorkshop(pdInquiryText(p, imgs.length>1? imgs[0].url : null, 0));
-          return link? `<a id="pdInquiryBtn" class="btn block" style="margin-top:8px;border-color:rgba(37,211,102,.4);color:#1ba851" target="_blank" href="${link}">💬 استفسار عن هذا المنتج عبر واتساب</a>` : ''; })()}
-        ${imgs.length>1? `<button class="btn block" style="margin-top:8px;border-color:rgba(37,211,102,.4);color:#1ba851" onclick="pdSendImage()">📷 أرسل الصورة المختارة عبر واتساب</button>`:''}
+          return link? `<a id="pdInquiryBtn" class="btn block" style="margin-top:8px;border-color:rgba(37,211,102,.4);color:#1ba851" target="_blank" href="${link}">💬 ${imgs.length>1?'استفسار عبر واتساب (مع الصورة المختارة)':'استفسار عن هذا المنتج عبر واتساب'}</a>` : ''; })()}
         <button class="btn block" style="margin-top:8px" onclick="shareProduct()">🔗 مشاركة المنتج</button>
       </div>
     </div>
@@ -821,15 +827,6 @@ if(!window.__pdSwipeInit){
     window.pdSelectImg(nxt);
   }, {passive:true});
 }
-window.pdSendImage = function(){
-  const p = window.__PD, urls = window.__PD_imgs||[], i = window.__PD_sel||0;
-  if(!p || !urls[i]) return;
-  // الرابط لوحده بسطر مستقل وهو الرابط الوحيد بالرسالة، حتى يعرض واتساب معاينة للصورة
-  const msg = `السلام عليكم،\nأرغب بهذه الصورة من المنتج:\n${p.name}\nالكود: ${p.code}\nالصورة رقم ${i+1}\n\n${urls[i]}`;
-  const link = waLinkWorkshop(msg);
-  if(!link){ toast('رقم واتساب الورشة غير مضبوط', true); return; }
-  window.open(link, '_blank');
-};
 window.shareProduct = async function(){
   const p = window.__PD; if(!p) return;
   const url = location.origin + location.pathname + '#/product/' + p.slug;
@@ -889,7 +886,7 @@ window.openCart = function(){
   const items = state.cart.map(i=>`
     <div class="cart-item">
       <img src="${i.image?esc(i.image):''}">
-      <div class="info"><b>${esc(i.name)}</b><small>${esc(i.code)} ${i.widthCm?`· ${i.widthCm}×${i.heightCm||''}سم`:''}</small>
+      <div class="info"><b>${esc(i.name)}</b><small>${esc(i.code)} ${i.widthCm?`· ${i.widthCm}×${i.heightCm||''}سم`:''}${i.chosenImage?` · الصورة رقم ${(i.chosenIdx||0)+1}`:''}</small>
       <div class="qty-x">
         <button onclick="cartChangeQty('${i.id}',-1)">−</button>
         <span class="mono">${i.quantity}</span>
@@ -1336,10 +1333,85 @@ window.prodForm = function(id){
     ${fld({key:'is_featured',label:'منتج مميز',type:'checkbox'},!!p.is_featured)}
     ${fld({key:'is_active',label:'مفعّل',type:'checkbox'},p.is_active!==false)}
     <div class="field"><label>إضافة صور</label><input type="file" id="prodImgFiles" accept="image/*" multiple>
-      <div class="img-grid">${(p.product_images||[]).map(im=>`<div class="im"><img src="${esc(im.url)}"><button onclick="prodImgDelete('${im.id}','${id}')">×</button></div>`).join('')}</div>
+      ${(p.product_images||[]).length>1?'<div class="field hint" style="margin-top:8px">اضغط مطولاً على أي صورة ثم اسحبها لتغيير ترتيبها — الصورة الأولى هي صورة العرض</div>':''}
+      <div class="img-grid" data-prod="${id||''}">${sortedImgs(p).map(im=>`<div class="im" data-id="${im.id}"><img src="${esc(im.url)}"><button onclick="prodImgDelete('${im.id}','${id}')">×</button></div>`).join('')}</div>
     </div>
     <button class="btn primary block" onclick="prodSave('${id||''}')">حفظ</button>`);
 };
+// ترتيب صور المنتج بالضغط المطوّل والسحب: الصورة الأولى = صورة العرض
+if(!window.__imgDragInit){
+  window.__imgDragInit = true;
+  let timer=null, st=null;
+  const scrollParent = (el)=>{ while(el && el!==document.body){ const o=getComputedStyle(el).overflowY; if((o==='auto'||o==='scroll') && el.scrollHeight>el.clientHeight) return el; el=el.parentElement; } return document.scrollingElement; };
+  function pt(e){ const t=(e.touches&&e.touches[0])||(e.changedTouches&&e.changedTouches[0])||e; return {x:t.clientX,y:t.clientY}; }
+  function start(e){
+    const tile = e.target.closest && e.target.closest('.img-grid .im');
+    if(!tile || e.target.closest('button') || !tile.closest('#modals')) return;
+    const grid = tile.parentElement; if(!grid.dataset.prod) return;
+    const p = pt(e);
+    st = {tile, grid, x0:p.x, y0:p.y, active:false, ghost:null, raf:null, y:p.y};
+    clearTimeout(timer);
+    timer = setTimeout(()=>{ if(!st) return; activate(); }, 380);
+  }
+  function activate(){
+    st.active = true;
+    const r = st.tile.getBoundingClientRect();
+    const g = st.tile.cloneNode(true); g.classList.add('drag-ghost'); g.querySelector('button')?.remove();
+    g.style.width=r.width+'px'; g.style.height=r.height+'px'; g.style.left=r.left+'px'; g.style.top=r.top+'px';
+    document.body.appendChild(g); st.ghost=g; st.off={x:st.x0-r.left,y:st.y0-r.top};
+    st.tile.classList.add('dragging');
+    if(navigator.vibrate) try{ navigator.vibrate(25); }catch(_){}
+    st.sp = scrollParent(st.grid);
+    const loop = ()=>{ if(!st||!st.active) return; const h=innerHeight; let d=0; if(st.y<110) d=-14; else if(st.y>h-110) d=14; if(d&&st.sp) st.sp.scrollTop += d; st.raf=requestAnimationFrame(loop); };
+    st.raf = requestAnimationFrame(loop);
+  }
+  function move(e){
+    if(!st) return;
+    const p = pt(e); st.y = p.y;
+    if(!st.active){
+      if(Math.hypot(p.x-st.x0,p.y-st.y0) > 10){ clearTimeout(timer); st=null; } // المستخدم يمرّر الصفحة، مو سحب
+      return;
+    }
+    if(e.cancelable) e.preventDefault();
+    st.ghost.style.left=(p.x-st.off.x)+'px'; st.ghost.style.top=(p.y-st.off.y)+'px';
+    const under = document.elementFromPoint(p.x,p.y);
+    const t = under && under.closest && under.closest('.img-grid .im');
+    if(t && t!==st.tile && t.parentElement===st.grid){
+      const kids = Array.from(st.grid.children);
+      if(kids.indexOf(st.tile) < kids.indexOf(t)) t.after(st.tile); else t.before(st.tile);
+    }
+  }
+  async function end(){
+    clearTimeout(timer);
+    if(!st) return;
+    const s0 = st; st = null;
+    if(!s0.active) return;
+    s0.active=false; cancelAnimationFrame(s0.raf);
+    s0.ghost.remove(); s0.tile.classList.remove('dragging');
+    const prodId = s0.grid.dataset.prod;
+    const ids = Array.from(s0.grid.children).map(el=>el.dataset.id);
+    const prod = (window.__PRODS_ADM||[]).find(x=>x.id===prodId);
+    const cur = {}; ((prod&&prod.product_images)||[]).forEach(im=>cur[im.id]=Number(im.sort_order)||0);
+    const changes = ids.map((id,i)=>({id,i})).filter(x=>cur[x.id]!==x.i);
+    if(!changes.length) return;
+    let failed = 0;
+    for(let k=0;k<changes.length;k+=8){
+      const res = await Promise.all(changes.slice(k,k+8).map(c=>sb.from('product_images').update({sort_order:c.i}).eq('id',c.id)));
+      res.forEach(r=>{ if(r.error) failed++; });
+    }
+    if(failed){ toast('تعذّر حفظ ترتيب بعض الصور', true); return; }
+    if(prod && prod.product_images) prod.product_images.forEach(im=>{ const n=ids.indexOf(im.id); if(n>=0) im.sort_order=n; });
+    toast('تم حفظ ترتيب الصور');
+  }
+  document.addEventListener('touchstart', start, {passive:true});
+  document.addEventListener('touchmove', move, {passive:false});
+  document.addEventListener('touchend', end);
+  document.addEventListener('touchcancel', end);
+  document.addEventListener('mousedown', start);
+  document.addEventListener('mousemove', move);
+  document.addEventListener('mouseup', end);
+  document.addEventListener('contextmenu', (e)=>{ if(e.target.closest && e.target.closest('.img-grid .im')) e.preventDefault(); });
+}
 window.prodImgDelete = async function(imgId, prodId){
   await sb.from('product_images').delete().eq('id',imgId);
   toast('تم حذف الصورة'); const p = await sb.from('products').select('*, product_images(*)').eq('id',prodId).single();
