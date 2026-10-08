@@ -1461,7 +1461,7 @@ window.custDetail = async function(id){
   const hasPhone = !!(cust.phone && String(cust.phone).replace(/\D/g,'').length>0);
   const statementLink = waLinkToPhone(cust.phone, buildStatementMessage(cust, items||[], pays||[], summary));
   const lastPaymentLink = (pays&&pays[0])? waLinkToPhone(cust.phone, buildPaymentMessage(cust, pays[0], summary)) : null;
-  const itemsHtml = (items||[]).map(it=>`<div class="card-item"><div class="meta"><b>${esc(it.product_name_snapshot||workTypeAr(it.work_type))}</b><small>${it.quantity} ${esc(unitAr(it.unit))} × ${money(it.unit_price)} = ${money(it.total_price)}</small></div><div style="display:flex;gap:6px"><button class="btn sm" onclick="custEditWorkForm('${it.id}')">تعديل</button><button class="btn sm danger" onclick="custDeleteWork('${it.id}')">حذف</button></div></div>`).join('') || '<div class="empty-state" style="padding:14px">لا توجد أعمال</div>';
+  const itemsHtml = (items||[]).map(it=>`<div class="card-item"><div class="meta"><b>${esc(it.product_name_snapshot||workTypeAr(it.work_type))}</b><small>${esc(String(it.created_at||'').slice(0,10))} · ${money(it.total_price)}</small></div><div style="display:flex;gap:6px"><button class="btn sm" onclick="custEditWorkForm('${it.id}')">تعديل</button><button class="btn sm danger" onclick="custDeleteWork('${it.id}')">حذف</button></div></div>`).join('') || '<div class="empty-state" style="padding:14px">لا توجد أعمال</div>';
   const paysHtml = (pays||[]).map(p=>`<div class="card-item"><div class="meta"><b>${money(p.amount)}</b><small>${esc(p.payment_date)} ${p.note?'· '+esc(p.note):''}</small></div><div style="display:flex;gap:6px"><button class="btn sm" onclick="custEditPayForm('${p.id}')">تعديل</button><button class="btn sm danger" onclick="custDeletePay('${p.id}')">حذف</button></div></div>`).join('') || '<div class="empty-state" style="padding:14px">لا توجد دفعات</div>';
   const adjsHtml = (adjs||[]).map(a=>`<div class="card-item"><div class="meta"><b>${a.amount>=0?'+':''}${money(a.amount)}</b><small>${esc(a.reason||'')}</small></div></div>`).join('') || '';
   openModal(`<div class="sheet-head"><h3>حساب ${esc(cust.name)}</h3><div class="sheet-close" onclick="closeModal()">×</div></div>
@@ -1502,26 +1502,17 @@ window.custDeleteRun = async function(id){
   toast('تم حذف الزبون'); closeModal(); render();
 };
 window.custAddWorkForm = function(){
-  const prods = window.__CUST_CTX.prods;
   openModal(`<div class="sheet-head"><h3>إضافة عمل</h3><div class="sheet-close" onclick="custDetail('${window.__CUST_CTX.id}')">×</div></div>
-    ${fld({key:'work_type',label:'النوع',type:'select',options:[{value:'door',label:'باب'},{value:'window',label:'شباك'},{value:'countertop',label:'كاونتر'},{value:'stair_railing',label:'محجر درج'},{value:'other',label:'أخرى'}]})}
-    ${fld({key:'product_id',label:'منتج مرتبط (اختياري)',type:'select',options:[{value:'',label:'بدون'},...prods.map(p=>({value:p.id,label:p.name}))]})}
-    ${fld({key:'product_name_snapshot',label:'اسم العمل/الوصف'})}
-    <div class="row2">${fld({key:'quantity',label:'الكمية',type:'number'},1)}${fld({key:'unit',label:'الوحدة',type:'select',options:[{value:'piece',label:'قطعة'},{value:'sqm',label:'م²'},{value:'meter',label:'م.ط'}]})}</div>
-    <div class="row2">${fld({key:'width_cm',label:'العرض (سم)',type:'number'})}${fld({key:'height_cm',label:'الارتفاع (سم)',type:'number'})}</div>
-    <div class="row2">${fld({key:'unit_price',label:'سعر الوحدة',type:'number'})}${fld({key:'total_price',label:'الإجمالي',type:'number'})}</div>
-    ${fld({key:'note',label:'ملاحظة',type:'textarea'})}
+    ${fld({key:'work_type',label:'نوع العمل',type:'select',options:[{value:'door',label:'باب'},{value:'window',label:'شباك'},{value:'countertop',label:'كاونتر'},{value:'stair_railing',label:'محجر درج'},{value:'other',label:'أخرى'}]})}
+    ${fld({key:'total_price',label:'المبلغ الكلي',type:'number'})}
     <button class="btn primary block" onclick="custAddWorkSave()">حفظ</button>`);
 };
 window.custAddWorkSave = async function(){
+  const total = readFld({key:'total_price',type:'number'})||0;
   const row = {
     customer_id: window.__CUST_CTX.id, work_type: readFld({key:'work_type'}),
-    product_id: readFld({key:'product_id'})||null, product_name_snapshot: readFld({key:'product_name_snapshot'}),
-    quantity: readFld({key:'quantity',type:'number'})||1, unit: readFld({key:'unit'}),
-    width_cm: readFld({key:'width_cm',type:'number'}), height_cm: readFld({key:'height_cm',type:'number'}),
-    area_or_length: readFld({key:'quantity',type:'number'})||1,
-    unit_price: readFld({key:'unit_price',type:'number'})||0, total_price: readFld({key:'total_price',type:'number'})||0,
-    note: readFld({key:'note'})
+    quantity: 1, unit: 'piece', area_or_length: 1,
+    unit_price: total, total_price: total
   };
   const {error} = await sb.from('customer_work_items').insert(row);
   if(error){ toast(error.message, true); return; }
@@ -1530,26 +1521,17 @@ window.custAddWorkSave = async function(){
 window.custEditWorkForm = function(itemId){
   const it = (window.__CUST_CTX.items||[]).find(x=>x.id===itemId);
   if(!it){ toast('تعذّر العثور على العمل', true); return; }
-  const prods = window.__CUST_CTX.prods;
   openModal(`<div class="sheet-head"><h3>تعديل العمل</h3><div class="sheet-close" onclick="custDetail('${window.__CUST_CTX.id}')">×</div></div>
-    ${fld({key:'work_type',label:'النوع',type:'select',options:[{value:'door',label:'باب'},{value:'window',label:'شباك'},{value:'countertop',label:'كاونتر'},{value:'stair_railing',label:'محجر درج'},{value:'other',label:'أخرى'}]},it.work_type)}
-    ${fld({key:'product_id',label:'منتج مرتبط (اختياري)',type:'select',options:[{value:'',label:'بدون'},...prods.map(p=>({value:p.id,label:p.name}))]},it.product_id||'')}
-    ${fld({key:'product_name_snapshot',label:'اسم العمل/الوصف'},it.product_name_snapshot||'')}
-    <div class="row2">${fld({key:'quantity',label:'الكمية',type:'number'},it.quantity)}${fld({key:'unit',label:'الوحدة',type:'select',options:[{value:'piece',label:'قطعة'},{value:'sqm',label:'م²'},{value:'meter',label:'م.ط'}]},it.unit)}</div>
-    <div class="row2">${fld({key:'width_cm',label:'العرض (سم)',type:'number'},it.width_cm)}${fld({key:'height_cm',label:'الارتفاع (سم)',type:'number'},it.height_cm)}</div>
-    <div class="row2">${fld({key:'unit_price',label:'سعر الوحدة',type:'number'},it.unit_price)}${fld({key:'total_price',label:'الإجمالي',type:'number'},it.total_price)}</div>
-    ${fld({key:'note',label:'ملاحظة',type:'textarea'},it.note||'')}
+    ${fld({key:'work_type',label:'نوع العمل',type:'select',options:[{value:'door',label:'باب'},{value:'window',label:'شباك'},{value:'countertop',label:'كاونتر'},{value:'stair_railing',label:'محجر درج'},{value:'other',label:'أخرى'}]},it.work_type)}
+    ${fld({key:'total_price',label:'المبلغ الكلي',type:'number'},it.total_price)}
     <button class="btn primary block" onclick="custUpdateWork('${itemId}')">حفظ التعديلات</button>`);
 };
 window.custUpdateWork = async function(itemId){
+  const total = readFld({key:'total_price',type:'number'})||0;
   const row = {
     work_type: readFld({key:'work_type'}),
-    product_id: readFld({key:'product_id'})||null, product_name_snapshot: readFld({key:'product_name_snapshot'}),
-    quantity: readFld({key:'quantity',type:'number'})||1, unit: readFld({key:'unit'}),
-    width_cm: readFld({key:'width_cm',type:'number'}), height_cm: readFld({key:'height_cm',type:'number'}),
-    area_or_length: readFld({key:'quantity',type:'number'})||1,
-    unit_price: readFld({key:'unit_price',type:'number'})||0, total_price: readFld({key:'total_price',type:'number'})||0,
-    note: readFld({key:'note'})
+    quantity: 1, unit: 'piece', area_or_length: 1,
+    unit_price: total, total_price: total
   };
   const {error} = await sb.from('customer_work_items').update(row).eq('id', itemId);
   if(error){ toast(error.message, true); return; }
