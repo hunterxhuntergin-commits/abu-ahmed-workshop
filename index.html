@@ -116,9 +116,10 @@ header.site{position:sticky;top:0;z-index:40;background:var(--header-bg);border-
 @media(max-width:760px){.pd-wrap{grid-template-columns:1fr}}
 .pd-gallery{border-radius:18px;overflow:hidden;background:var(--panel);border:1px solid var(--line);aspect-ratio:1/1;position:relative}
 .pd-gallery:has(img){aspect-ratio:auto}
-.pd-gallery img{width:100%;height:auto;display:block}
-.pd-thumbs{display:flex;gap:8px;margin-top:8px}
-.pd-thumbs img{width:56px;height:56px;object-fit:cover;border-radius:8px;border:2px solid var(--line);cursor:pointer;opacity:.7}
+.pd-gallery img{width:100%;height:auto;max-height:60vh;object-fit:contain;display:block;margin:0 auto}
+.pd-wrap>div{min-width:0}
+.pd-thumbs{display:flex;gap:8px;margin-top:8px;overflow-x:auto;padding-bottom:6px;-webkit-overflow-scrolling:touch}
+.pd-thumbs img{flex:0 0 auto;width:64px;height:64px;object-fit:cover;border-radius:8px;border:2px solid var(--line);cursor:pointer;opacity:.7}
 .pd-thumbs img.sel{border-color:var(--accent);opacity:1}
 .pd-pick{font-size:12px;color:var(--muted);margin-top:8px;font-weight:700}
 .field{margin-bottom:14px}
@@ -293,23 +294,28 @@ function loadH2C(){
 }
 
 // -------------------- أداء: ضغط الصور قبل الرفع (الأصلية من الجوال 3-8 ميغا) --------------------
-async function compressImage(file, maxDim=1600){
+async function compressImage(file, maxDim=1600, forceJpeg=false){
   try{
     if(!file || !file.type.startsWith('image/')) return file;
     const bmp = await createImageBitmap(file);
     const k = Math.min(1, maxDim/Math.max(bmp.width,bmp.height));
-    if(k===1 && file.size < 300*1024) return file;
+    if(!forceJpeg && k===1 && file.size < 300*1024) return file;
+    if(forceJpeg && k===1 && file.type==='image/jpeg' && file.size < 300*1024) return file;
     const c = document.createElement('canvas');
     c.width = Math.round(bmp.width*k); c.height = Math.round(bmp.height*k);
-    c.getContext('2d').drawImage(bmp,0,0,c.width,c.height);
+    const cx = c.getContext('2d');
+    if(forceJpeg){ cx.fillStyle='#fff'; cx.fillRect(0,0,c.width,c.height); }
+    cx.drawImage(bmp,0,0,c.width,c.height);
     if(bmp.close) bmp.close();
-    let blob = await new Promise(r=>c.toBlob(r,'image/webp',0.82));
-    if(!blob || blob.type!=='image/webp') blob = await new Promise(r=>c.toBlob(r,'image/jpeg',0.82));
+    let blob = null;
+    if(!forceJpeg) blob = await new Promise(r=>c.toBlob(r,'image/webp',0.82));
+    if(!blob || blob.type!=='image/webp') blob = await new Promise(r=>c.toBlob(r,'image/jpeg',0.85));
+    if(forceJpeg) return blob || file;
     return (blob && blob.size < file.size) ? blob : file;
   }catch(e){ return file; }
 }
 async function uploadImg(bucket, path, file){
-  const blob = await compressImage(file);
+  const blob = await compressImage(file, 1600, bucket==='product-images');
   const ext = (blob.type.split('/')[1]||'jpg').replace('jpeg','jpg');
   path = path.replace(/\.[^./]+$/, '.'+ext);
   const r = await sb.storage.from(bucket).upload(path, blob, {contentType: blob.type||'image/jpeg', cacheControl:'31536000'});
@@ -1325,6 +1331,7 @@ function autoSlugCode(name){
   return {slug, code};
 }
 window.prodSave = async function(id){
+  if(window.__prodSaving) return;
   const name = readFld({key:'name'});
   const row = {
     name, category_id: readFld({key:'category_id'})||null, description: readFld({key:'description'}),
@@ -1336,11 +1343,15 @@ window.prodSave = async function(id){
     is_active: readFld({key:'is_active',type:'checkbox'})
   };
   if(!row.name){ toast('الاسم مطلوب', true); return; }
+  window.__prodSaving = true;
+  try{
   if(!id){ const gen = autoSlugCode(name); row.code = gen.code; row.slug = gen.slug; }
   let prodId = id;
   const {data, error} = id? await sb.from('products').update(row).eq('id',id).select().single() : await sb.from('products').insert(row).select().single();
   if(error){ toast(error.message, true); return; }
   prodId = data.id;
+  // بعد إنشاء المنتج، أي محاولة حفظ ثانية تعدّل نفس المنتج ولا تنشئ منتجاً جديداً
+  { const b0 = document.querySelector('#modals button[onclick^="prodSave"]'); if(b0) b0.setAttribute('onclick', "prodSave('"+prodId+"')"); }
   const files = Array.from(document.getElementById('prodImgFiles').files||[]);
   if(files.length){
     const saveBtn = document.querySelector('#modals button[onclick^="prodSave"]');
@@ -1375,6 +1386,7 @@ window.prodSave = async function(id){
     if(failed>0){ toast(`تم رفع ${rows.length} من ${files.length} صورة — فشل ${failed}، أعد إضافتها`, true); closeModal(); render(); return; }
   }
   toast('تم الحفظ'); closeModal(); render();
+  } finally { window.__prodSaving = false; }
 };
 window.prodDelete = async function(id){
   if(!confirm('تأكيد الحذف؟')) return;
