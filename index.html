@@ -328,6 +328,37 @@ async function uploadImg(bucket, path, file){
   const r = await sb.storage.from(bucket).upload(path, blob, {contentType: blob.type||'image/jpeg', cacheControl:'31536000'});
   return {error:r.error, path};
 }
+// ---- صور المنتجات: نسخة كاملة (-f) + نسخة مصغّرة (-t) لتسريع الموقع ----
+async function makeThumbBlob(src, dim=420){
+  try{
+    const bmp = await createImageBitmap(src);
+    const k = Math.min(1, dim/Math.max(bmp.width,bmp.height));
+    const c = document.createElement('canvas');
+    c.width = Math.max(1,Math.round(bmp.width*k)); c.height = Math.max(1,Math.round(bmp.height*k));
+    const cx = c.getContext('2d'); cx.fillStyle='#fff'; cx.fillRect(0,0,c.width,c.height); cx.drawImage(bmp,0,0,c.width,c.height);
+    if(bmp.close) bmp.close();
+    return await new Promise(r=>c.toBlob(r,'image/jpeg',0.78));
+  }catch(e){ return null; }
+}
+async function uploadProductImage(file){
+  const base = `${Date.now()}_${uid()}`;
+  const main = await compressImage(file, 1600, true);
+  const thumb = await makeThumbBlob(main, 420);
+  const mainPath = `${base}-f.jpg`;
+  const r1 = await sb.storage.from('product-images').upload(mainPath, main, {contentType: main.type||'image/jpeg', cacheControl:'31536000'});
+  if(r1.error) return {error:r1.error};
+  if(thumb) await sb.storage.from('product-images').upload(`${base}-t.jpg`, thumb, {contentType:'image/jpeg', cacheControl:'31536000'});
+  return {error:null, path:mainPath};
+}
+const FULL_RE = /-f\.[A-Za-z0-9]+(\?.*)?$/;
+function thumbOf(url){ url = String(url||''); return FULL_RE.test(url)? url.replace(FULL_RE,'-t.jpg') : url; }
+function imgAttrs(url){ const t = thumbOf(url); return `src="${esc(t)}"` + (t!==url? ` onerror="this.onerror=null;this.src='${esc(url)}'"` : ''); }
+function storagePathFromUrl(url){ const m = /\/object\/public\/product-images\/(.+?)(\?.*)?$/.exec(String(url||'')); return m? decodeURIComponent(m[1]) : null; }
+async function removeProductFiles(urls){
+  const paths = [];
+  (urls||[]).forEach(u=>{ const p = storagePathFromUrl(u); if(!p) return; paths.push(p); if(FULL_RE.test(p)) paths.push(p.replace(FULL_RE,'-t.jpg')); });
+  for(let i=0;i<paths.length;i+=100){ try{ await sb.storage.from('product-images').remove(paths.slice(i,i+100)); }catch(e){} }
+}
 function money(n){ n = Number(n||0); return n.toLocaleString('ar-IQ',{maximumFractionDigits:0}) + ' د.ع'; }
 // رقم عراقي صحيح: يبدأ بـ07 ويتكون من 11 رقم بالضبط
 function isValidIraqiPhone(p){ const digits = String(p||'').replace(/\D/g,''); return /^07\d{9}$/.test(digits); }
@@ -569,7 +600,7 @@ window.exportCustomersCSV = function(){
 };
 function catImg(c){ return c.image_url? `<img src="${esc(c.image_url)}" loading="lazy" decoding="async">` : `<div class="ph"></div>`; }
 function sortedImgs(p){ return ((p&&p.product_images)||[]).map((im,i)=>({im,i})).sort((a,b)=>((Number(a.im.sort_order)||0)-(Number(b.im.sort_order)||0))||(a.i-b.i)).map(x=>x.im); }
-function prodImg(p){ const first = sortedImgs(p)[0]; const url = first&&first.url; return url? `<img src="${esc(url)}" loading="lazy" decoding="async">` : `<div class="ph"></div>`; }
+function prodImg(p){ const first = sortedImgs(p)[0]; const url = first&&first.url; return url? `<img ${imgAttrs(url)} loading="lazy" decoding="async">` : `<div class="ph"></div>`; }
 function priceLabel(p){
   if(p.pricing_method==='piece') return money(p.unit_price)+` <small>/قطعة</small>`;
   if(p.pricing_method==='sqm') return money(p.unit_price)+` <small>/م²</small>`;
@@ -759,7 +790,7 @@ async function pageProduct(slug){
     <div class="pd-wrap">
       <div>
         <div class="pd-gallery" id="pdMainImg">${imgs[0]? `<img src="${esc(imgs[0].url)}">`:'<div class="ph" style="position:absolute;inset:0"></div>'}</div>
-        ${imgs.length>1? `<div class="pd-thumbs">${imgs.map((im,i)=>`<img class="${i===0?'sel':''}" src="${esc(im.url)}" loading="lazy" onclick="pdSelectImg(${i})">`).join('')}</div><div class="pd-pick">اضغط على أي صورة لاختيارها — الصورة المختارة تُرسل لنا مع استفسارك أو طلبك</div>`:''}
+        ${imgs.length>1? `<div class="pd-thumbs">${imgs.map((im,i)=>`<img class="${i===0?'sel':''}" ${imgAttrs(im.url)} loading="lazy" onclick="pdSelectImg(${i})">`).join('')}</div><div class="pd-pick">اضغط على أي صورة لاختيارها — الصورة المختارة تُرسل لنا مع استفسارك أو طلبك</div>`:''}
       </div>
       <div>
         <h1 style="margin:6px 0">${esc(p.name)}</h1>
@@ -791,9 +822,15 @@ async function pageProduct(slug){
     </div>
   </section>${footer()} ${waFab()}`;
 }
+// فعّلها (true) بعد رفع worker.js على Cloudflare ليظهر معاينة (صورة + عنوان) عند مشاركة رابط المنتج بواتساب
+const USE_PREVIEW_LINKS = false;
+function productShareUrl(p, idx){
+  if(USE_PREVIEW_LINKS) return location.origin + '/p/' + encodeURIComponent(p.slug) + (idx? '?i='+(idx+1) : '');
+  return location.origin + location.pathname + '#/product/' + p.slug;
+}
 function pdInquiryText(p, imgUrl, idx){
   let t = `السلام عليكم،\nأرغب بالاستفسار عن المنتج:\n${p.name}`;
-  if(imgUrl) t += `\nالصورة المختارة: رقم ${idx+1}\n\n${imgUrl}`;
+  if(imgUrl) t += `\nالصورة المختارة: رقم ${idx+1}\n\n${USE_PREVIEW_LINKS? productShareUrl(p, idx) : imgUrl}`;
   return t;
 }
 window.pdSelectImg = function(i){
@@ -830,7 +867,7 @@ if(!window.__pdSwipeInit){
 }
 window.shareProduct = async function(){
   const p = window.__PD; if(!p) return;
-  const url = location.origin + location.pathname + '#/product/' + p.slug;
+  const url = productShareUrl(p, window.__PD_sel||0);
   const shareData = { title: p.name, text: `${p.name}`, url };
   if(navigator.share){
     try{ await navigator.share(shareData); return; }
@@ -886,7 +923,7 @@ window.openCart = function(){
   const modals=document.getElementById('modals');
   const items = state.cart.map(i=>`
     <div class="cart-item">
-      <img src="${i.image?esc(i.image):''}">
+      <img ${i.image?imgAttrs(i.image):'src=""'}>
       <div class="info"><b>${esc(i.name)}</b><small>${i.widthCm?`${i.widthCm}×${i.heightCm||''} سم`:''}${i.chosenImage?` · الصورة رقم ${(i.chosenIdx||0)+1}`:''}</small>
       ${i.pricingMethod==='piece'? `<div class="qty-x">
         <button onclick="cartChangeQty('${i.id}',-1)">−</button>
@@ -1309,6 +1346,7 @@ async function admProducts(){
   const {data} = await sb.from('products').select('*, categories(name), product_images(*)').order('sort_order');
   window.__PRODS_ADM = data||[]; window.__CATS_ADM = cats||[];
   return `<div class="adm-topbar"><h2>المنتجات</h2><button class="btn primary" onclick="prodForm()">+ منتج جديد</button></div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin:8px 0"><button class="btn sm" onclick="prodDupes()">🔍 كشف المكرر</button><button class="btn sm" onclick="prodRenumber()">🔢 إعادة ترقيم الأكواد</button><button class="btn sm" onclick="imgOptimizeLegacy()">🖼️ تحسين الصور القديمة</button></div>
   <div class="tbl-hint">⇠ مرر يمينًا لعرض باقي الأعمدة</div><div class="tbl-scroll"><table class="admtbl"><thead><tr><th>الكود</th><th>الاسم</th><th>القسم</th><th>السعر</th><th>الحالة</th><th></th></tr></thead><tbody>
   ${(data||[]).map(p=>`<tr><td class="mono">${esc(p.code||'')}</td><td>${esc(p.name)}</td><td>${esc(p.categories?.name||'-')}</td>
     <td>${p.unit_price?money(p.unit_price):'-'}</td><td>${p.is_active?'مفعّل':'موقوف'}</td>
@@ -1336,7 +1374,7 @@ window.prodForm = function(id){
     ${fld({key:'is_active',label:'مفعّل',type:'checkbox'},p.is_active!==false)}
     <div class="field"><label>إضافة صور</label><input type="file" id="prodImgFiles" accept="image/*" multiple>
       ${(p.product_images||[]).length>1?'<div class="field hint" style="margin-top:8px">اضغط مطولاً على أي صورة ثم اسحبها لتغيير ترتيبها — الصورة الأولى هي صورة العرض</div>':''}
-      <div class="img-grid" data-prod="${id||''}">${sortedImgs(p).map(im=>`<div class="im" data-id="${im.id}"><img src="${esc(im.url)}"><button onclick="prodImgDelete('${im.id}','${id}')">×</button></div>`).join('')}</div>
+      <div class="img-grid" data-prod="${id||''}">${sortedImgs(p).map(im=>`<div class="im" data-id="${im.id}"><img ${imgAttrs(im.url)}><button onclick="prodImgDelete('${im.id}','${id}')">×</button></div>`).join('')}</div>
     </div>
     <button class="btn primary block" onclick="prodSave('${id||''}')">حفظ</button>`);
 };
@@ -1470,8 +1508,7 @@ window.prodSave = async function(id){
         const idx = next++;
         const file = files[idx];
         try{
-          const path = `${Date.now()}_${uid()}.${(file.name.split('.').pop()||'jpg')}`;
-          const {error:upErr, path:upPath} = await uploadImg('product-images',path,file);
+          const {error:upErr, path:upPath} = await uploadProductImage(file);
           if(!upErr) results[idx] = sb.storage.from('product-images').getPublicUrl(upPath).data.publicUrl;
         }catch(e){ /* نكمل بباقي الصور */ }
         done++; setProg(done);
@@ -1491,6 +1528,92 @@ window.prodSave = async function(id){
   }
   toast('تم الحفظ'); closeModal(); render();
   } finally { window.__prodSaving = false; }
+};
+function progBox(text){
+  let el = document.getElementById('progBox');
+  if(!el){ el = document.createElement('div'); el.id='progBox'; el.style.cssText='position:fixed;z-index:99999;left:12px;right:12px;bottom:16px;background:#0f172a;color:#fff;padding:12px 14px;border-radius:12px;font-size:13px;font-weight:700;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.3)'; document.body.appendChild(el); }
+  el.textContent = text; return el;
+}
+function progDone(){ const el = document.getElementById('progBox'); if(el) setTimeout(()=>el.remove(), 4000); }
+
+// تحسين الصور القديمة: تنزيل → نسخة أصغر + مصغّرة → تحديث الرابط → حذف الملف القديم
+window.imgOptimizeLegacy = async function(){
+  const {data:rows, error} = await sb.from('product_images').select('id,url');
+  if(error){ toast(error.message, true); return; }
+  const todo = (rows||[]).filter(r=>r.url && !FULL_RE.test(r.url));
+  if(!todo.length){ toast('كل الصور محسّنة'); return; }
+  if(!confirm(`سيتم تحسين ${todo.length} صورة قديمة (نسخة أصغر + نسخة مصغّرة). قد يأخذ دقائق — لا تغلق الصفحة. متابعة؟`)) return;
+  const useCount = {}; (rows||[]).forEach(r=>{ useCount[r.url]=(useCount[r.url]||0)+1; });
+  let done=0, ok=0, fail=0, next=0;
+  async function worker(){
+    while(next<todo.length){
+      const r = todo[next++];
+      try{
+        const res = await fetch(r.url); if(!res.ok) throw new Error('fetch');
+        const blob = await res.blob();
+        const up = await uploadProductImage(new File([blob], 'old.jpg', {type: blob.type||'image/jpeg'}));
+        if(up.error) throw up.error;
+        const newUrl = sb.storage.from('product-images').getPublicUrl(up.path).data.publicUrl;
+        const u = await sb.from('product_images').update({url:newUrl}).eq('id', r.id);
+        if(u.error) throw u.error;
+        if(useCount[r.url]===1) await removeProductFiles([r.url]);
+        useCount[r.url]--; ok++;
+      }catch(e){ fail++; }
+      done++; progBox(`جاري تحسين الصور ${done} / ${todo.length}`);
+    }
+  }
+  progBox(`جاري تحسين الصور 0 / ${todo.length}`);
+  await Promise.all([worker(),worker(),worker()]);
+  progBox(`انتهى: تم تحسين ${ok} صورة` + (fail? ` — فشل ${fail} (أعد المحاولة)` : '')); progDone();
+  render();
+};
+
+// إعادة ترقيم الأكواد P-001, P-002 ... حسب تاريخ الإنشاء
+window.prodRenumber = async function(){
+  const {data, error} = await sb.from('products').select('id,code,created_at').order('created_at',{ascending:true});
+  if(error){ toast(error.message, true); return; }
+  if(!(data||[]).length){ toast('لا توجد منتجات'); return; }
+  if(!confirm(`سيتم ترقيم ${data.length} منتج من P-001. الطلبات القديمة تحتفظ بأكوادها كما سُجّلت. متابعة؟`)) return;
+  let done=0, fail=0;
+  const run = async (fn)=>{ for(let i=0;i<data.length;i+=6){ const res = await Promise.all(data.slice(i,i+6).map((p,j)=>fn(p,i+j))); res.forEach(r=>{ if(r.error) fail++; }); done=Math.min(data.length,i+6); progBox(`جاري الترقيم ${done} / ${data.length}`); } };
+  progBox('جاري الترقيم...');
+  await run((p,i)=>sb.from('products').update({code:'TMP-'+String(i+1).padStart(4,'0')}).eq('id',p.id));
+  await run((p,i)=>sb.from('products').update({code:'P-'+String(i+1).padStart(3,'0')}).eq('id',p.id));
+  progBox(fail? `انتهى مع ${fail} أخطاء — أعد المحاولة` : 'تمت إعادة الترقيم'); progDone();
+  render();
+};
+
+// كشف المنتجات المكررة (نفس الاسم والقسم والسعر وطريقة التسعير) مع إبقاء الأكثر صوراً
+window.prodDupes = async function(){
+  const {data, error} = await sb.from('products').select('id,code,name,category_id,unit_price,pricing_method,created_at,product_images(id,url)').order('created_at',{ascending:true});
+  if(error){ toast(error.message, true); return; }
+  const groups = {};
+  (data||[]).forEach(p=>{ const k = [String(p.name||'').trim(), p.category_id||'', p.unit_price||0, p.pricing_method||''].join('|'); (groups[k]=groups[k]||[]).push(p); });
+  const dupGroups = Object.values(groups).filter(g=>g.length>1);
+  if(!dupGroups.length){ toast('لا توجد منتجات مكررة ✅'); return; }
+  const plan = dupGroups.map(g=>{ const sorted = g.slice().sort((a,b)=>(b.product_images||[]).length-(a.product_images||[]).length); return {keep:sorted[0], del:sorted.slice(1)}; });
+  window.__DUPE_PLAN = plan;
+  const totalDel = plan.reduce((n,x)=>n+x.del.length,0);
+  openModal(`<div class="sheet-head"><h3>المنتجات المكررة</h3><div class="sheet-close" onclick="closeModal()">×</div></div>
+    <div class="field hint">وجدت ${dupGroups.length} مجموعة مكررة. يُبقى من كل مجموعة المنتج الأكثر صوراً ويُحذف الباقي (${totalDel} منتج) مع صوره.</div>
+    ${plan.map(x=>`<div class="card-item"><div class="meta"><b>${esc(x.keep.name)}</b><small>يبقى: <span class="mono">${esc(x.keep.code||'')}</span> (${(x.keep.product_images||[]).length} صورة) — يُحذف: ${x.del.map(d=>`<span class="mono">${esc(d.code||'')}</span> (${(d.product_images||[]).length})`).join('، ')}</small></div></div>`).join('')}
+    <button class="btn primary block" style="margin-top:10px" onclick="prodDupesRun()">حذف المكررات (${totalDel})</button>`);
+};
+window.prodDupesRun = async function(){
+  const plan = window.__DUPE_PLAN||[]; const list = plan.flatMap(x=>x.del);
+  if(!list.length) return;
+  if(!confirm(`تأكيد حذف ${list.length} منتج مكرر؟ لا يمكن التراجع.`)) return;
+  let ok=0, fail=0; const urls=[];
+  for(let i=0;i<list.length;i++){
+    progBox(`جاري الحذف ${i+1} / ${list.length}`);
+    const p = list[i];
+    const {error} = await sb.from('products').delete().eq('id', p.id);
+    if(error){ fail++; } else { ok++; (p.product_images||[]).forEach(im=>urls.push(im.url)); }
+  }
+  await removeProductFiles(urls);
+  closeModal();
+  progBox(`تم حذف ${ok} منتج مكرر` + (fail? ` — تعذّر حذف ${fail} (مرتبط بطلبات)` : '')); progDone();
+  render();
 };
 window.prodDelete = async function(id){
   if(!confirm('تأكيد الحذف؟')) return;
