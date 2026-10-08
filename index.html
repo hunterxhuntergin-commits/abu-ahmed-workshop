@@ -118,7 +118,9 @@ header.site{position:sticky;top:0;z-index:40;background:var(--header-bg);border-
 .pd-gallery:has(img){aspect-ratio:auto}
 .pd-gallery img{width:100%;height:auto;display:block}
 .pd-thumbs{display:flex;gap:8px;margin-top:8px}
-.pd-thumbs img{width:56px;height:56px;object-fit:cover;border-radius:8px;border:1px solid var(--line);cursor:pointer}
+.pd-thumbs img{width:56px;height:56px;object-fit:cover;border-radius:8px;border:2px solid var(--line);cursor:pointer;opacity:.7}
+.pd-thumbs img.sel{border-color:var(--accent);opacity:1}
+.pd-pick{font-size:12px;color:var(--muted);margin-top:8px;font-weight:700}
 .field{margin-bottom:14px}
 .field label{display:block;font-size:12px;color:var(--muted);margin-bottom:6px;font-weight:700}
 .field input,.field select,.field textarea{width:100%;background:var(--panel2);border:1px solid var(--line);border-radius:11px;padding:11px 12px;font-size:14px}
@@ -361,7 +363,8 @@ function addToCart(product, opts){
   const calc = calcLine(product, opts);
   const item = {
     id: uid(), productId: product.id, name: product.name, code: product.code,
-    image: (product.product_images&&product.product_images[0]&&product.product_images[0].url)||null,
+    image: opts.chosenImage || (product.product_images&&product.product_images[0]&&product.product_images[0].url)||null,
+    chosenImage: opts.chosenImage||null, chosenIdx: opts.chosenIdx||0,
     pricingMethod: product.pricing_method, unitPrice: Number(product.unit_price||0),
     roundingRule: product.rounding_rule, noRounding: !!product.no_rounding, quantity: Number(opts.quantity||1),
     widthCm: opts.widthCm||null, heightCm: opts.heightCm||null, note: opts.note||'',
@@ -732,6 +735,8 @@ async function pageProduct(slug){
   const needsDims = p.pricing_method==='sqm' || p.pricing_method==='linear_meter';
   const purchasable = p.is_purchasable && p.pricing_method!=='quote_only';
   window.__PD = p;
+  window.__PD_imgs = imgs.map(im=>im.url);
+  window.__PD_sel = 0;
   window.__PD_meta = { needsDims, purchasable, pricingMethod: p.pricing_method };
   return `${header()}
   <section class="section wrap">
@@ -739,7 +744,7 @@ async function pageProduct(slug){
     <div class="pd-wrap">
       <div>
         <div class="pd-gallery" id="pdMainImg">${imgs[0]? `<img src="${esc(imgs[0].url)}">`:'<div class="ph" style="position:absolute;inset:0"></div>'}</div>
-        ${imgs.length>1? `<div class="pd-thumbs">${imgs.map(im=>`<img src="${esc(im.url)}" loading="lazy" onclick="document.getElementById('pdMainImg').innerHTML='<img src=\\'${esc(im.url)}\\'>'">`).join('')}</div>`:''}
+        ${imgs.length>1? `<div class="pd-thumbs">${imgs.map((im,i)=>`<img class="${i===0?'sel':''}" src="${esc(im.url)}" loading="lazy" onclick="pdSelectImg(${i})">`).join('')}</div><div class="pd-pick">اضغط على أي صورة لاختيارها — الصورة المختارة تُرسل لنا مع استفسارك أو طلبك</div>`:''}
       </div>
       <div>
         <span class="code mono">${esc(p.code)}</span>
@@ -763,13 +768,27 @@ async function pageProduct(slug){
           <div id="pdLiveTotal" class="summary-box" style="text-align:center;font-weight:900;font-size:16px">أدخل البيانات لحساب السعر</div>
           <button class="btn primary block" onclick="pdAddToCart()">أضف للسلة</button>
         </div>`:''}
-        ${(()=>{ const link = waLinkWorkshop(`السلام عليكم،\nأرغب بالاستفسار عن المنتج:\n${p.name}\nالكود: ${p.code}`);
-          return link? `<a class="btn block" style="margin-top:8px;border-color:rgba(37,211,102,.4);color:#1ba851" target="_blank" href="${link}">💬 استفسار عن هذا المنتج عبر واتساب</a>` : ''; })()}
+        ${(()=>{ const link = waLinkWorkshop(pdInquiryText(p, imgs.length>1? imgs[0].url : null, 0));
+          return link? `<a id="pdInquiryBtn" class="btn block" style="margin-top:8px;border-color:rgba(37,211,102,.4);color:#1ba851" target="_blank" href="${link}">💬 استفسار عن هذا المنتج عبر واتساب</a>` : ''; })()}
         <button class="btn block" style="margin-top:8px" onclick="shareProduct()">🔗 مشاركة المنتج</button>
       </div>
     </div>
   </section>${footer()} ${waFab()}`;
 }
+function pdInquiryText(p, imgUrl, idx){
+  let t = `السلام عليكم،\nأرغب بالاستفسار عن المنتج:\n${p.name}\nالكود: ${p.code}`;
+  if(imgUrl) t += `\nالصورة المختارة (رقم ${idx+1}):\n${imgUrl}`;
+  return t;
+}
+window.pdSelectImg = function(i){
+  const urls = window.__PD_imgs||[]; if(!urls[i]) return;
+  window.__PD_sel = i;
+  const main = document.getElementById('pdMainImg');
+  if(main){ main.innerHTML = ''; const im = document.createElement('img'); im.src = urls[i]; main.appendChild(im); }
+  document.querySelectorAll('.pd-thumbs img').forEach((el,n)=> el.classList.toggle('sel', n===i));
+  const btn = document.getElementById('pdInquiryBtn');
+  if(btn){ const link = waLinkWorkshop(pdInquiryText(window.__PD, urls[i], i)); if(link) btn.href = link; }
+};
 window.shareProduct = async function(){
   const p = window.__PD; if(!p) return;
   const url = location.origin + location.pathname + '#/product/' + p.slug;
@@ -789,7 +808,8 @@ window.pdAddToCart = function(){
   if((p.pricing_method==='sqm'||p.pricing_method==='linear_meter') && (!w || (p.pricing_method==='sqm' && !h))){
     toast('أدخل القياسات أولاً', true); return;
   }
-  addToCart(p, { quantity: qty, widthCm: w, heightCm: h, note: document.getElementById('pdNote')?.value });
+  const urls = window.__PD_imgs||[];
+  addToCart(p, { quantity: qty, widthCm: w, heightCm: h, note: document.getElementById('pdNote')?.value, chosenImage: urls.length>1? urls[window.__PD_sel||0] : null, chosenIdx: window.__PD_sel||0 });
   window.__pdAdded = true;
 };
 // تنبيه لو الزبون طالع من صفحة منتج يحتاج عرض وارتفاع (sqm) وعبّى بُعد وحد بس ونسي الثاني، ولسا ما ضاف المنتج للسلة
@@ -882,6 +902,7 @@ function buildOrderWaMessage(order, cartItems, total, f, notes){
   cartItems.forEach((i,n)=>{
     const dims = i.widthCm ? ' — ' + i.widthCm + (i.heightCm ? '×' + i.heightCm : '') + ' سم' : '';
     L.push((n+1) + ') ' + i.name + (i.code ? ' (' + i.code + ')' : '') + dims + ' — الكمية: ' + i.quantity + ' — ' + money(i.lineTotal));
+    if(i.chosenImage) L.push('   الصورة المختارة (رقم ' + ((i.chosenIdx||0)+1) + '): ' + i.chosenImage);
   });
   L.push('');
   L.push('*الإجمالي: ' + money(total) + '*');
@@ -921,7 +942,7 @@ window.submitOrder = async function(){
     product_id:i.productId, product_name_snapshot:i.name, product_code_snapshot:i.code,
     unit_price_snapshot:i.unitPrice, pricing_method_snapshot:i.pricingMethod, quantity:i.quantity,
     width_cm:i.widthCm||null, height_cm:i.heightCm||null, calculated_area_or_length:i.areaOrLength,
-    note:i.note||null, total_price:i.lineTotal
+    note:[i.note, i.chosenImage? ('الصورة المختارة (رقم '+((i.chosenIdx||0)+1)+'): '+i.chosenImage) : ''].filter(Boolean).join('\n')||null, total_price:i.lineTotal
   }));
   function saveOfflineOrder(){
     const offLink = waLinkWorkshop(buildOrderWaMessage(null, cartSnapshot, subtotal, customerFields, orderNotes));
@@ -1262,8 +1283,6 @@ window.prodForm = function(id){
     ${fld({key:'name',label:'الاسم'},p.name)}
     ${fld({key:'category_id',label:'القسم',type:'select',options:[{value:'',label:'بدون'},...cats.map(c=>({value:c.id,label:c.name}))]},p.category_id)}
     ${fld({key:'description',label:'الوصف',type:'textarea'},p.description)}
-    <div class="row2">${fld({key:'material',label:'المادة'},p.material)}${fld({key:'color',label:'اللون'},p.color)}</div>
-    <div class="row2">${fld({key:'glass_type',label:'نوع الزجاج'},p.glass_type)}${fld({key:'design',label:'التصميم'},p.design)}</div>
     ${fld({key:'pricing_method',label:'طريقة التسعير',type:'select',options:[
       {value:'piece',label:'بالقطعة'},{value:'sqm',label:'بالمتر المربع'},{value:'linear_meter',label:'بالمتر الطولي'},{value:'quote_only',label:'عرض سعر فقط'}]},p.pricing_method||'quote_only')}
     <div class="row2">${fld({key:'unit_price',label:'سعر الوحدة',type:'number'},p.unit_price)}
@@ -1298,8 +1317,7 @@ window.prodSave = async function(id){
   const name = readFld({key:'name'});
   const row = {
     name, category_id: readFld({key:'category_id'})||null, description: readFld({key:'description'}),
-    material: readFld({key:'material'}), color: readFld({key:'color'}), glass_type: readFld({key:'glass_type'}),
-    design: readFld({key:'design'}), pricing_method: readFld({key:'pricing_method'}),
+    pricing_method: readFld({key:'pricing_method'}),
     unit_price: readFld({key:'unit_price',type:'number'}), rounding_rule: readFld({key:'rounding_rule'}),
     no_rounding: readFld({key:'no_rounding',type:'checkbox'}),
     sort_order: readFld({key:'sort_order',type:'number'})||0,
@@ -1352,7 +1370,7 @@ window.orderPayChange = async function(id, payment_status){
 };
 window.orderDetail = function(id){
   const o = window.__ORDERS_ADM.find(x=>x.id===id);
-  const items = (o.order_items||[]).map(it=>`<div class="summary-line"><span>${esc(it.product_name_snapshot)} (${esc(it.product_code_snapshot)}) × ${it.quantity}</span><b>${money(it.total_price)}</b></div>`).join('');
+  const items = (o.order_items||[]).map(it=>`<div class="summary-line"><span>${esc(it.product_name_snapshot)} (${esc(it.product_code_snapshot)}) × ${it.quantity}</span><b>${money(it.total_price)}</b></div>${it.note?`<div class="field hint" style="margin:-2px 0 6px;white-space:pre-wrap;word-break:break-all">${esc(it.note)}</div>`:''}`).join('');
   openModal(`<div class="sheet-head"><h3>تفاصيل الطلب ${esc(o.order_number)}</h3><div class="sheet-close" onclick="closeModal()">×</div></div>
     <div class="summary-box">
       <div class="summary-line"><span>الزبون</span><b>${esc(o.customer_name)}</b></div>
