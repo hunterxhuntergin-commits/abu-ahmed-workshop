@@ -20,7 +20,7 @@
 <link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAYAAABS3GwHAAAD9UlEQVR4nO3dTW5UVxSF0SJKG3phbmF8MDfohQmQRlSSgxLs9979OefttfqIK9f+6pZdluvxAAAAAAAAAAC4jXe7D3DF+89ff+w+A//4/uljyy21ObSx99MhitIHNPr7qBpDyUMZ/n1VC6HUYQw/R5UQShzC8HPtDmHrf274PO0K4bcd/+njYfz82649LK/O8HnNyttg6Q1g/LzFyp0sC8D4OWLVXpYEYPycsWI30wMwfq6YvZ+pARg/I8zc0bQAjJ+RZu1pSgDGzwwzdjU8AONnptH7GhqA8bPCyJ1t+1UIqGBYAJ79WWnU3oYEYPzsMGJ3XgIR7XIAnv3Z6er+3ABEuxSAZ38quLJDNwDRTgfg2Z9Kzu7RDUC0UwF49qeiM7t0AxBNAEQ7HICXP1R2dJ9uAKIJgGgCINrvuw8w0l9//rH7CDE+fPm2+whDHPobjFW/ATb8faqG8Na/L9r+JZDx79X96986gO5f/Lvo/Di0DgCuahtA52edO+r6eLQNAEYQANFu9T7AS1V/PPd4vP5yoerZu77M+RU3ANEEQDQBEE0ARBMA0QRANAEQTQBEEwDRBEA0ARBNAEQTANEEQDQBEE0ARBMA0QRANAEQTQBEEwDRBEA0ARBNAEQTANEEQDQBEE0ARBMA0QRANAEQTQBEEwDRBEA0ARBNAEQTANEEQLTbfkxq54/07Hz2btwARBMA0QRANAEQTQBEEwDRBEC0274P8OHLt91H+F+v/Zy/6tnv+P6EG4BoAiCaAIgmAKIJgGgCIJoAiCYAogmAaAIgmgCIJgCiCYBoAiCaAIgmAKIJgGgCIJoAiCYAogmAaAIgmgCIJgCiCYBoAiCaAIgmAKIJgGgCIJoAiCYAogmAaAIgmgCIJgCiCYBot/2UyM6faNj57N24AYgmAKK1DaDqh0mn6vp4tA0ARmgdQNdnnbvp/Di0DuDx6P3Fv4PuX/93R//B+89ff8w4yAh+fLhO5eF///Txzbu+1fsAlR8Uamr/EgiuEADRBEC0wwEc+QYDVju6TzcA0QRAtFMBeBlERWd26QYg2ukA3AJUcnaPbgCiXQrALUAFV3boBiDa5QDcAux0dX9uAKINCcAtwA4jdjfsBhABK43am5dARBsagFuAFUbubPgNIAJmGr2vKS+BRMAMM3Y17XsAETDSrD1N/SZYBIwwc0fTfwokAq6YvZ8lPwYVAWes2M2y9wFEwBGr9rL0jTAR8BYrd7JtkJX/xih77HiC3ParEG4DXtq1hxIjdBvk2v1EWCKAJyHk2D38pxKH+JkQ7qvK8J9KHeZnQriPasN/Knmo/yKGfqqO/qXyB/wVUdTRYewAAAAAAAAAJPgbQCj7dQgna80AAAAASUVORK5CYII=">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="أبو أحمد">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
@@ -44,7 +44,7 @@ button,input,select,textarea{font-family:inherit;color:inherit}
 img{max-width:100%;display:block}
 .wrap{max-width:1100px;margin:0 auto;padding:0 20px}
 /* header */
-header.site{position:sticky;top:0;z-index:40;background:var(--header-bg);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+header.site{position:sticky;top:0;z-index:40;background:var(--header-bg);border-bottom:1px solid var(--line)}
 .hbar{display:flex;align-items:center;justify-content:space-between;flex-wrap:nowrap;gap:8px;padding:14px 16px;max-width:1100px;margin:0 auto}
 .brand{font-weight:900;font-size:19px;display:flex;align-items:center;gap:8px;min-width:0;flex-shrink:1}
 .brand img{flex:0 0 auto}
@@ -52,8 +52,7 @@ header.site{position:sticky;top:0;z-index:40;background:var(--header-bg);backdro
 @media (max-width:480px){.brand-name{display:none}}
 .brand .mark{width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,var(--accent),#0284C7);display:grid;place-items:center;font-weight:900;color:#ffffff;flex:0 0 auto}
 .nav{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;min-width:0;flex-shrink:1;
-  -webkit-mask-image:linear-gradient(to right, transparent 0, #000 14px, #000 calc(100% - 14px), transparent 100%);
-  mask-image:linear-gradient(to right, transparent 0, #000 14px, #000 calc(100% - 14px), transparent 100%);}
+  }
 .nav::-webkit-scrollbar{display:none}
 .nav a{padding:9px 13px;border-radius:999px;font-size:13px;font-weight:700;color:var(--muted);white-space:nowrap}
 .nav a.active,.nav a:hover{color:var(--text);background:var(--panel2)}
@@ -214,6 +213,14 @@ footer.site{border-top:1px solid var(--line);padding:26px 0;margin-top:30px;colo
 .stat-strip{display:flex;gap:22px;margin-top:14px;flex-wrap:wrap}
 .stat-strip .st b{font-size:22px;font-weight:900;display:block}
 .stat-strip .st small{font-size:11px;color:var(--muted)}
+
+/* ===== آيفون (التطبيق المثبّت): نزول المحتوى تحت شريط الحالة/الجزيرة حتى تشتغل الأزرار العليا ===== */
+header.site{padding-top:env(safe-area-inset-top,0px)}
+.offline-banner{padding-top:calc(7px + env(safe-area-inset-top,0px))}
+@media(max-width:760px){.adm-side{padding-top:calc(10px + env(safe-area-inset-top,0px));-webkit-overflow-scrolling:touch;touch-action:pan-x}}
+@media(min-width:761px){.adm-shell{padding-top:env(safe-area-inset-top,0px)}}
+body{padding-bottom:env(safe-area-inset-bottom,0px)}
+.nav a,.adm-side a{cursor:pointer;-webkit-tap-highlight-color:rgba(14,165,233,.25)}
 </style>
 </head>
 <body>
