@@ -141,6 +141,22 @@ header.site{position:sticky;top:0;z-index:40;background:var(--header-bg);border-
 .overlay{position:fixed;inset:0;background:rgba(15,23,42,.55);z-index:60;padding:14px;overflow:auto;display:flex;align-items:flex-start;justify-content:center}
 .sheet{max-width:520px;width:100%;margin:24px auto;background:var(--panel);border:1px solid var(--line);border-radius:22px;padding:20px;box-shadow:0 30px 80px rgba(15,23,42,.22)}
 .sheet.wide{max-width:760px}
+.imp-card{border:1px solid var(--line);border-radius:16px;padding:12px;margin-bottom:12px;background:var(--panel2)}
+.imp-card.warn{border-color:#f59e0b;box-shadow:0 0 0 1px rgba(245,158,11,.25)}
+.imp-head{display:flex;gap:8px;align-items:center;margin-bottom:8px}
+.imp-head b{font-size:13px}
+.imp-warn{color:#b45309;font-size:12px;font-weight:800;margin-inline-end:auto}
+.imp-head .btn{margin-inline-start:auto}
+.imp-warn + .btn{margin-inline-start:0}
+.imp-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.imp-sec{display:flex;justify-content:space-between;align-items:center;margin:10px 0 6px;font-size:13px}
+.imp-line{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px}
+.imp-line>*{min-width:0}
+.imp-card input,.imp-card select{width:100%;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:9px 8px;font-size:13px;color:var(--text)}
+.imp-line select{flex:1 1 96px}.imp-line .i-desc{flex:2 1 140px}.imp-line .i-amt{flex:1 1 100px}.imp-line .i-date{flex:1 1 130px}.imp-line .i-note{flex:2 1 120px}
+.imp-line .btn{flex:0 0 34px;width:34px;padding:8px 0}
+.imp-tot{font-size:12px;font-weight:800;color:var(--muted);margin-top:8px}
+.imp-thumb{width:64px;height:64px;object-fit:cover;border-radius:10px;border:1px solid var(--line)}
 .sheet-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
 .sheet-head h3{margin:0;font-size:18px;font-weight:900}
 .sheet-close{width:36px;height:36px;border:1px solid var(--line);border-radius:10px;background:var(--panel2);display:grid;place-items:center;cursor:pointer;font-size:20px;line-height:1}
@@ -1700,7 +1716,7 @@ async function admCustomers(){
     return {customer_id:c.id, name:c.name, phone:c.phone, ...summary};
   });
   window.__CUST_ADM = data;
-  return `<div class="adm-topbar"><h2>حسابات الزبائن</h2><div style="display:flex;gap:8px"><button class="btn" onclick="exportCustomersCSV()">⬇ تصدير Excel/CSV</button><button class="btn primary" onclick="custForm()">+ زبون جديد</button></div></div>
+  return `<div class="adm-topbar"><h2>حسابات الزبائن</h2><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn" onclick="ledgerImportForm()">📷 استيراد من صورة</button><button class="btn" onclick="exportCustomersCSV()">⬇ تصدير Excel/CSV</button><button class="btn primary" onclick="custForm()">+ زبون جديد</button></div></div>
   <div class="tbl-hint">⇠ مرر يمينًا لعرض باقي الأعمدة</div><div class="tbl-scroll"><table class="admtbl"><thead><tr><th>الاسم</th><th>الهاتف</th><th>الإجمالي</th><th>المدفوع</th><th>المتبقي</th><th>الحالة</th><th></th></tr></thead><tbody>
   ${(data||[]).map(c=>`<tr><td>${esc(c.name)}</td><td class="mono">${esc(c.phone)}</td><td>${money(c.agreed_total)}</td>
     <td>${money(c.paid_total)}</td><td>${money(c.remaining)}</td><td><span class="status-pill ${c.status==='unpaid'?'new':c.status==='completed'?'completed':'in_progress'}">${c.status==='unpaid'?'غير مدفوع':c.status==='completed'?'مكتمل':'متبقي'}</span></td>
@@ -1732,6 +1748,172 @@ window.custUpdate = async function(id){
   const {error} = await sb.from('customers').update(row).eq('id', id);
   if(error){ toast(error.message, true); return; }
   toast('تم تحديث بيانات الزبون'); closeModal(); render();
+};
+// -------------------- استيراد دفتر الزبائن من صورة (OCR) --------------------
+function ledgerNormName(s){ return String(s||'').replace(/[\u064B-\u0652\u0640]/g,'').replace(/[أإآ]/g,'ا').replace(/ى/g,'ي').replace(/ة/g,'ه').replace(/\s+/g,' ').trim().toLowerCase(); }
+function ledgerNormPhone(s){ return toWesternDigits(s||'').replace(/\D/g,'').slice(-10); }
+function ledgerShrink(file, max){
+  max = max || 1800;
+  return new Promise((res,rej)=>{
+    const url = URL.createObjectURL(file); const img = new Image();
+    img.onload = ()=>{
+      const k = Math.min(1, max/Math.max(img.width,img.height));
+      const c = document.createElement('canvas'); c.width = Math.round(img.width*k); c.height = Math.round(img.height*k);
+      c.getContext('2d').drawImage(img,0,0,c.width,c.height);
+      URL.revokeObjectURL(url); res(c.toDataURL('image/jpeg',0.86).split(',')[1]);
+    };
+    img.onerror = ()=>{ URL.revokeObjectURL(url); rej(new Error('تعذّر فتح الصورة')); };
+    img.src = url;
+  });
+}
+window.ledgerImportForm = function(){
+  window.__LEDGER_FILES = [];
+  openModal(`<div class="sheet-head"><h3>📷 استيراد الدفتر من صورة</h3><div class="sheet-close" onclick="closeModal()">×</div></div>
+    <div class="field hint" style="font-size:12px;line-height:1.8;margin-bottom:12px">صوّر صفحات الدفتر (أو لقطات شاشة ملاحظات الهاتف) وسيقرؤها الذكاء الاصطناعي ويجهّز حسابات الزبائن لتراجعها قبل الحفظ. صوّر بإضاءة جيدة وصفحة مستقيمة.</div>
+    <div class="field"><input id="ledgerFiles" type="file" accept="image/*" multiple onchange="ledgerPick(this)"></div>
+    <div id="ledgerThumbs" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px"></div>
+    <div class="field"><label><input type="checkbox" id="ledgerThousands" style="width:auto;margin-left:8px">المبالغ في الدفتر مكتوبة بالآلاف (مثلاً 250 تعني 250,000)</label></div>
+    <div id="ledgerStatus" class="field hint" style="font-size:12px"></div>
+    <button id="ledgerGo" class="btn primary block" onclick="ledgerRead()" disabled>قراءة الصور</button>`);
+};
+window.ledgerPick = function(inp){
+  window.__LEDGER_FILES = Array.from(inp.files||[]).slice(0,12);
+  const box = document.getElementById('ledgerThumbs'); box.innerHTML = '';
+  window.__LEDGER_FILES.forEach(f=>{ const im = document.createElement('img'); im.className = 'imp-thumb'; im.src = URL.createObjectURL(f); box.appendChild(im); });
+  document.getElementById('ledgerGo').disabled = !window.__LEDGER_FILES.length;
+};
+window.ledgerRead = async function(){
+  const files = window.__LEDGER_FILES||[]; if(!files.length) return;
+  const thousands = document.getElementById('ledgerThousands').checked;
+  const st = document.getElementById('ledgerStatus'), go = document.getElementById('ledgerGo');
+  go.disabled = true;
+  const {data:{session}} = await sb.auth.getSession();
+  if(!session){ toast('سجّل الدخول أولاً', true); go.disabled = false; return; }
+  const all = []; let failed = 0, lastErr = '';
+  for(let i=0;i<files.length;i++){
+    st.textContent = `جارٍ قراءة الصورة ${i+1} من ${files.length}… (قد تستغرق نصف دقيقة)`;
+    try{
+      const b64 = await ledgerShrink(files[i]);
+      const r = await fetch('/api/ledger-ocr',{method:'POST',headers:{'content-type':'application/json',Authorization:'Bearer '+session.access_token},body:JSON.stringify({image:b64,media_type:'image/jpeg'})});
+      const j = await r.json().catch(()=>({}));
+      if(!r.ok) throw new Error(j.error||('خطأ '+r.status));
+      (j.customers||[]).forEach(c=>all.push(c));
+    }catch(e){ failed++; lastErr = e.message; }
+  }
+  if(!all.length){ st.textContent = 'لم يتم استخراج أي زبون. '+(lastErr||'جرّب صورة أوضح.'); go.disabled = false; return; }
+  await ledgerBuildReview(all, thousands, failed);
+};
+async function ledgerBuildReview(list, thousands, failed){
+  const {data:existing} = await sb.from('customers').select('id,name,phone');
+  const k = thousands? 1000 : 1;
+  const num = v=>{ const n = Number(toWesternDigits(String(v==null?'':v)).replace(/[,٬\s]/g,'')); return isFinite(n)&&n>0? Math.round(n*k) : 0; };
+  const merged = [];
+  list.forEach(c=>{
+    const name = String(c.name||'').trim(); if(!name) return;
+    const phone = toWesternDigits(String(c.phone||'')).replace(/[^\d+]/g,'');
+    const nn = ledgerNormName(name), pp = ledgerNormPhone(phone);
+    let row = merged.find(r=> (pp.length>=7 && ledgerNormPhone(r.phone)===pp) || ledgerNormName(r.name)===nn);
+    if(!row){ row = {name, phone, notes:'', total:'', pays:[], uncertain:false, match:'', skip:false}; merged.push(row); }
+    if(!row.phone && phone) row.phone = phone;
+    if(c.notes) row.notes = row.notes? row.notes+' — '+c.notes : String(c.notes);
+    if(c.uncertain) row.uncertain = true;
+    const t = c.total!=null? num(c.total) : (c.works||[]).reduce((x,w)=>x+num(w.amount),0);
+    if(t) row.total = (Number(row.total)||0) + t;
+    (c.payments||[]).forEach(p=>{ const a = num(p.amount); if(a) row.pays.push({amount:a, date: /^\d{4}-\d{2}-\d{2}$/.test(p.date||'')? p.date : '', note:String(p.note||'').trim()}); });
+  });
+  merged.forEach(r=>{
+    const pp = ledgerNormPhone(r.phone), nn = ledgerNormName(r.name);
+    const m = (existing||[]).find(e=> (pp.length>=7 && ledgerNormPhone(e.phone)===pp) || ledgerNormName(e.name)===nn);
+    if(m) r.match = m.id;
+  });
+  window.__LEDGER = {rows:merged, existing:existing||[], failed};
+  ledgerRenderReview();
+}
+function ledgerCardHtml(i){
+  const L = window.__LEDGER, r = L.rows[i];
+  const payLines = r.pays.map((p,j)=>`<div class="imp-line">
+      <input class="i-amt mono" inputmode="numeric" placeholder="المبلغ" value="${esc(p.amount)}" oninput="ledgerNum(${i},${j},this.value)">
+      <input class="i-date" type="date" value="${esc(p.date)}" ${p.date?'':'style="border-color:#f59e0b" title="بلا تاريخ — سيُحفظ بتاريخ اليوم"'} onchange="__LEDGER.rows[${i}].pays[${j}].date=this.value;this.style.borderColor=''">
+      <input class="i-note" placeholder="ملاحظة" value="${esc(p.note)}" oninput="__LEDGER.rows[${i}].pays[${j}].note=this.value">
+      <button class="btn sm danger" onclick="ledgerDel(${i},${j})">×</button></div>`).join('');
+  return `<div class="imp-card ${r.uncertain?'warn':''}" id="impc${i}">
+    <div class="imp-head"><b>#${i+1}</b>${r.uncertain?'<span class="imp-warn">⚠ تحتاج مراجعة</span>':''}<button class="btn sm danger" onclick="ledgerDrop(${i})">حذف</button></div>
+    <div class="imp-grid">
+      <div class="field"><label>الاسم</label><input value="${esc(r.name)}" oninput="__LEDGER.rows[${i}].name=this.value"></div>
+      <div class="field"><label>الهاتف</label><input class="mono" inputmode="tel" placeholder="غير مكتوب" value="${esc(r.phone)}" oninput="__LEDGER.rows[${i}].phone=this.value"></div>
+    </div>
+    <div class="field"><label>الحفظ في</label><select onchange="__LEDGER.rows[${i}].match=this.value"><option value="">زبون جديد</option>${L.existing.map(e=>`<option value="${e.id}" ${e.id===r.match?'selected':''}>إضافة إلى حساب: ${esc(e.name)}</option>`).join('')}</select></div>
+    <div class="field"><label>المبلغ الكلي (مجموع أعمال الزبون)</label><input class="mono" inputmode="numeric" placeholder="0" value="${esc(r.total)}" oninput="ledgerTotalSet(${i},this.value)"></div>
+    <div class="imp-sec"><b>الدفعات</b><button class="btn sm" onclick="ledgerAdd(${i})">+ دفعة</button></div>${payLines}
+    <div class="imp-tot" id="impt${i}"></div></div>`;
+}
+function ledgerTot(i){
+  const r = window.__LEDGER.rows[i], el = document.getElementById('impt'+i); if(!el) return;
+  const tot = Number(r.total)||0, paid = r.pays.reduce((s,p)=>s+(Number(p.amount)||0),0);
+  el.textContent = `الإجمالي ${money(tot)} · الواصل ${money(paid)} · المتبقي ${money(tot-paid)}`;
+}
+window.ledgerRenderReview = function(){
+  const L = window.__LEDGER;
+  const live = L.rows.filter(r=>!r.skip).length;
+  openModal(`<div class="sheet-head"><h3>مراجعة الحسابات المستخرجة</h3><div class="sheet-close" onclick="closeModal()">×</div></div>
+    <div class="field hint" style="font-size:12px;line-height:1.8;margin-bottom:12px">تم استخراج <b>${live}</b> زبون. القراءة من خط اليد قد تخطئ — <b>راجع الأسماء والمبالغ والتواريخ</b> وصحّح ما يلزم قبل الحفظ. الدفعة التي بلا تاريخ (إطار برتقالي) تُحفظ بتاريخ اليوم.${L.failed?` <span style="color:#b45309">تعذّرت قراءة ${L.failed} صورة.</span>`:''}</div>
+    <div id="ledgerCards">${L.rows.map((r,i)=> r.skip? '' : ledgerCardHtml(i)).join('')}</div>
+    <div id="ledgerErr" class="field hint" style="color:#b91c1c;font-size:12px;line-height:1.8"></div>
+    <button id="ledgerSaveBtn" class="btn primary block" onclick="ledgerSave()">حفظ الكل في حسابات الزبائن</button>`);
+  L.rows.forEach((r,i)=>{ if(!r.skip) ledgerTot(i); });
+};
+window.ledgerTotalSet = function(i,val){
+  const n = Number(toWesternDigits(String(val)).replace(/[,٬\s]/g,''));
+  window.__LEDGER.rows[i].total = isFinite(n)&&n>0? n : '';
+  ledgerTot(i);
+};
+window.ledgerNum = function(i,j,val){
+  const n = Number(toWesternDigits(String(val)).replace(/[,٬\s]/g,''));
+  window.__LEDGER.rows[i].pays[j].amount = isFinite(n)&&n>0? n : '';
+  ledgerTot(i);
+};
+window.ledgerAdd = function(i){
+  window.__LEDGER.rows[i].pays.push({amount:'',date:'',note:''});
+  document.getElementById('impc'+i).outerHTML = ledgerCardHtml(i); ledgerTot(i);
+};
+window.ledgerDel = function(i,j){
+  window.__LEDGER.rows[i].pays.splice(j,1);
+  document.getElementById('impc'+i).outerHTML = ledgerCardHtml(i); ledgerTot(i);
+};
+window.ledgerDrop = function(i){
+  window.__LEDGER.rows[i].skip = true;
+  const el = document.getElementById('impc'+i); if(el) el.remove();
+};
+window.ledgerSave = async function(){
+  const L = window.__LEDGER, btn = document.getElementById('ledgerSaveBtn'), errBox = document.getElementById('ledgerErr');
+  btn.disabled = true; btn.textContent = 'جارٍ الحفظ…'; errBox.textContent = '';
+  let ok = 0; const fail = [];
+  for(let i=0;i<L.rows.length;i++){
+    const r = L.rows[i]; if(r.skip) continue;
+    const name = String(r.name||'').trim();
+    if(!name){ fail.push(`#${i+1}: الاسم فارغ`); continue; }
+    try{
+      let cid = r.match;
+      if(!cid){
+        const {data,error} = await sb.from('customers').insert({name, phone:String(r.phone||'').trim(), notes:r.notes||null}).select('id').single();
+        if(error) throw error; cid = data.id; r.match = cid;
+      }
+      const today = new Date().toISOString().slice(0,10);
+      const tot = Number(r.total)||0;
+      const works = tot>0? [{customer_id:cid, work_type:'other', product_name_snapshot:'مجموع الأعمال (من الدفتر)', quantity:1, unit:'piece', area_or_length:1, unit_price:tot, total_price:tot}] : [];
+      const pays = r.pays.filter(p=>Number(p.amount)>0).map(p=>({customer_id:cid, amount:Number(p.amount), payment_date:p.date||today, note:p.note||null}));
+      if(works.length && !r.worksDone){ const {error} = await sb.from('customer_work_items').insert(works); if(error) throw error; r.worksDone = true; }
+      if(pays.length && !r.paysDone){ const {error} = await sb.from('customer_payments').insert(pays); if(error) throw error; r.paysDone = true; }
+      r.skip = true; ok++;
+    }catch(e){ fail.push(`${name}: ${e.message||e}`); }
+  }
+  if(fail.length){
+    ledgerRenderReview();
+    document.getElementById('ledgerErr').innerHTML = `<b>تم حفظ ${ok}، وتعذّر حفظ ${fail.length}:</b><br>`+fail.map(esc).join('<br>');
+    toast(`تم حفظ ${ok} وتعذّر ${fail.length}`, true);
+    return;
+  }
+  toast(`تم حفظ ${ok} زبون في الحسابات`); closeModal(); render();
 };
 function buildStatementMessage(cust, items, pays, summary){
   const lines = [`السلام عليكم ${cust.name}`, '', 'هذا كشف حسابكم:', ''];
