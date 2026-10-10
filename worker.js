@@ -21,7 +21,9 @@ Each customer has ONE general account: the total amount of all his works, and th
 {"customers":[{"name":string,"phone":string|null,"notes":string|null,"total":number|null,"payments":[{"amount":number,"date":"YYYY-MM-DD"|null,"note":string|null}],"uncertain":boolean}]}
 Rules:
 - Never invent anything. If something is unreadable use null and set "uncertain" to true for that customer.
-- Write digits as Western digits. Amounts are the numbers exactly as written: do NOT add zeros or multiply.
+- Write digits as Western digits. Amounts are in dinars exactly as written. A trailing dash after a comma (e.g. '٥٧٠,—' or '570,-') is shorthand for three zeros: read '٥٧٠,—' as 570000 and '٢,٧٥٠,—' as 2750000. Never guess missing zeros in any other case.
+- Lines often look like 'ابواب عدد ٣ ← amount' or 'شبابيك الكلي ← amount' (an item name followed by an arrow and its price). Add those item prices to get "total". If the label الكلي has its own amount written on a separate line, use that as the total instead.
+- Template labels with no amount written next to them (الكلي، الواصل، الباقي، or an item such as درج with nothing after the arrow) must be ignored. The header at the top of the page (e.g. 'ابو منظر / كباسي') is the customer name: keep it as written, including the part after the slash.
 - "total" is the overall amount charged to the customer for all his works. If a total is written use it; if only separate prices of works are written, add them up; if only the remaining balance (الباقي / المتبقي) is written, use remaining + the payments listed (or just the remaining if no payments are listed). Do not describe the individual works.
 - Money received (دفعة، واصل، استلمت، مقدم، عربون، دفع) goes to "payments". Never put a remaining balance or a total into payments.
 - Keep names exactly as written (e.g. أبو علي، حسين الكرخ). The same customer on several lines is one entry.
@@ -48,25 +50,32 @@ async function handleLedgerOcr(request, env) {
   const mt = ["image/jpeg", "image/png", "image/webp"].includes(body.media_type) ? body.media_type : "image/jpeg";
   if (image.length < 100 || image.length > 7000000) return json({ error: "حجم الصورة غير مناسب" }, 400);
 
-  let r;
-  try {
-    r = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST",
-      headers: { "content-type": "application/json", "x-api-key": env.ANTHROPIC_API_KEY, "anthropic-version": "2023-06-01" },
-      body: JSON.stringify({
-        model: env.ANTHROPIC_MODEL || OCR_MODEL_DEFAULT,
-        max_tokens: 4096,
-        system: OCR_PROMPT + `\nThe current year is ${new Date().getFullYear()}.`,
-        messages: [{ role: "user", content: [
-          { type: "image", source: { type: "base64", media_type: mt, data: image } },
-          { type: "text", text: "استخرج حسابات الزبائن من هذه الصفحة. أعد JSON فقط." }
-        ] }]
-      })
-    });
-  } catch (e) { return json({ error: "تعذّر الاتصال بخدمة القراءة" }, 502); }
+  const models = [...new Set([env.ANTHROPIC_MODEL, OCR_MODEL_DEFAULT, "claude-sonnet-4-6"].filter(Boolean))];
+  const payload = (model) => JSON.stringify({
+    model,
+    max_tokens: 4096,
+    system: OCR_PROMPT + `\nThe current year is ${new Date().getFullYear()}.`,
+    messages: [{ role: "user", content: [
+      { type: "image", source: { type: "base64", media_type: mt, data: image } },
+      { type: "text", text: "استخرج حسابات الزبائن من هذه الصفحة. أعد JSON فقط." }
+    ] }]
+  });
+  let r = null;
+  for (const model of models) {
+    try {
+      r = await fetch("https://api.anthropic.com/v1/messages", {
+        method: "POST",
+        headers: { "content-type": "application/json", "x-api-key": env.ANTHROPIC_API_KEY, "anthropic-version": "2023-06-01" },
+        body: payload(model)
+      });
+    } catch (e) { return json({ error: "تعذّر الاتصال بخدمة القراءة" }, 502); }
+    if (r.status !== 404) break; // اسم الموديل غير موجود → جرّب التالي
+  }
   if (!r.ok) {
     const t = await r.text().catch(() => "");
-    return json({ error: "فشلت قراءة الصورة (" + r.status + ")", detail: t.slice(0, 300) }, 502);
+    let msg = "";
+    try { msg = JSON.parse(t)?.error?.message || ""; } catch (e) { msg = t.slice(0, 200); }
+    return json({ error: "فشلت قراءة الصورة (" + r.status + ")" + (msg ? ": " + msg : "") }, 502);
   }
   const d = await r.json().catch(() => ({}));
   const txt = (d.content || []).filter((b) => b.type === "text").map((b) => b.text).join("");
