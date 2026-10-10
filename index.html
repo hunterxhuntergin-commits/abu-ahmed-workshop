@@ -576,7 +576,12 @@ function waLinkWorkshop(message){
 // رابط واتساب لرقم زبون محدد (لإرسال كشف حساب/إشعار دفعة) — يفتح المحادثة فقط، الموظف يضغط إرسال بنفسه
 // إذا لم يوجد رقم هاتف صالح، يفتح واتساب بدون رقم محدد ليختار المستخدم جهة الاتصال بنفسه
 function waLinkToPhone(phone, message){
-  const digits = phone? String(phone).replace(/^0+/,'').replace(/\D/g,'') : '';
+  let digits = phone? toWesternDigits(String(phone)).replace(/\D/g,'').replace(/^00/,'') : '';
+  if(digits){
+    // واتساب يحتاج الرقم الدولي: 07701234567 ← 9647701234567 (رمز الدولة من الإعدادات، الافتراضي العراق)
+    const cc = String((state.settings||{}).country_code||'+964').replace(/\D/g,'') || '964';
+    if(!(digits.startsWith(cc) && digits.length > cc.length+7)) digits = cc + digits.replace(/^0+/,'');
+  }
   const base = digits? `https://wa.me/${digits}` : `https://wa.me/`;
   return `${base}?text=${encodeURIComponent(message)}`;
 }
