@@ -1234,6 +1234,7 @@ window.adminLogin = async function(){
   const btn=document.getElementById('loginBtn'); btn.disabled=true; btn.innerHTML='<span class="spin"></span>';
   const {error}=await sb.auth.signInWithPassword({email,password});
   if(error){ toast('فشل الدخول: تأكد من البريد وكلمة المرور', true); btn.disabled=false; btn.textContent='دخول'; return; }
+  try{ localStorage.setItem(NO_COUNT_KEY,'1'); }catch(e){}
   location.hash='#/'+ADMIN_ROUTE+'/overview'; render();
 };
 window.adminLogout = async function(){ teardownOrderAlerts(); await sb.auth.signOut(); location.hash='#/'+ADMIN_ROUTE+'/login'; render(); };
@@ -1272,19 +1273,30 @@ window.closeModal = function(){ document.getElementById('modals').innerHTML=''; 
 
 // ---- overview ----
 async function admOverview(){
-  const [{count:catCount},{count:prodCount},{count:orderCount},{count:newOrders},{count:custCount}] = await Promise.all([
+  const [{count:catCount},{count:prodCount},{count:orderCount},{count:newOrders},{count:custCount},visitRes] = await Promise.all([
     sb.from('categories').select('*',{count:'exact',head:true}),
     sb.from('products').select('*',{count:'exact',head:true}),
     sb.from('orders').select('*',{count:'exact',head:true}),
     sb.from('orders').select('*',{count:'exact',head:true}).eq('status','new'),
     sb.from('customers').select('*',{count:'exact',head:true}),
+    sb.rpc('get_visit_stats'),
   ]);
+  const vs = (visitRes && !visitRes.error && visitRes.data) ? visitRes.data : null;
+  const nf = n => (n==null? '—' : Number(n).toLocaleString('en-US'));
   const cards = [
     ['الأقسام',catCount],['المنتجات',prodCount],['كل الطلبات',orderCount],
     ['طلبات جديدة',newOrders],['الزبائن',custCount]
   ];
   return `<div class="adm-topbar"><h2>نظرة عامة</h2></div>
-  <div class="grid cols-3">${cards.map(c=>`<div class="stat-card"><small>${c[0]}</small><b>${c[1]??0}</b></div>`).join('')}</div>`;
+  <div class="grid cols-3">${cards.map(c=>`<div class="stat-card"><small>${c[0]}</small><b>${c[1]??0}</b></div>`).join('')}</div>
+  <h3 style="margin:22px 0 10px">زوار الموقع</h3>
+  <div class="grid cols-4">
+    <div class="stat-card"><small>عدد الزوار (أجهزة مختلفة)</small><b>${nf(vs&&vs.visitors)}</b></div>
+    <div class="stat-card"><small>عدد الزيارات</small><b>${nf(vs&&vs.visits)}</b></div>
+    <div class="stat-card"><small>زوار اليوم</small><b>${nf(vs&&vs.visitors_today)}</b></div>
+    <div class="stat-card"><small>زيارات اليوم</small><b>${nf(vs&&vs.visits_today)}</b></div>
+  </div>
+  ${vs? '' : '<div style="color:var(--muted);font-size:12px;margin-top:8px">العدّاد غير مفعّل بعد: شغّل ملف visitor-counter.sql في Supabase.</div>'}`;
 }
 
 // ---- categories ----
@@ -2496,12 +2508,35 @@ if('serviceWorker' in navigator){
   window.addEventListener('load', ()=>{ navigator.serviceWorker.register('/sw.js').catch(e=>console.warn('[SW] register failed', e)); });
 }
 
+// -------------------- عدّاد الزوار (لا يحسب الإدارة) --------------------
+// الزائر = جهاز/متصفح (معرّف عشوائي محفوظ)، الزيارة = جلسة تصفح واحدة (تُحسب مرة لكل جلسة).
+// لا تُحسب الزيارة إذا: صفحة الإدارة، أو فيه تسجيل دخول، أو هذا الجهاز سبق دخل منه الأدمن، أو بوت.
+const VISITOR_KEY = "workshop_visitor_id_v1";
+const VISIT_SESSION_KEY = "workshop_visit_counted_v1";
+const NO_COUNT_KEY = "workshop_no_count_v1";
+async function trackVisit(){
+  try{
+    if(/bot|crawl|spider|slurp|headless|lighthouse|preview/i.test(navigator.userAgent)) return;
+    if(location.hash.indexOf('#/'+ADMIN_ROUTE)===0) return;
+    if(localStorage.getItem(NO_COUNT_KEY)==='1') return;
+    if(sessionStorage.getItem(VISIT_SESSION_KEY)) return;
+    const {data} = await sb.auth.getSession();
+    if(data && data.session){ localStorage.setItem(NO_COUNT_KEY,'1'); return; }
+    let vid = localStorage.getItem(VISITOR_KEY);
+    if(!vid){ vid = uid()+uid(); localStorage.setItem(VISITOR_KEY, vid); }
+    sessionStorage.setItem(VISIT_SESSION_KEY,'1');
+    await sb.rpc('record_visit',{p_visitor:vid});
+  }catch(e){ /* العدّاد لا يجب أن يعطّل الموقع أبداً */ }
+}
+
 // -------------------- boot --------------------
 sb.auth.onAuthStateChange((_e, session)=>{
   state.session=session;
+  if(session){ try{ localStorage.setItem(NO_COUNT_KEY,'1'); }catch(e){} }
   if(_e==='PASSWORD_RECOVERY'){ location.hash='#/'+ADMIN_ROUTE+'/change-password'; render(); }
 });
 render();
+trackVisit();
 syncThemeBtn();
 updateOfflineBanner();
 if(navigator.onLine) flushOfflineQueue();
